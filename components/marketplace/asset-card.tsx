@@ -20,7 +20,10 @@ import {
   BadgeCheck,
   Star,
   Calendar,
-  Zap
+  Zap,
+  DollarSign,
+  Stethoscope,
+  ClipboardList
 } from "lucide-react"
 
 const iconMap: Record<string, React.ElementType> = {
@@ -36,6 +39,9 @@ const iconMap: Record<string, React.ElementType> = {
   Shield,
   BarChart,
   MessageCircle,
+  DollarSign,
+  Stethoscope,
+  ClipboardList,
 }
 
 interface AssetCardProps {
