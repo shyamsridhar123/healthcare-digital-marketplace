@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Asset } from "@/lib/types"
-import { Button } from "@/components/ui/button"
+import { Asset, AssetType } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import { 
   MessageSquare, 
@@ -20,11 +19,14 @@ import {
   BadgeCheck,
   Star,
   Calendar,
-  Zap,
   DollarSign,
   Stethoscope,
-  ClipboardList
+  ClipboardList,
+  Bot,
+  Server,
+  Wrench
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const iconMap: Record<string, React.ElementType> = {
   MessageSquare,
@@ -44,6 +46,35 @@ const iconMap: Record<string, React.ElementType> = {
   ClipboardList,
 }
 
+// Type badge colors matching Azure AI Foundry style
+const typeBadgeConfig: Record<AssetType, { label: string; className: string; icon: React.ElementType }> = {
+  "agent": {
+    label: "Agent",
+    className: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    icon: Bot,
+  },
+  "mcp-server": {
+    label: "MCP Server",
+    className: "bg-teal-500/20 text-teal-400 border-teal-500/30",
+    icon: Server,
+  },
+  "mcp-tool": {
+    label: "Tool",
+    className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    icon: Wrench,
+  },
+  "model": {
+    label: "Model",
+    className: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    icon: Brain,
+  },
+  "workflow-template": {
+    label: "Workflow",
+    className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    icon: Workflow,
+  },
+}
+
 interface AssetCardProps {
   asset: Asset
   variant?: "list" | "card"
@@ -60,163 +91,111 @@ function getUsageStars(usage: number): number {
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" })
 }
 
 function StarRating({ stars, usage }: { stars: number; usage: number }) {
   return (
-    <div className="flex items-center gap-1" title={`Used in ${usage.toLocaleString()} orchestrations`}>
+    <div className="flex items-center gap-0.5" title={`Used in ${usage.toLocaleString()} orchestrations`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <Star
           key={i}
-          className={`h-3 w-3 ${
+          className={cn(
+            "h-3 w-3",
             i <= stars
-              ? "fill-yellow-500 text-yellow-500"
-              : "fill-muted text-muted"
-          }`}
+              ? "fill-amber-400 text-amber-400"
+              : "fill-muted/30 text-muted/30"
+          )}
         />
       ))}
-      <span className="ml-1 text-xs text-muted-foreground">{usage.toLocaleString()}</span>
+      <span className="ml-1.5 text-xs text-muted-foreground">{usage.toLocaleString()}</span>
     </div>
   )
 }
 
-export function AssetCard({ asset, variant = "list" }: AssetCardProps) {
+export function AssetCard({ asset, variant = "card" }: AssetCardProps) {
   const Icon = iconMap[asset.icon] || Brain
+  const typeConfig = typeBadgeConfig[asset.type]
+  const TypeIcon = typeConfig.icon
+  const usageStars = getUsageStars(asset.orchestrationUsage)
 
-  if (variant === "card") {
-    const usageStars = getUsageStars(asset.orchestrationUsage)
-    
-    return (
-      <Link href={`/asset/${asset.id}`}>
-        <div className="group flex h-full flex-col rounded-lg border border-border bg-card p-4 transition-colors hover:border-muted-foreground/50">
-          <div className="mb-3 flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-              <Icon className="h-5 w-5 text-foreground" />
-            </div>
-            <Badge 
-              variant={asset.pricing === "Free" ? "secondary" : "outline"}
-              className="text-xs"
-            >
-              {asset.pricing}
-            </Badge>
+  // Card variant (default) - Azure AI Foundry style
+  return (
+    <Link href={`/asset/${asset.id}`} className="group block">
+      <div className="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all duration-200 hover:border-muted-foreground/40 hover:bg-card/80">
+        {/* Header with icon and type badge */}
+        <div className="mb-4 flex items-start justify-between">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/80">
+            <Icon className="h-6 w-6 text-foreground" />
           </div>
-          
-          <h3 className="mb-1 font-medium text-foreground group-hover:text-accent">
-            {asset.name}
-          </h3>
-          
-          <p className="mb-2 text-sm font-medium text-foreground/80">
-            {asset.summary}
-          </p>
-          
-          {/* Capabilities */}
-          <div className="mb-3 flex flex-wrap gap-1">
-            {asset.capabilities.slice(0, 3).map((cap) => (
-              <span
-                key={cap}
-                className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground"
-              >
-                <Zap className="h-2.5 w-2.5" />
-                {cap}
-              </span>
-            ))}
-            {asset.capabilities.length > 3 && (
-              <span className="inline-flex items-center rounded bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
-                +{asset.capabilities.length - 3}
-              </span>
+          <div className={cn(
+            "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+            typeConfig.className
+          )}>
+            <TypeIcon className="h-3 w-3" />
+            {typeConfig.label}
+          </div>
+        </div>
+        
+        {/* Title */}
+        <h3 className="mb-1.5 text-base font-semibold text-foreground group-hover:text-blue-400 transition-colors">
+          {asset.name}
+        </h3>
+        
+        {/* Summary */}
+        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+          {asset.summary}
+        </p>
+        
+        {/* Capabilities as tags */}
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {asset.capabilities.slice(0, 3).map((cap) => (
+            <span
+              key={cap}
+              className="rounded-md bg-secondary/60 px-2 py-0.5 text-xs text-muted-foreground"
+            >
+              {cap}
+            </span>
+          ))}
+          {asset.capabilities.length > 3 && (
+            <span className="rounded-md bg-secondary/60 px-2 py-0.5 text-xs text-muted-foreground">
+              +{asset.capabilities.length - 3}
+            </span>
+          )}
+        </div>
+        
+        {/* Star rating */}
+        <div className="mb-4">
+          <StarRating stars={usageStars} usage={asset.orchestrationUsage} />
+        </div>
+        
+        {/* Footer */}
+        <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">{asset.publisher}</span>
+            {asset.publisherVerified && (
+              <BadgeCheck className="h-3.5 w-3.5 text-blue-400" />
             )}
           </div>
-          
-          {/* Star rating based on usage */}
-          <div className="mb-3">
-            <StarRating stars={usageStars} usage={asset.orchestrationUsage} />
-          </div>
-          
-          {/* Footer with publisher and date */}
-          <div className="mt-auto flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              {asset.publisher}
-              {asset.publisherVerified && (
-                <BadgeCheck className="h-3 w-3 text-accent" />
-              )}
-            </span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               {formatDate(asset.publishedDate)}
             </span>
+            <Badge 
+              variant="outline"
+              className={cn(
+                "text-xs",
+                asset.pricing === "Free" && "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+                asset.pricing === "Pro" && "border-blue-500/30 bg-blue-500/10 text-blue-400",
+                asset.pricing === "Enterprise" && "border-purple-500/30 bg-purple-500/10 text-purple-400"
+              )}
+            >
+              {asset.pricing}
+            </Badge>
           </div>
         </div>
-      </Link>
-    )
-  }
-
-  const usageStars = getUsageStars(asset.orchestrationUsage)
-  
-  return (
-    <div className="flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:border-muted-foreground/50">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary">
-        <Icon className="h-6 w-6 text-foreground" />
       </div>
-      
-      <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-center gap-2">
-          <Link 
-            href={`/asset/${asset.id}`}
-            className="font-medium text-foreground hover:text-accent"
-          >
-            {asset.name}
-          </Link>
-          <Badge 
-            variant={asset.pricing === "Free" ? "secondary" : "outline"}
-            className="text-xs"
-          >
-            {asset.pricing}
-          </Badge>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            {asset.publisher}
-            {asset.publisherVerified && (
-              <BadgeCheck className="h-3 w-3 text-accent" />
-            )}
-          </span>
-        </div>
-        
-        <p className="mb-2 text-sm text-foreground/80">
-          {asset.summary}
-        </p>
-        
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Capabilities */}
-          <div className="flex flex-wrap gap-1">
-            {asset.capabilities.slice(0, 4).map((cap) => (
-              <span
-                key={cap}
-                className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground"
-              >
-                <Zap className="h-2.5 w-2.5" />
-                {cap}
-              </span>
-            ))}
-          </div>
-          
-          <span className="text-border">|</span>
-          
-          {/* Star rating */}
-          <StarRating stars={usageStars} usage={asset.orchestrationUsage} />
-          
-          <span className="text-border">|</span>
-          
-          {/* Published date */}
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            {formatDate(asset.publishedDate)}
-          </span>
-        </div>
-      </div>
-      
-      <Button variant="outline" size="sm" className="shrink-0">
-        Add
-      </Button>
-    </div>
+    </Link>
   )
 }

@@ -4,10 +4,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Bell, HelpCircle, Settings, User } from "lucide-react"
+import { Bell, HelpCircle, Settings, ChevronDown, Search } from "lucide-react"
 
 const navItems = [
-  { label: "Marketplace", href: "/" },
+  { label: "Model catalog", href: "/" },
   { label: "Orchestration", href: "/orchestration" },
   { label: "Deployments", href: "/deployments" },
   { label: "Governance", href: "/governance" },
@@ -17,63 +17,70 @@ export function Header() {
   const pathname = usePathname()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center px-6">
-        <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
+      <div className="flex h-12 items-center px-4">
+        {/* Logo and Project Selector */}
+        <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5 text-primary-foreground"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
+            <div className="flex h-7 w-7 items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-6 w-6 text-blue-500" fill="currentColor">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" opacity="0.8" />
+                <path d="M2 17l10 5 10-5" opacity="0.6" />
+                <path d="M2 12l10 5 10-5" opacity="0.4" />
               </svg>
             </div>
-            <span className="font-semibold">Azure AI</span>
-            <span className="rounded bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-              Enterprise
-            </span>
+            <span className="text-sm font-medium text-foreground">Azure AI Foundry</span>
           </Link>
-
-          <nav className="flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "px-3 py-2 text-sm transition-colors",
-                  pathname === item.href
-                    ? "text-foreground border-b-2 border-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          
+          <div className="h-4 w-px bg-border" />
+          
+          <button className="flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+            <span>Healthcare RCM</span>
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            Feedback
+        {/* Main Navigation */}
+        <nav className="ml-8 flex items-center">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "relative px-3 py-3.5 text-sm transition-colors",
+                pathname === item.href || (item.href === "/" && pathname === "/")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {item.label}
+              {(pathname === item.href || (item.href === "/" && pathname === "/")) && (
+                <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-blue-500 rounded-t" />
+              )}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right side actions */}
+        <div className="ml-auto flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+            <Search className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
             <Bell className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
             <HelpCircle className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
             <Settings className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <User className="h-4 w-4" />
-          </Button>
+          
+          <div className="ml-2 h-4 w-px bg-border" />
+          
+          <button className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-medium text-white">
+            HC
+          </button>
         </div>
       </div>
     </header>
