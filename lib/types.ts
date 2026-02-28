@@ -18,6 +18,7 @@ export interface Asset {
   id: string
   name: string
   description: string
+  summary: string // Short capability summary
   type: AssetType
   category: string
   publisher: string
@@ -29,6 +30,9 @@ export interface Asset {
   pricing: "Free" | "Pro" | "Enterprise"
   icon: string
   lastUpdated: string
+  publishedDate: string // Initial publish date
+  orchestrationUsage: number // Number of orchestrations/projects using this asset
+  capabilities: string[] // List of key capabilities
 }
 
 export interface WorkflowNode {

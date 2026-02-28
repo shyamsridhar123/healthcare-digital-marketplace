@@ -5,6 +5,7 @@ export const assets: Asset[] = [
     id: "agent-1",
     name: "Customer Service Agent",
     description: "Enterprise-grade conversational AI agent for customer support with multi-turn dialogue capabilities and CRM integration.",
+    summary: "Handles customer inquiries, resolves tickets, and integrates with CRM systems",
     type: "agent",
     category: "AI Agents",
     publisher: "Azure AI",
@@ -15,12 +16,16 @@ export const assets: Asset[] = [
     tags: ["customer-service", "nlp", "enterprise"],
     pricing: "Pro",
     icon: "MessageSquare",
-    lastUpdated: "2026-02-15"
+    lastUpdated: "2026-02-15",
+    publishedDate: "2025-06-12",
+    orchestrationUsage: 847,
+    capabilities: ["Multi-turn Dialogue", "CRM Integration", "Sentiment Analysis", "Ticket Resolution"]
   },
   {
     id: "agent-2",
     name: "Code Review Agent",
     description: "Intelligent code review assistant that analyzes pull requests, identifies bugs, and suggests improvements using advanced static analysis.",
+    summary: "Automates code reviews with bug detection and improvement suggestions",
     type: "agent",
     category: "AI Agents",
     publisher: "DevTools Inc",
@@ -31,12 +36,16 @@ export const assets: Asset[] = [
     tags: ["code-review", "devtools", "automation"],
     pricing: "Free",
     icon: "Code",
-    lastUpdated: "2026-02-20"
+    lastUpdated: "2026-02-20",
+    publishedDate: "2025-09-03",
+    orchestrationUsage: 562,
+    capabilities: ["PR Analysis", "Bug Detection", "Code Suggestions", "Static Analysis"]
   },
   {
     id: "mcp-1",
     name: "Azure Blob Storage MCP",
     description: "Model Context Protocol server for Azure Blob Storage operations. Read, write, and manage blobs with natural language commands.",
+    summary: "Enables AI agents to interact with Azure Blob Storage",
     type: "mcp-server",
     category: "MCP Servers",
     publisher: "Azure AI",
@@ -47,12 +56,16 @@ export const assets: Asset[] = [
     tags: ["storage", "azure", "mcp"],
     pricing: "Free",
     icon: "Database",
-    lastUpdated: "2026-02-18"
+    lastUpdated: "2026-02-18",
+    publishedDate: "2025-04-20",
+    orchestrationUsage: 1243,
+    capabilities: ["Read Blobs", "Write Blobs", "List Containers", "Manage Access"]
   },
   {
     id: "mcp-2",
     name: "GitHub MCP Server",
     description: "Connect AI agents to GitHub repositories. Create issues, review PRs, manage branches, and automate workflows.",
+    summary: "Full GitHub integration for AI-powered development workflows",
     type: "mcp-server",
     category: "MCP Servers",
     publisher: "GitHub",
@@ -63,12 +76,16 @@ export const assets: Asset[] = [
     tags: ["github", "devops", "mcp"],
     pricing: "Free",
     icon: "GitBranch",
-    lastUpdated: "2026-02-22"
+    lastUpdated: "2026-02-22",
+    publishedDate: "2025-03-15",
+    orchestrationUsage: 2156,
+    capabilities: ["Issue Management", "PR Reviews", "Branch Control", "Workflow Automation"]
   },
   {
     id: "tool-1",
     name: "SQL Query Generator",
     description: "Transform natural language to SQL queries with support for Azure SQL, PostgreSQL, and MySQL dialects.",
+    summary: "Converts natural language to optimized SQL queries",
     type: "mcp-tool",
     category: "MCP Tools",
     publisher: "DataForge",
@@ -79,12 +96,16 @@ export const assets: Asset[] = [
     tags: ["sql", "database", "nlp"],
     pricing: "Pro",
     icon: "Table",
-    lastUpdated: "2026-02-10"
+    lastUpdated: "2026-02-10",
+    publishedDate: "2025-08-22",
+    orchestrationUsage: 423,
+    capabilities: ["NL to SQL", "Query Optimization", "Multi-dialect Support", "Schema Awareness"]
   },
   {
     id: "tool-2",
     name: "Document Parser",
     description: "Extract structured data from PDFs, Word docs, and images using OCR and intelligent parsing.",
+    summary: "Extracts structured data from documents using AI-powered OCR",
     type: "mcp-tool",
     category: "MCP Tools",
     publisher: "DocuAI",
@@ -95,12 +116,16 @@ export const assets: Asset[] = [
     tags: ["document", "ocr", "parsing"],
     pricing: "Enterprise",
     icon: "FileText",
-    lastUpdated: "2026-02-12"
+    lastUpdated: "2026-02-12",
+    publishedDate: "2025-05-10",
+    orchestrationUsage: 891,
+    capabilities: ["PDF Parsing", "OCR Processing", "Table Extraction", "Form Recognition"]
   },
   {
     id: "model-1",
     name: "GPT-4 Turbo",
     description: "Latest generation large language model with 128k context window and improved reasoning capabilities.",
+    summary: "Advanced LLM with 128k context and superior reasoning",
     type: "model",
     category: "Models",
     publisher: "OpenAI",
@@ -111,12 +136,16 @@ export const assets: Asset[] = [
     tags: ["llm", "gpt", "reasoning"],
     pricing: "Pro",
     icon: "Brain",
-    lastUpdated: "2026-01-25"
+    lastUpdated: "2026-01-25",
+    publishedDate: "2025-01-25",
+    orchestrationUsage: 4521,
+    capabilities: ["Text Generation", "Code Synthesis", "Reasoning", "Multi-turn Chat"]
   },
   {
     id: "model-2",
     name: "Azure Vision API",
     description: "Computer vision model for image analysis, object detection, and OCR with enterprise-grade accuracy.",
+    summary: "Enterprise computer vision for image analysis and OCR",
     type: "model",
     category: "Models",
     publisher: "Azure AI",
@@ -127,12 +156,16 @@ export const assets: Asset[] = [
     tags: ["vision", "ocr", "image-analysis"],
     pricing: "Pro",
     icon: "Eye",
-    lastUpdated: "2026-02-05"
+    lastUpdated: "2026-02-05",
+    publishedDate: "2025-02-05",
+    orchestrationUsage: 1876,
+    capabilities: ["Image Analysis", "Object Detection", "OCR", "Face Recognition"]
   },
   {
     id: "workflow-1",
     name: "Customer Onboarding Pipeline",
     description: "End-to-end customer onboarding workflow with document verification, CRM integration, and automated follow-ups.",
+    summary: "Automates the entire customer onboarding journey",
     type: "workflow-template",
     category: "Workflow Templates",
     publisher: "Enterprise Solutions",
@@ -143,12 +176,16 @@ export const assets: Asset[] = [
     tags: ["onboarding", "automation", "crm"],
     pricing: "Enterprise",
     icon: "Workflow",
-    lastUpdated: "2026-02-08"
+    lastUpdated: "2026-02-08",
+    publishedDate: "2025-07-18",
+    orchestrationUsage: 234,
+    capabilities: ["Doc Verification", "CRM Sync", "Auto Follow-ups", "Progress Tracking"]
   },
   {
     id: "workflow-2",
     name: "Security Incident Response",
     description: "Automated security incident detection and response workflow with escalation policies and compliance reporting.",
+    summary: "Detects and responds to security incidents automatically",
     type: "workflow-template",
     category: "Workflow Templates",
     publisher: "SecureOps",
@@ -159,12 +196,16 @@ export const assets: Asset[] = [
     tags: ["security", "incident-response", "compliance"],
     pricing: "Enterprise",
     icon: "Shield",
-    lastUpdated: "2026-02-14"
+    lastUpdated: "2026-02-14",
+    publishedDate: "2025-06-30",
+    orchestrationUsage: 312,
+    capabilities: ["Threat Detection", "Auto Escalation", "Compliance Reports", "Incident Logging"]
   },
   {
     id: "agent-3",
     name: "Data Analysis Agent",
     description: "Automated data analysis and visualization agent that generates insights from structured and unstructured data sources.",
+    summary: "Generates insights and visualizations from any data source",
     type: "agent",
     category: "AI Agents",
     publisher: "DataForge",
@@ -175,12 +216,16 @@ export const assets: Asset[] = [
     tags: ["analytics", "data", "visualization"],
     pricing: "Pro",
     icon: "BarChart",
-    lastUpdated: "2026-02-19"
+    lastUpdated: "2026-02-19",
+    publishedDate: "2025-10-05",
+    orchestrationUsage: 678,
+    capabilities: ["Data Analysis", "Chart Generation", "Insight Discovery", "Report Building"]
   },
   {
     id: "mcp-3",
     name: "Slack MCP Server",
     description: "Integrate AI agents with Slack workspaces. Send messages, manage channels, and respond to events.",
+    summary: "Connects AI agents to Slack for messaging and automation",
     type: "mcp-server",
     category: "MCP Servers",
     publisher: "Slack",
@@ -191,7 +236,10 @@ export const assets: Asset[] = [
     tags: ["slack", "messaging", "integration"],
     pricing: "Free",
     icon: "MessageCircle",
-    lastUpdated: "2026-02-16"
+    lastUpdated: "2026-02-16",
+    publishedDate: "2025-05-28",
+    orchestrationUsage: 1534,
+    capabilities: ["Send Messages", "Channel Management", "Event Handling", "Thread Replies"]
   }
 ]
 
