@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Azure AI Marketplace',
-  description: 'Discover, orchestrate, and deploy enterprise AI agents, MCP tools, and workflow templates',
+  title: 'Agency Marketplace (Playground)',
+  description: 'Discover, orchestrate, and deploy enterprise AI agents, MCP tools, and workflow templates for healthcare RCM',
   generator: 'v0.app',
   icons: {
     icon: [

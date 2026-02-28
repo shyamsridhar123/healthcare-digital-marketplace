@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Bell, HelpCircle, Settings, ChevronDown, Search } from "lucide-react"
 
 const navItems = [
-  { label: "Model catalog", href: "/" },
+  { label: "Agent Catalog", href: "/" },
   { label: "Orchestration", href: "/orchestration" },
   { label: "Deployments", href: "/deployments" },
   { label: "Governance", href: "/governance" },
@@ -21,15 +21,19 @@ export function Header() {
       <div className="flex h-12 items-center px-4">
         {/* Logo and Project Selector */}
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 text-blue-500" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" opacity="0.8" />
-                <path d="M2 17l10 5 10-5" opacity="0.6" />
-                <path d="M2 12l10 5 10-5" opacity="0.4" />
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
               </svg>
             </div>
-            <span className="text-sm font-medium text-foreground">Azure AI Foundry</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-foreground">Agency Marketplace</span>
+              <span className="rounded-md bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-400">
+                Playground
+              </span>
+            </div>
           </Link>
           
           <div className="h-4 w-px bg-border" />

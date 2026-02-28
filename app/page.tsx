@@ -51,7 +51,7 @@ export default function MarketplacePage() {
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-foreground">Model Catalog</h1>
+              <h1 className="text-xl font-semibold text-foreground">Agent Catalog</h1>
               <p className="text-sm text-muted-foreground">
                 Discover and deploy AI agents, tools, and models for healthcare RCM
               </p>
