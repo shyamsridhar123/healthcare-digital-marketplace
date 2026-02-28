@@ -1,157 +1,167 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Header } from "@/components/marketplace/header"
-import { CategoryTabs } from "@/components/marketplace/category-tabs"
-import { AssetCard } from "@/components/marketplace/asset-card"
-import { SearchInput } from "@/components/marketplace/search-input"
-import { Button } from "@/components/ui/button"
+import { HeroBanner } from "@/components/marketplace/hero-banner"
+import { NavTabs } from "@/components/marketplace/nav-tabs"
+import { PluginCard, ContributeCard } from "@/components/marketplace/plugin-card"
 import { assets } from "@/lib/mock-data"
-import { Filter, SlidersHorizontal } from "lucide-react"
+import { Search, ChevronDown, Copy } from "lucide-react"
 import Link from "next/link"
 
 export default function MarketplacePage() {
-  const [selectedTab, setSelectedTab] = useState("all")
+  const [selectedTab, setSelectedTab] = useState("plugins")
   const [searchQuery, setSearchQuery] = useState("")
+  const [category, setCategory] = useState("All Categories")
+  const [sortBy, setSortBy] = useState("Name")
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
-      const matchesTab =
-        selectedTab === "all" ||
-        asset.type === selectedTab
       const matchesSearch =
         searchQuery === "" ||
         asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         asset.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         asset.summary.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesTab && matchesSearch
+      return matchesSearch
     })
-  }, [selectedTab, searchQuery])
+  }, [searchQuery])
 
-  // Group assets by type for the "all" view
-  const assetsByType = useMemo(() => {
-    if (selectedTab !== "all") return null
-    
-    const groups: Record<string, typeof assets> = {}
-    filteredAssets.forEach((asset) => {
-      if (!groups[asset.type]) {
-        groups[asset.type] = []
-      }
-      groups[asset.type].push(asset)
-    })
-    return groups
-  }, [filteredAssets, selectedTab])
+  // Counts for tabs
+  const counts = {
+    plugins: assets.filter(a => a.type === "mcp-tool" || a.type === "mcp-server").length,
+    skills: assets.reduce((acc, a) => acc + a.capabilities.length, 0),
+    agents: assets.filter(a => a.type === "agent").length,
+  }
+
+  // Get tab title
+  const getTabTitle = () => {
+    switch (selectedTab) {
+      case "plugins": return "Discover Plugins"
+      case "skills": return "Discover Skills"
+      case "agents": return "Discover Agents"
+      case "stats": return "Marketplace Stats"
+      default: return "Discover Plugins"
+    }
+  }
+
+  const getTabDescription = () => {
+    switch (selectedTab) {
+      case "plugins": return "Browse and install plugins for Copilot and Claude."
+      case "skills": return "Explore skills that extend agent capabilities."
+      case "agents": return "Find AI agents for healthcare RCM automation."
+      case "stats": return "View marketplace analytics and trends."
+      default: return "Browse and install plugins for Copilot and Claude."
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
-      {/* Sub-header with title and actions */}
-      <div className="border-b border-border bg-card/50">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Agent Catalog</h1>
-              <p className="text-sm text-muted-foreground">
-                Discover and deploy AI agents, tools, and models for healthcare RCM
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link href="/orchestration">
-                <Button variant="outline" size="sm">
-                  Open Orchestration Studio
-                </Button>
-              </Link>
-              <Link href="/deployments">
-                <Button size="sm">
-                  My Deployments
-                </Button>
-              </Link>
-            </div>
+      {/* Top navigation bar */}
+      <header className="border-b border-border bg-background">
+        <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Link href="/" className="text-sm font-medium text-foreground">
+              Agency Marketplace
+            </Link>
+            <span className="text-muted-foreground">/</span>
+            <Link href="/orchestration" className="text-sm text-muted-foreground hover:text-foreground">
+              Orchestration
+            </Link>
+            <Link href="/deployments" className="text-sm text-muted-foreground hover:text-foreground">
+              Deployments
+            </Link>
+            <Link href="/governance" className="text-sm text-muted-foreground hover:text-foreground">
+              Governance
+            </Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Healthcare RCM</span>
           </div>
         </div>
-      </div>
+      </header>
       
-      {/* Category Tabs */}
-      <div className="bg-card/30">
-        <div className="mx-auto max-w-7xl px-6">
-          <CategoryTabs
+      <main className="mx-auto max-w-7xl px-6 py-6">
+        {/* Hero Banner */}
+        <div className="mb-6">
+          <HeroBanner />
+        </div>
+        
+        {/* Navigation Tabs */}
+        <div className="mb-8">
+          <NavTabs
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
+            counts={counts}
           />
         </div>
-      </div>
-      
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-6 py-6">
+        
+        {/* Page Title */}
+        <div className="mb-6">
+          <h2 className="mb-2 text-3xl font-light text-cyan-400">
+            {getTabTitle()}
+          </h2>
+          <p className="text-muted-foreground">
+            {getTabDescription().split("plugins").map((part, i, arr) => (
+              <span key={i}>
+                {part}
+                {i < arr.length - 1 && <span className="text-purple-400">plugins</span>}
+              </span>
+            ))}
+          </p>
+        </div>
+        
+        {/* Install Command */}
+        <div className="mb-6 inline-flex items-center gap-3 rounded-lg border border-border bg-card/50 px-4 py-2.5">
+          <span className="text-sm text-muted-foreground">Install any plugin in one command:</span>
+          <code className="text-sm">
+            <span className="text-cyan-400">/plugin install</span>
+            <span className="text-emerald-400"> {'<name>'}@agency-playground</span>
+          </code>
+          <button className="text-muted-foreground hover:text-foreground transition-colors">
+            <Copy className="h-4 w-4" />
+          </button>
+        </div>
+        
         {/* Search and Filters */}
         <div className="mb-6 flex items-center gap-4">
-          <div className="flex-1">
-            <SearchInput
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
               value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Search by name, capability, or publisher..."
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search plugins..."
+              className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
             />
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <SlidersHorizontal className="h-4 w-4" />
-            Sort
-          </Button>
+          <button className="flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            {category}
+            <ChevronDown className="h-4 w-4" />
+          </button>
+          <button className="flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            Sort by {sortBy}
+            <ChevronDown className="h-4 w-4" />
+          </button>
         </div>
         
-        {/* Results count */}
-        <div className="mb-4 text-sm text-muted-foreground">
-          Showing {filteredAssets.length} results
+        {/* Cards Grid */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Contribute Card */}
+          <ContributeCard />
+          
+          {/* Plugin Cards */}
+          {filteredAssets.map((asset) => (
+            <PluginCard key={asset.id} asset={asset} />
+          ))}
         </div>
-
-        {/* Asset Grid */}
-        {selectedTab === "all" && assetsByType ? (
-          // Grouped view for "All" tab
-          <div className="space-y-10">
-            {Object.entries(assetsByType).map(([type, typeAssets]) => (
-              <section key={type}>
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-foreground capitalize">
-                    {type.replace("-", " ").replace("mcp", "MCP")}s
-                  </h2>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-muted-foreground hover:text-foreground"
-                    onClick={() => setSelectedTab(type)}
-                  >
-                    View all
-                  </Button>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {typeAssets.slice(0, 4).map((asset) => (
-                    <AssetCard key={asset.id} asset={asset} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        ) : (
-          // Flat grid for specific type tabs
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredAssets.map((asset) => (
-              <AssetCard key={asset.id} asset={asset} />
-            ))}
-          </div>
-        )}
         
-        {filteredAssets.length === 0 && (
+        {filteredAssets.length === 0 && searchQuery && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
-              <Filter className="h-8 w-8 text-muted-foreground" />
+              <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="mb-2 text-lg font-medium text-foreground">No assets found</h3>
+            <h3 className="mb-2 text-lg font-medium text-foreground">No plugins found</h3>
             <p className="max-w-md text-sm text-muted-foreground">
-              Try adjusting your search or filters to find what you're looking for.
+              Try adjusting your search to find what you're looking for.
             </p>
           </div>
         )}
