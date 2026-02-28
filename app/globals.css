@@ -43,11 +43,58 @@
   --success: oklch(0.7 0.18 145);
   --warning: oklch(0.8 0.15 80);
   --info: oklch(0.65 0.2 260);
+  
+  /* Category colors - Professional healthcare palette */
+  --cat-agents: oklch(0.65 0.18 250);
+  --cat-agents-bg: oklch(0.25 0.08 250);
+  --cat-mcp-servers: oklch(0.7 0.16 180);
+  --cat-mcp-servers-bg: oklch(0.25 0.06 180);
+  --cat-mcp-tools: oklch(0.75 0.14 145);
+  --cat-mcp-tools-bg: oklch(0.25 0.05 145);
+  --cat-models: oklch(0.7 0.18 300);
+  --cat-models-bg: oklch(0.25 0.08 300);
+  --cat-workflows: oklch(0.75 0.15 45);
+  --cat-workflows-bg: oklch(0.25 0.06 45);
+  --cat-claims: oklch(0.65 0.15 220);
+  --cat-claims-bg: oklch(0.22 0.06 220);
+  --cat-denials: oklch(0.65 0.18 15);
+  --cat-denials-bg: oklch(0.22 0.07 15);
+  --cat-collections: oklch(0.7 0.15 120);
+  --cat-collections-bg: oklch(0.22 0.05 120);
+  --cat-eligibility: oklch(0.7 0.16 280);
+  --cat-eligibility-bg: oklch(0.22 0.06 280);
+  --cat-coding: oklch(0.72 0.14 60);
+  --cat-coding-bg: oklch(0.22 0.05 60);
+  --cat-payments: oklch(0.68 0.16 160);
+  --cat-payments-bg: oklch(0.22 0.06 160);
 }
 
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  /* Category colors */
+  --color-cat-agents: var(--cat-agents);
+  --color-cat-agents-bg: var(--cat-agents-bg);
+  --color-cat-mcp-servers: var(--cat-mcp-servers);
+  --color-cat-mcp-servers-bg: var(--cat-mcp-servers-bg);
+  --color-cat-mcp-tools: var(--cat-mcp-tools);
+  --color-cat-mcp-tools-bg: var(--cat-mcp-tools-bg);
+  --color-cat-models: var(--cat-models);
+  --color-cat-models-bg: var(--cat-models-bg);
+  --color-cat-workflows: var(--cat-workflows);
+  --color-cat-workflows-bg: var(--cat-workflows-bg);
+  --color-cat-claims: var(--cat-claims);
+  --color-cat-claims-bg: var(--cat-claims-bg);
+  --color-cat-denials: var(--cat-denials);
+  --color-cat-denials-bg: var(--cat-denials-bg);
+  --color-cat-collections: var(--cat-collections);
+  --color-cat-collections-bg: var(--cat-collections-bg);
+  --color-cat-eligibility: var(--cat-eligibility);
+  --color-cat-eligibility-bg: var(--cat-eligibility-bg);
+  --color-cat-coding: var(--cat-coding);
+  --color-cat-coding-bg: var(--cat-coding-bg);
+  --color-cat-payments: var(--cat-payments);
+  --color-cat-payments-bg: var(--cat-payments-bg);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
