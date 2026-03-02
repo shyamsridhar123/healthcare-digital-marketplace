@@ -32,7 +32,8 @@ function getCategoryStyle(category: string): string {
 
 export function PluginCard({ asset }: PluginCardProps) {
   const skillCount = asset.capabilities.length
-  const scriptCount = Math.floor(Math.random() * 6) + 1 // Simulated
+  // Derive script count deterministically from asset id to avoid hydration mismatch
+  const scriptCount = (asset.id.charCodeAt(asset.id.length - 1) % 6) + 1
 
   return (
     <Link href={`/asset/${asset.id}`} className="group block">
