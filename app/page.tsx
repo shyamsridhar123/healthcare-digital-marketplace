@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { HeroBanner } from "@/components/marketplace/hero-banner"
 import { NavTabs } from "@/components/marketplace/nav-tabs"
 import { PluginCard, ContributeCard } from "@/components/marketplace/plugin-card"
 import { assets } from "@/lib/mock-data"
 import { Search, ChevronDown, Copy } from "lucide-react"
-import Link from "next/link"
 
 export default function MarketplacePage() {
   const [selectedTab, setSelectedTab] = useState("plugins")
@@ -55,31 +55,9 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top navigation bar */}
-      <header className="border-b border-border bg-background">
-        <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm font-medium text-foreground">
-              Agency Marketplace
-            </Link>
-            <span className="text-muted-foreground">/</span>
-            <Link href="/orchestration" className="text-sm text-muted-foreground hover:text-foreground">
-              Orchestration
-            </Link>
-            <Link href="/deployments" className="text-sm text-muted-foreground hover:text-foreground">
-              Deployments
-            </Link>
-            <Link href="/governance" className="text-sm text-muted-foreground hover:text-foreground">
-              Governance
-            </Link>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Healthcare RCM</span>
-          </div>
-        </div>
-      </header>
+      <AppSidebar />
       
-      <main className="mx-auto max-w-7xl px-6 py-6">
+      <main className="ml-64 p-6">
         {/* Hero Banner */}
         <div className="mb-6">
           <HeroBanner />
