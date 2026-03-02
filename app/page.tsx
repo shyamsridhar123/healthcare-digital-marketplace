@@ -4,12 +4,12 @@ import { useState, useMemo } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { HeroBanner } from "@/components/marketplace/hero-banner"
 import { NavTabs } from "@/components/marketplace/nav-tabs"
-import { PluginCard, ContributeCard } from "@/components/marketplace/plugin-card"
+import { AssetCard, ContributeCard } from "@/components/marketplace/plugin-card"
 import { assets } from "@/lib/mock-data"
 import { Search, ChevronDown, Copy } from "lucide-react"
 
 export default function MarketplacePage() {
-  const [selectedTab, setSelectedTab] = useState("plugins")
+  const [selectedTab, setSelectedTab] = useState("agents")
   const [searchQuery, setSearchQuery] = useState("")
   const [category, setCategory] = useState("All Categories")
   const [sortBy, setSortBy] = useState("Name")
@@ -27,29 +27,29 @@ export default function MarketplacePage() {
 
   // Counts for tabs
   const counts = {
-    plugins: assets.filter(a => a.type === "mcp-tool" || a.type === "mcp-server").length,
-    skills: assets.reduce((acc, a) => acc + a.capabilities.length, 0),
     agents: assets.filter(a => a.type === "agent").length,
+    tools: assets.filter(a => a.type === "mcp-tool" || a.type === "mcp-server").length,
+    skills: assets.reduce((acc, a) => acc + a.capabilities.length, 0),
   }
 
   // Get tab title
   const getTabTitle = () => {
     switch (selectedTab) {
-      case "plugins": return "Discover Plugins"
-      case "skills": return "Discover Skills"
       case "agents": return "Discover Agents"
+      case "tools": return "Discover Tools"
+      case "skills": return "Discover Skills"
       case "stats": return "Marketplace Stats"
-      default: return "Discover Plugins"
+      default: return "Discover Agents"
     }
   }
 
   const getTabDescription = () => {
     switch (selectedTab) {
-      case "plugins": return "Browse and install plugins for Copilot and Claude."
-      case "skills": return "Explore skills that extend agent capabilities."
-      case "agents": return "Find AI agents for healthcare RCM automation."
+      case "agents": return "AI agents for healthcare RCM automation and intelligent workflows."
+      case "tools": return "MCP tools and servers to extend agent capabilities."
+      case "skills": return "Reusable skills that power agent actions and integrations."
       case "stats": return "View marketplace analytics and trends."
-      default: return "Browse and install plugins for Copilot and Claude."
+      default: return "AI agents for healthcare RCM automation and intelligent workflows."
     }
   }
 
@@ -78,12 +78,7 @@ export default function MarketplacePage() {
             {getTabTitle()}
           </h2>
           <p className="text-muted-foreground">
-            {getTabDescription().split("plugins").map((part, i, arr) => (
-              <span key={i}>
-                {part}
-                {i < arr.length - 1 && <span className="text-[var(--optum-orange)]">plugins</span>}
-              </span>
-            ))}
+            {getTabDescription()}
           </p>
         </div>
         
@@ -107,7 +102,7 @@ export default function MarketplacePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search agents, plugins, and skills..."
+              placeholder="Search agents, tools, and skills..."
               className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--optum-orange)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--optum-orange)]/50"
             />
           </div>
@@ -126,9 +121,9 @@ export default function MarketplacePage() {
           {/* Contribute Card */}
           <ContributeCard />
           
-          {/* Plugin Cards */}
+          {/* Asset Cards */}
           {filteredAssets.map((asset) => (
-            <PluginCard key={asset.id} asset={asset} />
+            <AssetCard key={asset.id} asset={asset} />
           ))}
         </div>
         
@@ -137,7 +132,7 @@ export default function MarketplacePage() {
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
               <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="mb-2 text-lg font-medium text-foreground">No plugins found</h3>
+            <h3 className="mb-2 text-lg font-medium text-foreground">No assets found</h3>
             <p className="max-w-md text-sm text-muted-foreground">
               Try adjusting your search to find what you're looking for.
             </p>

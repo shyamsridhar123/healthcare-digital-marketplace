@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-interface PluginCardProps {
+interface AssetCardProps {
   asset: Asset
 }
 
@@ -32,7 +32,7 @@ function getCategoryStyle(category: string): string {
   return styles[category] || "bg-secondary text-muted-foreground"
 }
 
-export function PluginCard({ asset }: PluginCardProps) {
+export function AssetCard({ asset }: AssetCardProps) {
   const skillCount = asset.capabilities.length
   // Derive script count deterministically from asset id to avoid hydration mismatch
   const scriptCount = (asset.id.charCodeAt(asset.id.length - 1) % 6) + 1

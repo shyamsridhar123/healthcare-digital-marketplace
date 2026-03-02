@@ -14,17 +14,17 @@ interface NavTabsProps {
   selectedTab: string
   onTabChange: (tab: string) => void
   counts: {
-    plugins: number
-    skills: number
     agents: number
+    tools: number
+    skills: number
   }
 }
 
 export function NavTabs({ selectedTab, onTabChange, counts }: NavTabsProps) {
   const tabs = [
-    { id: "plugins", label: "Plugins", icon: Puzzle, count: counts.plugins },
-    { id: "skills", label: "Skills", icon: Zap, count: counts.skills },
     { id: "agents", label: "Agents", icon: Bot, count: counts.agents },
+    { id: "tools", label: "Tools", icon: Puzzle, count: counts.tools },
+    { id: "skills", label: "Skills", icon: Zap, count: counts.skills },
     { id: "mcp", label: "MCP", icon: Globe, external: true },
     { id: "stats", label: "Stats", icon: BarChart3 },
   ]
@@ -45,9 +45,9 @@ export function NavTabs({ selectedTab, onTabChange, counts }: NavTabsProps) {
           >
             <tab.icon className={cn(
               "h-4 w-4",
-              tab.id === "plugins" && "text-[var(--optum-orange)]",
+              tab.id === "agents" && "text-[var(--optum-orange)]",
+              tab.id === "tools" && "text-[var(--uhg-blue-light)]",
               tab.id === "skills" && "text-[var(--optum-teal)]",
-              tab.id === "agents" && "text-[var(--uhg-blue-light)]",
               tab.id === "mcp" && "text-[var(--success)]",
               tab.id === "stats" && "text-[var(--info)]"
             )} />
