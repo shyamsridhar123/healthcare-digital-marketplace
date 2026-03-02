@@ -39,17 +39,17 @@ export function NavTabs({ selectedTab, onTabChange, counts }: NavTabsProps) {
             className={cn(
               "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
               selectedTab === tab.id
-                ? "bg-secondary text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-[var(--optum-orange)]/10 text-foreground border border-[var(--optum-orange)]/30"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
             )}
           >
             <tab.icon className={cn(
               "h-4 w-4",
-              tab.id === "plugins" && "text-purple-400",
-              tab.id === "skills" && "text-yellow-400",
-              tab.id === "agents" && "text-cyan-400",
-              tab.id === "mcp" && "text-emerald-400",
-              tab.id === "stats" && "text-blue-400"
+              tab.id === "plugins" && "text-[var(--optum-orange)]",
+              tab.id === "skills" && "text-[var(--optum-teal)]",
+              tab.id === "agents" && "text-[var(--uhg-blue-light)]",
+              tab.id === "mcp" && "text-[var(--success)]",
+              tab.id === "stats" && "text-[var(--info)]"
             )} />
             <span>{tab.label}</span>
             {tab.count !== undefined && (

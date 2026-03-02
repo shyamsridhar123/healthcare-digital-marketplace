@@ -74,25 +74,25 @@ export default function MarketplacePage() {
         
         {/* Page Title */}
         <div className="mb-6">
-          <h2 className="mb-2 text-3xl font-light text-cyan-400">
+          <h2 className="mb-2 text-2xl font-semibold text-foreground">
             {getTabTitle()}
           </h2>
           <p className="text-muted-foreground">
             {getTabDescription().split("plugins").map((part, i, arr) => (
               <span key={i}>
                 {part}
-                {i < arr.length - 1 && <span className="text-purple-400">plugins</span>}
+                {i < arr.length - 1 && <span className="text-[var(--optum-orange)]">plugins</span>}
               </span>
             ))}
           </p>
         </div>
         
         {/* Install Command */}
-        <div className="mb-6 inline-flex items-center gap-3 rounded-lg border border-border bg-card/50 px-4 py-2.5">
-          <span className="text-sm text-muted-foreground">Install any plugin in one command:</span>
+        <div className="mb-6 inline-flex items-center gap-3 rounded-lg border border-[var(--optum-orange)]/30 bg-card/50 px-4 py-2.5">
+          <span className="text-sm text-muted-foreground">Install any agent in one command:</span>
           <code className="text-sm">
-            <span className="text-cyan-400">/plugin install</span>
-            <span className="text-emerald-400"> {'<name>'}@agency-playground</span>
+            <span className="text-[var(--optum-orange)]">/agent install</span>
+            <span className="text-[var(--success)]"> {'<name>'}@uap-marketplace</span>
           </code>
           <button className="text-muted-foreground hover:text-foreground transition-colors">
             <Copy className="h-4 w-4" />
@@ -107,8 +107,8 @@ export default function MarketplacePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search plugins..."
-              className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
+              placeholder="Search agents, plugins, and skills..."
+              className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--optum-orange)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--optum-orange)]/50"
             />
           </div>
           <button className="flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-4 text-sm text-muted-foreground hover:text-foreground transition-colors">

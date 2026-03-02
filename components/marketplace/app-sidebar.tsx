@@ -12,9 +12,13 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
-  Sparkles,
   Package,
   ChevronRight,
+  Rocket,
+  Code2,
+  FileCheck,
+  Users,
+  Building2,
 } from "lucide-react"
 
 interface NavItem {
@@ -26,49 +30,67 @@ interface NavItem {
   description?: string
 }
 
-const mainNavItems: NavItem[] = [
+// UAP Marketplaces
+const marketplaceItems: NavItem[] = [
   {
     label: "Agent Marketplace",
     href: "/",
     icon: Bot,
-    badge: "New",
-    badgeColor: "bg-emerald-500/20 text-emerald-400",
-    description: "Discover AI agents and plugins",
+    description: "Reusable AI agents library",
   },
   {
     label: "Model Marketplace",
     href: "/models",
     icon: Brain,
-    badge: "Beta",
-    badgeColor: "bg-purple-500/20 text-purple-400",
-    description: "AI models registry and governance",
+    badge: "BYOM",
+    badgeColor: "bg-[var(--optum-orange)]/20 text-[var(--optum-orange)]",
+    description: "Governed AI models registry",
   },
 ]
 
-const workspaceNavItems: NavItem[] = [
+// UAP Development & Deployment
+const developmentItems: NavItem[] = [
   {
-    label: "Orchestration",
+    label: "Agent Builder",
     href: "/orchestration",
     icon: Workflow,
-    description: "Build multi-agent workflows",
+    description: "Visual workflow designer",
   },
   {
-    label: "Deployments",
-    href: "/deployments",
-    icon: Package,
-    description: "Manage deployed assets",
+    label: "IMDE",
+    href: "/imde",
+    icon: Code2,
+    badge: "Dev",
+    badgeColor: "bg-[var(--uhg-blue)]/20 text-[var(--uhg-blue-light)]",
+    description: "Integrated Model Dev Environment",
   },
+  {
+    label: "One-Click Deploy",
+    href: "/deployments",
+    icon: Rocket,
+    description: "CI/CD & deployment management",
+  },
+]
+
+// UAP Governance & Operations
+const governanceItems: NavItem[] = [
   {
     label: "Governance",
     href: "/governance",
     icon: Shield,
-    description: "Policies and compliance",
+    description: "Compliance & audit workflows",
+  },
+  {
+    label: "Model Cards",
+    href: "/governance/model-cards",
+    icon: FileCheck,
+    description: "Evaluation & documentation",
   },
   {
     label: "Analytics",
     href: "/analytics",
     icon: BarChart3,
-    description: "Usage and performance metrics",
+    description: "Performance & usage metrics",
   },
 ]
 
@@ -79,7 +101,7 @@ const bottomNavItems: NavItem[] = [
     icon: Settings,
   },
   {
-    label: "Help & Support",
+    label: "Help & Docs",
     href: "/help",
     icon: HelpCircle,
   },
@@ -114,7 +136,7 @@ function NavSection({ title, items }: { title?: string; items: NavItem[] }) {
                 <span className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
                   isActive 
-                    ? "bg-gradient-to-br from-cyan-500/20 to-purple-500/20 text-cyan-400" 
+                    ? "bg-[var(--optum-orange)]/20 text-[var(--optum-orange)]" 
                     : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
                 )}>
                   <Icon className="h-4 w-4" />
@@ -138,7 +160,7 @@ function NavSection({ title, items }: { title?: string; items: NavItem[] }) {
                   )}
                 </div>
                 {isActive && (
-                  <ChevronRight className="h-4 w-4 text-cyan-400" />
+                  <ChevronRight className="h-4 w-4 text-[var(--optum-orange)]" />
                 )}
               </Link>
             </li>
@@ -151,39 +173,38 @@ function NavSection({ title, items }: { title?: string; items: NavItem[] }) {
 
 export function AppSidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-card/50">
-      {/* Logo */}
-      <div className="flex h-14 items-center gap-2.5 border-b border-border px-4">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-purple-500">
-          <Sparkles className="h-4 w-4 text-white" />
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-sidebar">
+      {/* UAP Logo */}
+      <div className="flex h-16 items-center gap-3 border-b border-border px-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--optum-orange)] to-[var(--optum-orange-light)]">
+          <Building2 className="h-5 w-5 text-white" />
         </div>
-        <div>
-          <span className="text-sm font-semibold text-foreground">Agency</span>
-          <span className="ml-1.5 rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-400">
-            Playground
-          </span>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold text-foreground tracking-tight">UAP</span>
+          <span className="text-xs text-muted-foreground">Unified AI Provider Platform</span>
         </div>
       </div>
       
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4">
-        <NavSection title="Marketplaces" items={mainNavItems} />
-        <NavSection title="Workspace" items={workspaceNavItems} />
+      <nav className="flex-1 overflow-y-auto p-3">
+        <NavSection title="Marketplaces" items={marketplaceItems} />
+        <NavSection title="Development" items={developmentItems} />
+        <NavSection title="Operations" items={governanceItems} />
       </nav>
       
       {/* Bottom section */}
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-3">
         <NavSection items={bottomNavItems} />
         
         {/* Organization Badge */}
-        <div className="mt-4 rounded-lg border border-border bg-secondary/30 p-3">
+        <div className="mt-3 rounded-lg border border-[var(--optum-orange)]/30 bg-[var(--optum-orange)]/5 p-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
-              <LayoutGrid className="h-4 w-4" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--optum-orange)]/20">
+              <Users className="h-4 w-4 text-[var(--optum-orange)]" />
             </div>
             <div>
-              <p className="text-xs font-medium text-foreground">Healthcare RCM</p>
-              <p className="text-xs text-muted-foreground">Enterprise Workspace</p>
+              <p className="text-xs font-semibold text-foreground">Optum RCM</p>
+              <p className="text-xs text-muted-foreground">Healthcare Revenue Cycle</p>
             </div>
           </div>
         </div>

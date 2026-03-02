@@ -4,45 +4,51 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Dark theme by default - enterprise AI marketplace */
-  --background: oklch(0.1 0 0);
+  /* UHG/Optum Brand - Dark Theme */
+  /* Primary: Optum Orange | Secondary: UHG Blue | Accent: Teal */
+  --background: oklch(0.12 0.005 250);
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.14 0 0);
+  --card: oklch(0.16 0.008 250);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0 0);
+  --popover: oklch(0.14 0.006 250);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.98 0 0);
-  --primary-foreground: oklch(0.1 0 0);
-  --secondary: oklch(0.2 0 0);
+  --primary: oklch(0.7 0.18 45);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.22 0.01 250);
   --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.18 0 0);
+  --muted: oklch(0.2 0.008 250);
   --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.65 0.2 260);
+  --accent: oklch(0.6 0.15 220);
   --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.65 0.2 260);
-  --chart-1: oklch(0.65 0.2 260);
-  --chart-2: oklch(0.7 0.15 180);
-  --chart-3: oklch(0.75 0.18 140);
-  --chart-4: oklch(0.8 0.15 80);
-  --chart-5: oklch(0.6 0.2 320);
+  --border: oklch(0.28 0.01 250);
+  --input: oklch(0.2 0.008 250);
+  --ring: oklch(0.7 0.18 45);
+  --chart-1: oklch(0.7 0.18 45);
+  --chart-2: oklch(0.6 0.15 220);
+  --chart-3: oklch(0.65 0.14 180);
+  --chart-4: oklch(0.7 0.12 145);
+  --chart-5: oklch(0.6 0.16 280);
   --radius: 0.5rem;
-  --sidebar: oklch(0.08 0 0);
+  --sidebar: oklch(0.1 0.006 250);
   --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.65 0.2 260);
+  --sidebar-primary: oklch(0.7 0.18 45);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent: oklch(0.2 0.01 250);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.22 0 0);
-  --sidebar-ring: oklch(0.65 0.2 260);
+  --sidebar-border: oklch(0.25 0.01 250);
+  --sidebar-ring: oklch(0.7 0.18 45);
   
-  /* Custom tokens for the marketplace */
-  --success: oklch(0.7 0.18 145);
-  --warning: oklch(0.8 0.15 80);
-  --info: oklch(0.65 0.2 260);
+  /* Optum Brand Tokens */
+  --optum-orange: oklch(0.7 0.18 45);
+  --optum-orange-light: oklch(0.8 0.14 45);
+  --uhg-blue: oklch(0.5 0.15 250);
+  --uhg-blue-light: oklch(0.6 0.12 250);
+  --optum-teal: oklch(0.6 0.12 180);
+  --success: oklch(0.65 0.16 145);
+  --warning: oklch(0.75 0.16 80);
+  --info: oklch(0.6 0.15 220);
   
   /* Category colors - Professional healthcare palette */
   --cat-agents: oklch(0.65 0.18 250);

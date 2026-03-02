@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Agency Marketplace (Playground)',
-  description: 'Discover, orchestrate, and deploy enterprise AI agents, MCP tools, and workflow templates for healthcare RCM',
+  title: 'UAP - Unified AI Provider Platform | Optum',
+  description: 'Unified AI Provider Platform for Healthcare RCM - Agent Marketplace, Model Registry, Workflow Orchestration, and One-Click Deployment',
   generator: 'v0.app',
   icons: {
     icon: [
