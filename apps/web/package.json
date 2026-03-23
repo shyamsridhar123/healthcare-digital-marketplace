@@ -13,7 +13,7 @@
     "@azure/ai-projects": "^1.0.1",
     "@azure/identity": "^4.13.0",
     "@azure/msal-browser": "^3.26.0",
-    "@azure/msal-react": "^2.1.0",
+    "@azure/msal-react": "^3.0.29",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
