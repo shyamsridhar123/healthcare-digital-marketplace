@@ -37,6 +37,7 @@ import {
   LogOut,
 } from "lucide-react"
 import { useAccount, useMsal } from "@azure/msal-react"
+import { ModeToggle } from "@/components/ui/mode-toggle"
 
 interface NavItem {
   label: string
@@ -580,14 +581,17 @@ export function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-sidebar">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-border px-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)]">
-          <Building2 className="h-5 w-5 text-white" />
+      <div className="flex h-16 items-center justify-between border-b border-border px-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)]">
+            <Building2 className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-foreground tracking-tight">AI Asset Marketplace</span>
+            <span className="text-xs text-muted-foreground">AI Marketplace Platform</span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-bold text-foreground tracking-tight">AI Asset Marketplace</span>
-          <span className="text-xs text-muted-foreground">AI Marketplace Platform</span>
-        </div>
+        <ModeToggle />
       </div>
       
       {/* Navigation */}
