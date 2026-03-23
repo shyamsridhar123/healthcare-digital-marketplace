@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Root workspace manifest for the AI Asset Marketplace monorepo.",
-  "workspaces": [
-    "apps/web",
-    "apps/api"
-  ],
+
   "scripts": {
     "dev": "npm run dev --workspace ai-marketplace-web",
     "build": "npm run build --workspace ai-marketplace-web",
@@ -18,7 +15,8 @@
     "api:start": "npm run start --workspace ai-marketplace-api"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=8"
   },
   "dependencies": {
     "@azure/msal-react": "^3.0.29",
