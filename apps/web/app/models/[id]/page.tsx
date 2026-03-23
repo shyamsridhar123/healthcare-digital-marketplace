@@ -73,7 +73,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
     <div className="min-h-screen bg-background">
       <AppSidebar />
 
-      <main className="ml-64 p-6">
+      <main className="app-shell-offset p-6">
         {/* Breadcrumb */}
         <Link
           href="/models"

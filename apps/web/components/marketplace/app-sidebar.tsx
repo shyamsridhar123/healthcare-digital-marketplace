@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -35,9 +36,15 @@ import {
   Zap,
   ShieldCheck,
   LogOut,
+  Menu,
+  PanelLeft,
+  X,
 } from "lucide-react"
 import { useAccount, useMsal } from "@azure/msal-react"
+import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface NavItem {
   label: string
@@ -47,6 +54,10 @@ interface NavItem {
   badgeColor?: string
   description?: string
 }
+
+const SIDEBAR_STORAGE_KEY = "ai-marketplace.sidebar-collapsed"
+const SIDEBAR_EXPANDED_WIDTH = "16rem"
+const SIDEBAR_COLLAPSED_WIDTH = "5rem"
 
 // UAP Marketplaces
 const marketplaceItems: NavItem[] = [
@@ -233,12 +244,24 @@ const settingsSubItems = [
   },
 ]
 
-function NavSection({ title, items, indent }: { title?: string; items: NavItem[]; indent?: boolean }) {
+function NavSection({
+  title,
+  items,
+  indent,
+  collapsed = false,
+  onNavigate,
+}: {
+  title?: string
+  items: NavItem[]
+  indent?: boolean
+  collapsed?: boolean
+  onNavigate?: () => void
+}) {
   const pathname = usePathname()
 
   return (
     <div className="mb-6">
-      {title && (
+      {title && !collapsed && (
         <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {title}
         </h3>
@@ -254,8 +277,11 @@ function NavSection({ title, items, indent }: { title?: string; items: NavItem[]
             <li key={item.href}>
               <Link
                 href={item.href}
+                onClick={onNavigate}
+                title={collapsed ? item.label : undefined}
                 className={cn(
                   "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                  collapsed ? "justify-center px-2.5" : "",
                   indent ? "pl-6" : "",
                   isActive
                     ? "bg-secondary text-foreground"
@@ -271,7 +297,7 @@ function NavSection({ title, items, indent }: { title?: string; items: NavItem[]
                 )}>
                   <Icon className={indent ? "h-3.5 w-3.5" : "h-4 w-4"} />
                 </span>
-                <div className="flex-1 min-w-0">
+                <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
                   <div className="flex items-center gap-2">
                     <span className="truncate">{item.label}</span>
                     {item.badge && (
@@ -283,13 +309,13 @@ function NavSection({ title, items, indent }: { title?: string; items: NavItem[]
                       </span>
                     )}
                   </div>
-                  {!indent && item.description && (
+                    {!indent && item.description && (
                     <p className="truncate text-xs text-muted-foreground/70">
                       {item.description}
                     </p>
                   )}
                 </div>
-                {isActive && (
+                  {isActive && !collapsed && (
                   <ChevronRight className="h-4 w-4 text-[var(--accent)]" />
                 )}
               </Link>
@@ -301,7 +327,7 @@ function NavSection({ title, items, indent }: { title?: string; items: NavItem[]
   )
 }
 
-function ImdeSection() {
+function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const isImde = pathname === "/imde" || pathname.startsWith("/imde/")
   const Icon = Code2
@@ -311,8 +337,11 @@ function ImdeSection() {
     <div className="mb-1">
       <Link
         href="/imde"
+        onClick={onNavigate}
+        title={collapsed ? "IMDE" : undefined}
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+          collapsed ? "justify-center px-2.5" : "",
           isMainActive
             ? "bg-secondary text-foreground"
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
@@ -326,16 +355,18 @@ function ImdeSection() {
         )}>
           <Icon className="h-4 w-4" />
         </span>
-        <div className="flex-1 min-w-0">
+        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
           <div className="flex items-center gap-2">
             <span className="truncate">IMDE</span>
             <span className="rounded px-1.5 py-0.5 text-xs font-medium bg-violet-500/20 text-violet-400">New</span>
           </div>
           <p className="truncate text-xs text-muted-foreground/70">Integrated Model Dev Environment</p>
         </div>
-        <ChevronRight className={cn("h-4 w-4 transition-transform", isImde ? "rotate-90 text-violet-400" : "text-muted-foreground/40")} />
+        {!collapsed && (
+          <ChevronRight className={cn("h-4 w-4 transition-transform", isImde ? "rotate-90 text-violet-400" : "text-muted-foreground/40")} />
+        )}
       </Link>
-      {isImde && (
+      {isImde && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {imdeSubItems.map((item) => {
             const SubIcon = item.icon
@@ -344,6 +375,7 @@ function ImdeSection() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onNavigate}
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
@@ -373,7 +405,7 @@ function ImdeSection() {
   )
 }
 
-function DataSection() {
+function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const isData = pathname === "/data" || pathname.startsWith("/data/")
   const Icon = Database
@@ -383,8 +415,11 @@ function DataSection() {
     <div className="mb-1">
       <Link
         href="/data"
+        onClick={onNavigate}
+        title={collapsed ? "Data" : undefined}
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+          collapsed ? "justify-center px-2.5" : "",
           isMainActive
             ? "bg-secondary text-foreground"
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
@@ -398,16 +433,18 @@ function DataSection() {
         )}>
           <Icon className="h-4 w-4" />
         </span>
-        <div className="flex-1 min-w-0">
+        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
           <div className="flex items-center gap-2">
             <span className="truncate">Data</span>
             <span className="rounded px-1.5 py-0.5 text-xs font-medium bg-sky-500/20 text-sky-400">New</span>
           </div>
           <p className="truncate text-xs text-muted-foreground/70">Storage, SQL, Cosmos & Fabric</p>
         </div>
-        <ChevronRight className={cn("h-4 w-4 transition-transform", isData ? "rotate-90 text-sky-400" : "text-muted-foreground/40")} />
+        {!collapsed && (
+          <ChevronRight className={cn("h-4 w-4 transition-transform", isData ? "rotate-90 text-sky-400" : "text-muted-foreground/40")} />
+        )}
       </Link>
-      {isData && (
+      {isData && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {dataSubItems.map((item) => {
             const SubIcon = item.icon
@@ -418,6 +455,7 @@ function DataSection() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onNavigate}
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
@@ -447,7 +485,7 @@ function DataSection() {
   )
 }
 
-function UserSection() {
+function UserSection({ collapsed = false }: { collapsed?: boolean }) {
   const { instance } = useMsal()
   const account = useAccount()
 
@@ -462,25 +500,24 @@ function UserSection() {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-secondary/30 p-3">
-      <div className="flex items-center gap-2.5">
-        {/* Avatar */}
+    <div className={cn("rounded-lg border border-border bg-secondary/30 p-3", collapsed && "p-2")}>
+      <div className={cn("flex items-center gap-2.5", collapsed && "flex-col gap-2") }>
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/20 text-xs font-bold text-[var(--accent)]">
-          {initials}
+          {collapsed ? initials.slice(0, 1) : initials}
         </div>
-        {/* Name + email */}
-        <div className="flex-1 min-w-0">
-          <p className="truncate text-xs font-semibold text-foreground leading-tight">
-            {account.name ?? account.username}
-          </p>
-          <p className="truncate text-xs text-muted-foreground leading-tight">
-            {account.username}
-          </p>
-        </div>
-        {/* Sign out */}
+        {!collapsed && (
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs leading-tight font-semibold text-foreground">
+              {account.name ?? account.username}
+            </p>
+            <p className="truncate text-xs leading-tight text-muted-foreground">
+              {account.username}
+            </p>
+          </div>
+        )}
         <button
           onClick={handleSignOut}
-          title="Sign out"
+          title={collapsed ? `${account.name ?? account.username} • Sign out` : "Sign out"}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
         >
           <LogOut className="h-3.5 w-3.5" />
@@ -490,7 +527,7 @@ function UserSection() {
   )
 }
 
-function SettingsSection() {
+function SettingsSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const isSettings = pathname.startsWith("/settings")
 
@@ -498,8 +535,11 @@ function SettingsSection() {
     <div className="mb-1">
       <Link
         href="/settings/infrastructure"
+        onClick={onNavigate}
+        title={collapsed ? "Settings" : undefined}
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+          collapsed ? "justify-center px-2.5" : "",
           isSettings
             ? "bg-secondary text-foreground"
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
@@ -513,17 +553,19 @@ function SettingsSection() {
         )}>
           <Settings className="h-4 w-4" />
         </span>
-        <div className="flex-1 min-w-0">
+        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
           <span className="truncate">Settings</span>
           <p className="truncate text-xs text-muted-foreground/70">Persona-based configuration</p>
         </div>
-        <ChevronRight className={cn(
-          "h-4 w-4 transition-transform",
-          isSettings ? "rotate-90 text-slate-400" : "text-muted-foreground/40"
-        )} />
+        {!collapsed && (
+          <ChevronRight className={cn(
+            "h-4 w-4 transition-transform",
+            isSettings ? "rotate-90 text-slate-400" : "text-muted-foreground/40"
+          )} />
+        )}
       </Link>
 
-      {isSettings && (
+      {isSettings && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {settingsSubItems.map((item) => {
             const SubIcon = item.icon
@@ -532,6 +574,7 @@ function SettingsSection() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onNavigate}
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
@@ -556,21 +599,23 @@ function SettingsSection() {
   )
 }
 
-function DevelopmentSection() {
+function DevelopmentSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   return (
     <div className="mb-6">
-      <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Development
-      </h3>
+      {!collapsed && (
+        <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Development
+        </h3>
+      )}
       <ul className="space-y-1">
         <li>
-          <NavSection items={[{ label: "Agent Builder", href: "/orchestration", icon: Workflow, description: "Visual workflow designer" }]} />
+          <NavSection collapsed={collapsed} onNavigate={onNavigate} items={[{ label: "Agent Builder", href: "/orchestration", icon: Workflow, description: "Visual workflow designer" }]} />
         </li>
         <li>
-          <ImdeSection />
+          <ImdeSection collapsed={collapsed} onNavigate={onNavigate} />
         </li>
         <li>
-          <NavSection items={[{ label: "One-Click Deploy", href: "/deployments", icon: Rocket, description: "CI/CD & deployment management" }]} />
+          <NavSection collapsed={collapsed} onNavigate={onNavigate} items={[{ label: "One-Click Deploy", href: "/deployments", icon: Rocket, description: "CI/CD & deployment management" }]} />
         </li>
       </ul>
     </div>
@@ -578,47 +623,136 @@ function DevelopmentSection() {
 }
 
 export function AppSidebar() {
-  return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-sidebar">
-      {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-border px-4">
-        <div className="flex items-center gap-3">
+  const isMobile = useIsMobile()
+  const [isCollapsed, setIsCollapsed] = React.useState(false)
+  const [isMobileOpen, setIsMobileOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(SIDEBAR_STORAGE_KEY)
+    if (stored !== null) {
+      setIsCollapsed(stored === "true")
+    }
+  }, [])
+
+  React.useEffect(() => {
+    const sidebarWidth = isMobile
+      ? "0rem"
+      : isCollapsed
+        ? SIDEBAR_COLLAPSED_WIDTH
+        : SIDEBAR_EXPANDED_WIDTH
+
+    document.documentElement.style.setProperty("--app-sidebar-width", sidebarWidth)
+
+    return () => {
+      document.documentElement.style.setProperty("--app-sidebar-width", SIDEBAR_EXPANDED_WIDTH)
+    }
+  }, [isCollapsed, isMobile])
+
+  const toggleSidebar = () => {
+    const nextValue = !isCollapsed
+    setIsCollapsed(nextValue)
+    window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(nextValue))
+  }
+
+  const closeMobileSidebar = () => setIsMobileOpen(false)
+
+  const sidebarContent = (collapsed: boolean, mobile = false) => (
+    <>
+      <div className={cn("flex h-16 items-center border-b border-border", collapsed ? "justify-center px-2" : "justify-between px-4")}>
+        <div className={cn("flex items-center", collapsed ? "justify-center" : "gap-3")}>
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)]">
             <Building2 className="h-5 w-5 text-white" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-foreground tracking-tight">AI Asset Marketplace</span>
-            <span className="text-xs text-muted-foreground">AI Marketplace Platform</span>
-          </div>
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="text-sm font-bold tracking-tight text-foreground">AI Asset Marketplace</span>
+              <span className="text-xs text-muted-foreground">AI Marketplace Platform</span>
+            </div>
+          )}
         </div>
-        <ModeToggle />
+        {!collapsed && (
+          <div className="flex items-center gap-1.5">
+            <ModeToggle />
+            {mobile && (
+              <Button variant="ghost" size="icon" onClick={closeMobileSidebar} aria-label="Close sidebar" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+            {!mobile && (
+              <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Collapse sidebar" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                <PanelLeft className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
+        {collapsed && !mobile && (
+          <div className="absolute inset-x-0 top-16 flex justify-center pt-2">
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Expand sidebar" className="h-8 w-8 rounded-full border border-border bg-sidebar text-muted-foreground shadow-sm hover:text-foreground">
+              <PanelLeft className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
-      
-      {/* Navigation */}
+
+      {collapsed && !mobile && (
+        <div className="flex justify-center border-b border-border/80 px-2 py-3">
+          <ModeToggle />
+        </div>
+      )}
+
       <nav className="flex-1 overflow-y-auto p-3">
-        <NavSection title="Marketplaces" items={marketplaceItems} />
-        <DevelopmentSection />
+        <NavSection title="Marketplaces" items={marketplaceItems} collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} />
+        <DevelopmentSection collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} />
         <div className="mb-6">
-          <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Data
-          </h3>
+          {!collapsed && (
+            <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Data
+            </h3>
+          )}
           <ul className="space-y-1">
-            <li><DataSection /></li>
+            <li><DataSection collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} /></li>
           </ul>
         </div>
-        <NavSection title="Operations" items={governanceItems} />
+        <NavSection title="Operations" items={governanceItems} collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} />
       </nav>
-      
-      {/* Bottom section */}
+
       <div className="border-t border-border p-3">
-        <div className="mb-1"><SettingsSection /></div>
-        <NavSection items={bottomNavItems} />
-        
-        {/* Signed-in user */}
+        <div className="mb-1"><SettingsSection collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} /></div>
+        <NavSection items={bottomNavItems} collapsed={collapsed} onNavigate={mobile ? closeMobileSidebar : undefined} />
         <div className="mt-3">
-          <UserSection />
+          <UserSection collapsed={collapsed} />
         </div>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      <Button
+        variant="secondary"
+        size="icon"
+        onClick={() => setIsMobileOpen(true)}
+        aria-label="Open sidebar"
+        className="fixed left-4 top-4 z-50 h-10 w-10 rounded-full border border-border shadow-lg md:hidden"
+      >
+        <Menu className="h-4 w-4" />
+      </Button>
+
+      <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+        <SheetContent side="left" className="w-72 border-r border-border bg-sidebar p-0 md:hidden [&>button]:hidden">
+          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <aside className="flex h-full flex-col">{sidebarContent(false, true)}</aside>
+        </SheetContent>
+      </Sheet>
+
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-border bg-sidebar transition-[width] duration-200 ease-out md:flex",
+          isCollapsed ? "w-20" : "w-64"
+        )}
+      >
+        {sidebarContent(isCollapsed)}
+      </aside>
+    </>
   )
 }

@@ -8,6 +8,7 @@ import { PropertiesPanel } from "@/components/orchestration/properties-panel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { WorkflowNode, WorkflowEdge, WorkflowNodeConfig, WorkflowNodeType } from "@/lib/types"
 import {
   Save,
@@ -28,6 +29,12 @@ import {
   Zap,
   CheckCircle2,
   X,
+  PanelLeft,
+  PanelRight,
+  Settings2,
+  Shapes,
+  LayoutTemplate,
+  Package,
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -174,6 +181,8 @@ export default function OrchestrationPage() {
   const [connectSourceId, setConnectSourceId] = useState<string | null>(null)
   const [leftTab, setLeftTab] = useState<LeftTab>("templates")
   const [saved, setSaved] = useState(false)
+  const [isBuilderPanelCollapsed, setIsBuilderPanelCollapsed] = useState(false)
+  const [isPropertiesPanelCollapsed, setIsPropertiesPanelCollapsed] = useState(false)
 
   /* ── Keyboard handlers ─────────────────────────────────────────────────── */
   useEffect(() => {
@@ -419,103 +428,156 @@ export default function OrchestrationPage() {
   }, [])
 
   const selectedNodeData = nodes.find((n) => n.id === selectedNode) ?? null
+  const builderTabs: Array<{ key: LeftTab; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+    { key: "components", label: "Components", icon: Shapes },
+    { key: "templates", label: "Templates", icon: LayoutTemplate },
+    { key: "assets", label: "Assets", icon: Package },
+  ]
 
   return (
     <div className="flex h-screen bg-background">
       <AppSidebar />
 
       {/* ── Left Panel ─────────────────────────────────────────────────── */}
-      <div className="ml-64 flex flex-col w-72 shrink-0 border-r border-border bg-card overflow-hidden">
-        {/* Tab bar */}
-        <div className="flex border-b border-border">
-          {(["components", "templates", "assets"] as LeftTab[]).map((tab) => (
-            <button
-              key={tab}
-              className={cn(
-                "flex-1 py-2.5 text-xs font-medium capitalize transition-colors",
-                leftTab === tab
-                  ? "border-b-2 border-accent text-accent"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-              onClick={() => setLeftTab(tab)}
+      <div
+        className={cn(
+          "app-shell-offset flex shrink-0 flex-col overflow-hidden border-r border-border bg-card transition-[width] duration-200 ease-out",
+          isBuilderPanelCollapsed ? "w-16" : "w-72"
+        )}
+      >
+        <div className={cn("border-b border-border", isBuilderPanelCollapsed ? "px-2 py-3" : "px-3 py-2.5")}>
+          <div className={cn("flex items-center", isBuilderPanelCollapsed ? "justify-center" : "justify-between gap-3")}>
+            {!isBuilderPanelCollapsed && (
+              <div>
+                <p className="text-sm font-semibold text-foreground">Agent Builder</p>
+                <p className="text-xs text-muted-foreground">Components, templates, and reusable assets</p>
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              onClick={() => setIsBuilderPanelCollapsed((current) => !current)}
+              aria-label={isBuilderPanelCollapsed ? "Expand Agent Builder panel" : "Collapse Agent Builder panel"}
+              title={isBuilderPanelCollapsed ? "Expand Agent Builder panel" : "Collapse Agent Builder panel"}
             >
-              {tab === "components" ? "Components" : tab === "templates" ? "Templates" : "Assets"}
-            </button>
-          ))}
+              <PanelLeft className={cn("h-4 w-4 transition-transform", isBuilderPanelCollapsed && "rotate-180")} />
+            </Button>
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-3">
-          {/* ── Components tab ────────────────────────────────────────── */}
-          {leftTab === "components" && (
-            <div className="space-y-5">
-              {/* Pattern shortcuts */}
-              <div>
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  Add Pattern
-                </p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {[
-                    { key: "condition" as const, label: "If / Else", icon: GitBranch, color: "text-orange-400" },
-                    { key: "fanout" as const, label: "Fan-Out/In", icon: ChevronsRight, color: "text-cyan-400" },
-                    { key: "loop" as const, label: "Loop", icon: RefreshCw, color: "text-purple-400" },
-                    { key: "approval" as const, label: "Approval", icon: UserCheck, color: "text-amber-400" },
-                  ].map(({ key, label, icon: Icon, color }) => (
-                    <button
-                      key={key}
-                      onClick={() => addPattern(key)}
-                      className="flex items-center gap-1.5 rounded-md border border-border bg-secondary/40 px-2 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
-                    >
-                      <Icon className={cn("h-3.5 w-3.5 shrink-0", color)} />
-                      {label}
-                    </button>
+        {isBuilderPanelCollapsed ? (
+          <div className="flex flex-1 flex-col items-center gap-2 p-2">
+            {builderTabs.map((tab) => (
+              <Tooltip key={tab.key}>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant={leftTab === tab.key ? "secondary" : "ghost"}
+                    size="icon"
+                    className="h-9 w-9"
+                    onClick={() => {
+                      setLeftTab(tab.key)
+                      setIsBuilderPanelCollapsed(false)
+                    }}
+                    aria-label={`Open ${tab.label} panel`}
+                  >
+                    <tab.icon className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" sideOffset={8}>{tab.label}</TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="flex border-b border-border">
+              {builderTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  className={cn(
+                    "flex-1 py-2.5 text-xs font-medium transition-colors",
+                    leftTab === tab.key
+                      ? "border-b-2 border-accent text-accent"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                  onClick={() => setLeftTab(tab.key)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-3">
+              {leftTab === "components" && (
+                <div className="space-y-5">
+                  <div>
+                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                      Add Pattern
+                    </p>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        { key: "condition" as const, label: "If / Else", icon: GitBranch, color: "text-orange-400" },
+                        { key: "fanout" as const, label: "Fan-Out/In", icon: ChevronsRight, color: "text-cyan-400" },
+                        { key: "loop" as const, label: "Loop", icon: RefreshCw, color: "text-purple-400" },
+                        { key: "approval" as const, label: "Approval", icon: UserCheck, color: "text-amber-400" },
+                      ].map(({ key, label, icon: Icon, color }) => (
+                        <button
+                          key={key}
+                          onClick={() => addPattern(key)}
+                          className="flex items-center gap-1.5 rounded-md border border-border bg-secondary/40 px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary"
+                        >
+                          <Icon className={cn("h-3.5 w-3.5 shrink-0", color)} />
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {PALETTE_SECTIONS.map((section) => (
+                    <div key={section.title}>
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                        {section.title}
+                      </p>
+                      <div className="space-y-1.5">
+                        {section.nodes.map((n) => (
+                          <NodePaletteItem
+                            key={n.type}
+                            type={n.type}
+                            label={n.label}
+                            description={n.description}
+                            onDragStart={handlePaletteDragStart}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
-              </div>
+              )}
 
-              {/* Node palette sections */}
-              {PALETTE_SECTIONS.map((section) => (
-                <div key={section.title}>
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    {section.title}
+              {leftTab === "templates" && (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Click a template to load it into the canvas. Replaces current workflow.
                   </p>
-                  <div className="space-y-1.5">
-                    {section.nodes.map((n) => (
-                      <NodePaletteItem
-                        key={n.type}
-                        type={n.type}
-                        label={n.label}
-                        description={n.description}
-                        onDragStart={handlePaletteDragStart}
-                      />
-                    ))}
-                  </div>
+                  {TEMPLATES.map((t) => (
+                    <WorkflowTemplateCard key={t.id} template={t} onLoad={handleLoadTemplate} />
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              )}
 
-          {/* ── Templates tab ─────────────────────────────────────────── */}
-          {leftTab === "templates" && (
-            <div className="space-y-3">
-              <p className="text-xs text-muted-foreground">
-                Click a template to load it into the canvas. Replaces current workflow.
-              </p>
-              {TEMPLATES.map((t) => (
-                <WorkflowTemplateCard key={t.id} template={t} onLoad={handleLoadTemplate} />
-              ))}
+              {leftTab === "assets" && (
+                <div>
+                  <p className="mb-3 text-xs text-muted-foreground">
+                    Drag an asset onto the canvas to create a pre-configured node.
+                  </p>
+                  <AssetQuickAdd onDragStart={handleAssetDragStart} />
+                </div>
+              )}
             </div>
-          )}
-
-          {/* ── Assets tab ────────────────────────────────────────────── */}
-          {leftTab === "assets" && (
-            <div>
-              <p className="mb-3 text-xs text-muted-foreground">
-                Drag an asset onto the canvas to create a pre-configured node.
-              </p>
-              <AssetQuickAdd onDragStart={handleAssetDragStart} />
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* ── Main Area ──────────────────────────────────────────────────── */}
@@ -603,14 +665,78 @@ export default function OrchestrationPage() {
           </div>
 
           {/* Properties Panel */}
-          <aside className="w-[280px] shrink-0 border-l border-border bg-card overflow-hidden flex flex-col">
-            <PropertiesPanel
-              node={selectedNodeData}
-              onClose={() => setSelectedNode(null)}
-              onUpdateNode={handleUpdateNodeData}
-              onUpdateConfig={handleUpdateConfig}
-              onDeleteNode={handleDeleteNode}
-            />
+          <aside
+            className={cn(
+              "shrink-0 overflow-hidden border-l border-border bg-card transition-[width] duration-200 ease-out flex flex-col",
+              isPropertiesPanelCollapsed ? "w-14" : "w-[280px]"
+            )}
+          >
+            {isPropertiesPanelCollapsed ? (
+              <div className="flex h-full flex-col items-center gap-3 p-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setIsPropertiesPanelCollapsed(false)}
+                      aria-label="Expand properties panel"
+                    >
+                      <PanelRight className="h-4 w-4 rotate-180" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" sideOffset={8}>Expand properties</TooltipContent>
+                </Tooltip>
+                <div
+                  className="flex w-full flex-1 items-center justify-center rounded-md border border-dashed border-border bg-secondary/20 px-1 text-center text-[10px] font-medium text-muted-foreground"
+                  title={selectedNodeData ? `${selectedNodeData.data.label} selected` : "No node selected"}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Settings2 className="h-4 w-4" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="[writing-mode:vertical-rl] rotate-180 tracking-[0.2em] uppercase">
+                          Props
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="left" sideOffset={8}>
+                        {selectedNodeData ? `Properties: ${selectedNodeData.data.label}` : "No node selected"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Properties</p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedNodeData ? `Editing ${selectedNodeData.data.label}` : "Select a node to inspect settings"}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setIsPropertiesPanelCollapsed(true)}
+                    aria-label="Collapse properties panel"
+                    title="Collapse properties panel"
+                  >
+                    <PanelRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <PropertiesPanel
+                  node={selectedNodeData}
+                  onClose={() => setSelectedNode(null)}
+                  onUpdateNode={handleUpdateNodeData}
+                  onUpdateConfig={handleUpdateConfig}
+                  onDeleteNode={handleDeleteNode}
+                />
+              </>
+            )}
           </aside>
         </div>
       </div>

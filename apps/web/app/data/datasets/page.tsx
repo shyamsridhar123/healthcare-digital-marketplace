@@ -462,7 +462,7 @@ export default function DatasetsPage() {
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar />
-      <main className="ml-64 p-6">
+      <main className="app-shell-offset p-6">
         {/* Hero */}
         <div className="mb-8 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/10 via-background to-violet-500/5 p-8">
           <div className="mb-2 flex items-center gap-2">

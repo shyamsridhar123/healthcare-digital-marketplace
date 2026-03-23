@@ -315,7 +315,7 @@ export function SettingsPageContent({ category }: SettingsPageContentProps) {
     <div className="flex h-screen bg-background">
       <AppSidebar />
 
-      <div className="ml-64 flex flex-1 flex-col overflow-hidden">
+      <div className="app-shell-offset flex flex-1 flex-col overflow-hidden">
         {/* Page header */}
         <header className="flex h-14 items-center gap-3 border-b border-border px-6 flex-shrink-0">
           <Settings className="h-4 w-4 text-muted-foreground" />

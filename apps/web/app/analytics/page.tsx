@@ -268,7 +268,7 @@ export default function AnalyticsPage() {
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar />
-      <main className="ml-64 p-6">
+      <main className="app-shell-offset p-6">
 
         {/* ── Header ── */}
         <div className="mb-6 flex items-start justify-between">

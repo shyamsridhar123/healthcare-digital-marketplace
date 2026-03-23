@@ -108,7 +108,7 @@ export default function DeploymentsPage() {
     <div className="min-h-screen bg-background">
       <AppSidebar />
 
-      <main className="ml-64 mx-auto max-w-6xl px-6 py-8">
+      <main className="app-shell-offset mx-auto max-w-6xl px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-foreground">Deployments</h1>

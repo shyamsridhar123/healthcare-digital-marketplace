@@ -447,7 +447,7 @@ export default function IMDEWorkspacePage() {
   return (
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
-      <div className="ml-64 flex-1 p-6">
+      <div className="app-shell-offset flex-1 p-6">
 
         {/* AML Workspace Banner */}
         {amlConfigured && amlWorkspace && (

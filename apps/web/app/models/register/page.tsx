@@ -184,7 +184,7 @@ export default function RegisterModelPage() {
     return (
       <div className="min-h-screen bg-background">
         <AppSidebar />
-        <main className="ml-64 p-6">
+        <main className="app-shell-offset p-6">
           <div className="mx-auto max-w-lg pt-16 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20">
               <CheckCircle2 className="h-10 w-10 text-emerald-400" />
@@ -238,7 +238,7 @@ export default function RegisterModelPage() {
     <div className="min-h-screen bg-background">
       <AppSidebar />
 
-      <main className="ml-64 p-6">
+      <main className="app-shell-offset p-6">
         {/* Breadcrumb */}
         <Link
           href="/models"

@@ -68,7 +68,7 @@ export default function MarketplacePage() {
     <div className="min-h-screen bg-background">
       <AppSidebar />
       
-      <main className="ml-64 p-6">
+      <main className="app-shell-offset p-6">
         {/* Hero Banner */}
         <div className="mb-6">
           <HeroBanner />

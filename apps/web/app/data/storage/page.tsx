@@ -184,7 +184,7 @@ export default function AzureStoragePage() {
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar />
-      <main className="ml-64 flex h-screen flex-col overflow-hidden p-6 pb-0">
+      <main className="app-shell-offset flex h-screen flex-col overflow-hidden p-6 pb-0">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between">
           <div>
