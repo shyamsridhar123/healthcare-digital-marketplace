@@ -5,6 +5,7 @@
 *.env
 
 # Build outputs
+node_modules/
 apps/web/.next/
 apps/web/node_modules/
 apps/api/node_modules/
