@@ -1,0 +1,23 @@
+{
+  "name": "ai-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Root workspace manifest for the AI Asset Marketplace monorepo.",
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace ai-marketplace-web",
+    "build": "npm run build --workspace ai-marketplace-web",
+    "start": "npm run start --workspace ai-marketplace-web",
+    "lint": "npm run lint --workspace ai-marketplace-web",
+    "type-check": "npm run type-check --workspace ai-marketplace-web",
+    "api:build": "npm run build --workspace ai-marketplace-api",
+    "api:dev": "npm run dev --workspace ai-marketplace-api",
+    "api:start": "npm run start --workspace ai-marketplace-api"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
