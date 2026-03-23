@@ -8,22 +8,17 @@
     "apps/api"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace ai-marketplace-web",
-    "build": "npm run build --workspace ai-marketplace-web",
-    "start": "npm run start --workspace ai-marketplace-web",
-    "lint": "npm run lint --workspace ai-marketplace-web",
-    "type-check": "npm run type-check --workspace ai-marketplace-web",
-    "api:build": "npm run build --workspace ai-marketplace-api",
-    "api:dev": "npm run dev --workspace ai-marketplace-api",
-    "api:start": "npm run start --workspace ai-marketplace-api"
+    "dev": "npm run dev --workspace ai-marketplace-web --",
+    "build": "npm run build --workspace ai-marketplace-web --",
+    "start": "npm run start --workspace ai-marketplace-web --",
+    "lint": "npm run lint --workspace ai-marketplace-web --",
+    "type-check": "npm run type-check --workspace ai-marketplace-web --",
+    "api:build": "npm run build --workspace ai-marketplace-api --",
+    "api:dev": "npm run dev --workspace ai-marketplace-api --",
+    "api:start": "npm run start --workspace ai-marketplace-api --"
   },
   "engines": {
     "node": ">=20"
   },
-  "dependencies": {
-    "@azure/msal-react": "^3.0.29",
-    "@vercel/analytics": "^2.0.1",
-    "lucide-react": "^0.577.0",
-    "next": "^16.2.1"
-  }
+  "packageManager": "npm@11.6.2"
 }

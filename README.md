@@ -51,13 +51,21 @@ gt sling mkt-00006       # assign visual canvas work to an agent
 ## Local Development
 
 ```bash
-# Frontend
-cd apps/web
+# Install all workspace dependencies from the repo root
 npm install
+
+# Start the Next.js frontend from the repo root
 npm run dev           # http://localhost:3000
 
+# Start the frontend on a different port if 3000 is already in use
+npm run dev -- --port 3003
+
+# Alternative: run the frontend workspace directly
+cd apps/web
+npm run dev
+
 # Backend (requires Azure Functions Core Tools)
-cd apps/api
+cd ../api
 npm install
 npm run build
 func start            # http://localhost:7071
@@ -66,6 +74,11 @@ func start            # http://localhost:7071
 # Download from https://aka.ms/cosmosdb-emulator
 # Endpoint: https://localhost:8081  Key: in local.settings.json
 ```
+
+Notes:
+- The repository now uses a single root `package-lock.json` with npm workspaces.
+- Do not regenerate `apps/web/package-lock.json`, `apps/api/package-lock.json`, or `pnpm-lock.yaml`.
+- Root scripts proxy to the `apps/web` workspace, so `npm run dev`, `npm run build`, `npm run lint`, and `npm run type-check` can all be run from the repo root.
 
 ## Azure Deployment
 

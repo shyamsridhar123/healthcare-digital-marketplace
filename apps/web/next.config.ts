@@ -4,12 +4,13 @@ import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 
 const configDir = path.dirname(fileURLToPath(import.meta.url));
+const workspaceRoot = path.resolve(configDir, "..", "..");
 
 const nextConfig: NextConfig = {
   output: "standalone",
   typescript: { ignoreBuildErrors: true },
   turbopack: {
-    root: configDir,
+    root: workspaceRoot,
   },
   images: {
     unoptimized: true,
