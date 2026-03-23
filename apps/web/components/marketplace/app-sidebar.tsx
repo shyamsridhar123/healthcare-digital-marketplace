@@ -53,6 +53,7 @@ interface NavItem {
   badge?: string
   badgeColor?: string
   description?: string
+  external?: boolean
 }
 
 const SIDEBAR_STORAGE_KEY = "ai-marketplace.sidebar-collapsed"
@@ -212,8 +213,10 @@ const governanceItems: NavItem[] = [
 const bottomNavItems: NavItem[] = [
   {
     label: "Help & Docs",
-    href: "/help",
+    href: "https://www.optum.com/en/",
     icon: HelpCircle,
+    description: "Optum website",
+    external: true,
   },
 ]
 
@@ -269,15 +272,18 @@ function NavSection({
       <ul className="space-y-1">
         {items.map((item) => {
           const Icon = item.icon
+          const isExternal = item.external ?? item.href.startsWith("http")
           const isActive = indent
             ? pathname === item.href || (item.href !== "/imde" && pathname.startsWith(item.href))
-            : pathname === item.href
+            : isExternal ? false : pathname === item.href
 
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
                 onClick={onNavigate}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noreferrer" : undefined}
                 title={collapsed ? item.label : undefined}
                 className={cn(
                   "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
@@ -332,13 +338,17 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
   const isImde = pathname === "/imde" || pathname.startsWith("/imde/")
   const Icon = Code2
   const isMainActive = pathname === "/imde"
+  const [isOpen, setIsOpen] = React.useState(isImde)
+
+  React.useEffect(() => {
+    if (isImde) {
+      setIsOpen(true)
+    }
+  }, [isImde])
 
   return (
     <div className="mb-1">
-      <Link
-        href="/imde"
-        onClick={onNavigate}
-        title={collapsed ? "IMDE" : undefined}
+      <div
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
           collapsed ? "justify-center px-2.5" : "",
@@ -347,26 +357,40 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
         )}
       >
-        <span className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-          isImde
-            ? "bg-violet-500/20 text-violet-400"
-            : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
-        )}>
-          <Icon className="h-4 w-4" />
-        </span>
-        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
-          <div className="flex items-center gap-2">
-            <span className="truncate">IMDE</span>
-            <span className="rounded px-1.5 py-0.5 text-xs font-medium bg-violet-500/20 text-violet-400">New</span>
+        <Link
+          href="/imde"
+          onClick={onNavigate}
+          title={collapsed ? "IMDE" : undefined}
+          className={cn("flex min-w-0 flex-1 items-center gap-3", collapsed && "justify-center")}
+        >
+          <span className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+            isImde
+              ? "bg-violet-500/20 text-violet-400"
+              : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
+          )}>
+            <Icon className="h-4 w-4" />
+          </span>
+          <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
+            <div className="flex items-center gap-2">
+              <span className="truncate">IMDE</span>
+              <span className="rounded bg-violet-500/20 px-1.5 py-0.5 text-xs font-medium text-violet-400">New</span>
+            </div>
+            <p className="truncate text-xs text-muted-foreground/70">Integrated Model Dev Environment</p>
           </div>
-          <p className="truncate text-xs text-muted-foreground/70">Integrated Model Dev Environment</p>
-        </div>
+        </Link>
         {!collapsed && (
-          <ChevronRight className={cn("h-4 w-4 transition-transform", isImde ? "rotate-90 text-violet-400" : "text-muted-foreground/40")} />
+          <button
+            type="button"
+            aria-label={isOpen ? "Collapse IMDE menu" : "Expand IMDE menu"}
+            onClick={() => setIsOpen((current) => !current)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+          >
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-violet-400" : "text-muted-foreground/40")} />
+          </button>
         )}
-      </Link>
-      {isImde && !collapsed && (
+      </div>
+      {isOpen && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {imdeSubItems.map((item) => {
             const SubIcon = item.icon
@@ -410,13 +434,17 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
   const isData = pathname === "/data" || pathname.startsWith("/data/")
   const Icon = Database
   const isMainActive = pathname === "/data"
+  const [isOpen, setIsOpen] = React.useState(isData)
+
+  React.useEffect(() => {
+    if (isData) {
+      setIsOpen(true)
+    }
+  }, [isData])
 
   return (
     <div className="mb-1">
-      <Link
-        href="/data"
-        onClick={onNavigate}
-        title={collapsed ? "Data" : undefined}
+      <div
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
           collapsed ? "justify-center px-2.5" : "",
@@ -425,26 +453,40 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
         )}
       >
-        <span className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-          isData
-            ? "bg-sky-500/20 text-sky-400"
-            : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
-        )}>
-          <Icon className="h-4 w-4" />
-        </span>
-        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
-          <div className="flex items-center gap-2">
-            <span className="truncate">Data</span>
-            <span className="rounded px-1.5 py-0.5 text-xs font-medium bg-sky-500/20 text-sky-400">New</span>
+        <Link
+          href="/data"
+          onClick={onNavigate}
+          title={collapsed ? "Data" : undefined}
+          className={cn("flex min-w-0 flex-1 items-center gap-3", collapsed && "justify-center")}
+        >
+          <span className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+            isData
+              ? "bg-sky-500/20 text-sky-400"
+              : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
+          )}>
+            <Icon className="h-4 w-4" />
+          </span>
+          <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
+            <div className="flex items-center gap-2">
+              <span className="truncate">Data</span>
+              <span className="rounded bg-sky-500/20 px-1.5 py-0.5 text-xs font-medium text-sky-400">New</span>
+            </div>
+            <p className="truncate text-xs text-muted-foreground/70">Storage, SQL, Cosmos & Fabric</p>
           </div>
-          <p className="truncate text-xs text-muted-foreground/70">Storage, SQL, Cosmos & Fabric</p>
-        </div>
+        </Link>
         {!collapsed && (
-          <ChevronRight className={cn("h-4 w-4 transition-transform", isData ? "rotate-90 text-sky-400" : "text-muted-foreground/40")} />
+          <button
+            type="button"
+            aria-label={isOpen ? "Collapse Data menu" : "Expand Data menu"}
+            onClick={() => setIsOpen((current) => !current)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+          >
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-sky-400" : "text-muted-foreground/40")} />
+          </button>
         )}
-      </Link>
-      {isData && !collapsed && (
+      </div>
+      {isOpen && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {dataSubItems.map((item) => {
             const SubIcon = item.icon
@@ -530,13 +572,17 @@ function UserSection({ collapsed = false }: { collapsed?: boolean }) {
 function SettingsSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const isSettings = pathname.startsWith("/settings")
+  const [isOpen, setIsOpen] = React.useState(isSettings)
+
+  React.useEffect(() => {
+    if (isSettings) {
+      setIsOpen(true)
+    }
+  }, [isSettings])
 
   return (
     <div className="mb-1">
-      <Link
-        href="/settings/infrastructure"
-        onClick={onNavigate}
-        title={collapsed ? "Settings" : undefined}
+      <div
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
           collapsed ? "justify-center px-2.5" : "",
@@ -545,27 +591,41 @@ function SettingsSection({ collapsed = false, onNavigate }: { collapsed?: boolea
             : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
         )}
       >
-        <span className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-          isSettings
-            ? "bg-slate-500/20 text-slate-300"
-            : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
-        )}>
-          <Settings className="h-4 w-4" />
-        </span>
-        <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
-          <span className="truncate">Settings</span>
-          <p className="truncate text-xs text-muted-foreground/70">Persona-based configuration</p>
-        </div>
+        <Link
+          href="/settings/infrastructure"
+          onClick={onNavigate}
+          title={collapsed ? "Settings" : undefined}
+          className={cn("flex min-w-0 flex-1 items-center gap-3", collapsed && "justify-center")}
+        >
+          <span className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+            isSettings
+              ? "bg-slate-500/20 text-slate-300"
+              : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
+          )}>
+            <Settings className="h-4 w-4" />
+          </span>
+          <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
+            <span className="truncate">Settings</span>
+            <p className="truncate text-xs text-muted-foreground/70">Persona-based configuration</p>
+          </div>
+        </Link>
         {!collapsed && (
-          <ChevronRight className={cn(
-            "h-4 w-4 transition-transform",
-            isSettings ? "rotate-90 text-slate-400" : "text-muted-foreground/40"
-          )} />
+          <button
+            type="button"
+            aria-label={isOpen ? "Collapse Settings menu" : "Expand Settings menu"}
+            onClick={() => setIsOpen((current) => !current)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+          >
+            <ChevronRight className={cn(
+              "h-4 w-4 transition-transform",
+              isOpen ? "rotate-90 text-slate-400" : "text-muted-foreground/40"
+            )} />
+          </button>
         )}
-      </Link>
+      </div>
 
-      {isSettings && !collapsed && (
+      {isOpen && !collapsed && (
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {settingsSubItems.map((item) => {
             const SubIcon = item.icon
@@ -664,9 +724,8 @@ export function AppSidebar() {
             <Building2 className="h-5 w-5 text-white" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-foreground">AI Asset Marketplace</span>
-              <span className="text-xs text-muted-foreground">AI Marketplace Platform</span>
+            <div>
+              <span className="text-sm font-bold tracking-tight text-foreground">HealthCare RCM</span>
             </div>
           )}
         </div>

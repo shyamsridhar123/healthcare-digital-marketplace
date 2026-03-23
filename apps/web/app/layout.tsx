@@ -10,8 +10,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'AI Asset Marketplace | Enterprise',
-  description: 'AI Asset Marketplace for Healthcare RCM - Agent Marketplace, Model Registry, Workflow Orchestration, and One-Click Deployment',
+  title: 'HealthCare RCM Marketplace | Enterprise',
+  description: 'HealthCare RCM Marketplace - Agent Marketplace, Model Registry, Workflow Orchestration, and One-Click Deployment',
   generator: 'v0.app',
   icons: {
     icon: [
