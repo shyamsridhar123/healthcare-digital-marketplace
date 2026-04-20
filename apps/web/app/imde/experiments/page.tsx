@@ -262,9 +262,8 @@ export default function IMDEExperimentsPage() {
                 </thead>
                 <tbody>
                   {runs.map((run) => (
-                    <>
+                    <React.Fragment key={run.id}>
                       <tr
-                        key={run.id}
                         className={cn(
                           "border-b border-border/50 hover:bg-secondary/20 cursor-pointer transition-colors",
                           selected.has(run.id) && "bg-violet-500/5"
@@ -343,7 +342,7 @@ export default function IMDEExperimentsPage() {
                         </td>
                       </tr>
                       {expandedParams === run.id && (
-                        <tr key={`${run.id}-params`} className="border-b border-border/50 bg-secondary/10">
+                        <tr className="border-b border-border/50 bg-secondary/10">
                           <td />
                           <td colSpan={10} className="px-3 py-3">
                             <div className="flex flex-wrap gap-4 text-xs">
@@ -358,7 +357,7 @@ export default function IMDEExperimentsPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>

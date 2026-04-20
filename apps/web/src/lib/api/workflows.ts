@@ -1,6 +1,6 @@
 import type { Workflow } from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 interface RunResult {
   workflowId: string;

@@ -1,0 +1,138 @@
+<mxfile host="Electron" modified="2026-03-23T00:00:00.000Z" agent="GitHub Copilot" version="24.0.0" compressed="false">
+  <diagram id="orchestrator-deploy-arch" name="Orchestrator Deployment Architecture">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Global &amp; Domain Orchestrator — Deployment Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=22;fontStyle=1;fontColor=#0b3b69;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1400" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ EDGE ═══ -->
+        <mxCell id="zone-edge" value="Edge" style="swimlane;startSize=26;fillColor=#e8f5e9;strokeColor=#43a047;fontStyle=1;fontSize=13;fontColor=#1b5e20;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="700" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-client" value="Clients" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/general/10783-icon-service-Browser.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+          <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-fd" value="Front Door" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/networking/10073-icon-service-Front-Door-and-CDN-Profiles.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+          <mxGeometry x="160" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-entra" value="Entra ID" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/identity/10231-icon-service-Entra-ID-Protection.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+          <mxGeometry x="290" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-apim" value="API Management" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10042-icon-service-API-Management-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+          <mxGeometry x="420" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge-kv" value="Key Vault" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/security/10245-icon-service-Key-Vaults.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+          <mxGeometry x="560" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ OBSERVABILITY (right sidebar) ═══ -->
+        <mxCell id="zone-ops" value="Observability" style="swimlane;startSize=26;fillColor=#fff8e1;strokeColor=#f9a825;fontStyle=1;fontSize=13;fontColor=#f57f17;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="780" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ops-ai" value="App Insights" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00012-icon-service-Application-Insights.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ops">
+          <mxGeometry x="40" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="ops-monitor" value="Azure Monitor" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00001-icon-service-Monitor.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ops">
+          <mxGeometry x="170" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="ops-devops" value="DevOps CI/CD" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/devops/10261-icon-service-Azure-DevOps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ops">
+          <mxGeometry x="300" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="ops-acr" value="Container Registry" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/containers/10105-icon-service-Container-Registries.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ops">
+          <mxGeometry x="440" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ GLOBAL ORCHESTRATOR ═══ -->
+        <mxCell id="zone-global" value="Global Orchestrator — middleware-api-subnet (10.10.3.0/24)" style="swimlane;startSize=28;fillColor=#fff3e0;strokeColor=#f57c00;fontStyle=1;fontSize=14;fontColor=#e65100;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="1520" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-aca" value="Container Apps&#xa;Orchestrator" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02989-icon-service-Container-Apps-Environments.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-global">
+          <mxGeometry x="30" y="42" width="68" height="68" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-func" value="Functions&#xa;MCP + Classify" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/compute/10029-icon-service-Function-Apps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-global">
+          <mxGeometry x="190" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-sb" value="Service Bus&#xa;Envelope Queue" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10836-icon-service-Azure-Service-Bus.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-global">
+          <mxGeometry x="340" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-search" value="AI Search&#xa;Registries" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10044-icon-service-Cognitive-Search.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-global">
+          <mxGeometry x="490" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-foundry" value="Azure Foundry&#xa;LLM Models" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/03438-icon-service-Azure-OpenAI.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-global">
+          <mxGeometry x="640" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="gl-note" value="Classify Intent → Governance → Select Domain + Plan → Resolve + Bind → Delegation Envelope → Post-flight → Respond" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;align=center;" vertex="1" parent="zone-global">
+          <mxGeometry x="30" y="152" width="1460" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ DOMAIN ORCHESTRATOR ═══ -->
+        <mxCell id="zone-domain" value="Domain Orchestrator — domain-services-subnet (10.10.8.0/24)" style="swimlane;startSize=28;fillColor=#fce4ec;strokeColor=#c62828;fontStyle=1;fontSize=14;fontColor=#b71c1c;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="1520" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-aca" value="Container Apps&#xa;Step Engine" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02884-icon-service-Worker-Container-App.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-domain">
+          <mxGeometry x="30" y="42" width="68" height="68" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-func" value="Functions&#xa;MCP Tools" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/compute/10029-icon-service-Function-Apps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-domain">
+          <mxGeometry x="190" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-bot" value="A2A Agents&#xa;Specialists" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10165-icon-service-Bot-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-domain">
+          <mxGeometry x="340" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-logic" value="Logic Apps&#xa;HITL" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/02631-icon-service-Logic-Apps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-domain">
+          <mxGeometry x="490" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-foundry" value="Azure Foundry&#xa;Classify / Generate" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/03438-icon-service-Azure-OpenAI.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-domain">
+          <mxGeometry x="640" y="46" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="dm-note" value="Receive Envelope → Init Memory → Step Loop (agent / tool / decision / compose) → HITL → Episode Record → Return Result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;align=center;" vertex="1" parent="zone-domain">
+          <mxGeometry x="30" y="152" width="1460" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ DATA PLATFORM ═══ -->
+        <mxCell id="zone-data" value="Unified Data Platform — udp-services-subnet (10.10.2.0/24)" style="swimlane;startSize=26;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=13;fontColor=#4a148c;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="670" width="740" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="udp-redis" value="Redis Cache&#xa;Agent State" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10137-icon-service-Cache-Redis.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+          <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="udp-cosmos" value="Cosmos DB&#xa;Episodic Memory" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10121-icon-service-Azure-Cosmos-DB.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+          <mxGeometry x="190" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="udp-sql" value="Azure SQL&#xa;RCM Data" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10130-icon-service-SQL-Database.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+          <mxGeometry x="350" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="udp-adls" value="ADLS Gen 2&#xa;Episode Records" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/storage/10090-icon-service-Data-Lake-Storage-Gen1.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+          <mxGeometry x="510" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ AI SERVICES ═══ -->
+        <mxCell id="zone-ai" value="AI Services — uais-services-subnet (10.10.6.0/24)" style="swimlane;startSize=26;fillColor=#ede7f6;strokeColor=#512da8;fontStyle=1;fontSize=13;fontColor=#311b92;rounded=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="820" y="670" width="740" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="uais-gw" value="AI Gateway" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10042-icon-service-API-Management-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ai">
+          <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="uais-safety" value="Content Safety&#xa;PHI Filter" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/03390-icon-service-Content-Safety.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ai">
+          <mxGeometry x="190" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="uais-foundry" value="Azure Foundry&#xa;LLM Models" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/03438-icon-service-Azure-OpenAI.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ai">
+          <mxGeometry x="350" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+        <mxCell id="uais-ml" value="ML Workspaces&#xa;Model Registry" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10166-icon-service-Machine-Learning.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-ai">
+          <mxGeometry x="510" y="38" width="56" height="56" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ FLOW ARROWS — only 5 key connections ═══ -->
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#43a047;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="edge-apim" target="gl-aca"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f2" value="envelope" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#f57c00;fontColor=#f57c00;fontSize=11;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="gl-sb" target="dm-aca"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f3" value="result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#c62828;fontColor=#c62828;fontSize=11;strokeWidth=3;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="dm-aca" target="gl-aca"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f4" value="memory" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#7b1fa2;fontColor=#7b1fa2;fontSize=11;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="dm-aca" target="udp-redis"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="f5" value="inference" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#512da8;fontColor=#512da8;fontSize=11;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="dm-aca" target="uais-gw"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

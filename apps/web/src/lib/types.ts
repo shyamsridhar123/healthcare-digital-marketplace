@@ -541,3 +541,103 @@ export interface ExecutionSummary {
   startedAt: string;
   completedAt?: string;
 }
+
+// ─── Sandbox Workspace types ─────────────────────────────────────────────────
+
+export type SandboxStatus =
+  | "requested"
+  | "approved"
+  | "provisioning"
+  | "ready"
+  | "suspended"
+  | "expired"
+  | "retired"
+  | "failed";
+
+export type SandboxType = "personal" | "team" | "restricted";
+
+export type ComputeProfile = "cpu-small" | "cpu-medium" | "gpu-small";
+
+export type DataClassification = "internal" | "restricted" | "phi";
+
+export interface SandboxLaunchUrls {
+  studio: string;
+  notebook: string;
+}
+
+export interface SandboxWorkspace {
+  id: string;
+  sandboxId: string;
+  name: string;
+  description?: string;
+  tenantId: string;
+  ownerId: string;
+  projectId?: string;
+  workspaceTemplateId: string;
+  sandboxType: SandboxType;
+  dataPackages: string[];
+  computeProfile: ComputeProfile;
+  status: SandboxStatus;
+  expiresAt: string;
+  costCenter?: string;
+  businessJustification?: string;
+  launchUrls?: SandboxLaunchUrls;
+  policyProfile: "standard" | "restricted";
+  amlWorkspaceId?: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
+  rejectionReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SandboxTemplate {
+  id: string;
+  name: string;
+  description: string;
+  sandboxType: SandboxType;
+  computeProfiles: ComputeProfile[];
+  defaultComputeProfile: ComputeProfile;
+  defaultDurationDays: number;
+  maxDurationDays: number;
+  policyProfile: "standard" | "restricted";
+  requiresApproval: boolean;
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AmlDataAsset {
+  name: string;
+  version: string;
+}
+
+export interface DataPackage {
+  id: string;
+  dataPackageId: string;
+  version: string;
+  displayName: string;
+  description: string;
+  classification: DataClassification;
+  amlDataAsset: AmlDataAsset;
+  allowedSandboxTypes: SandboxType[];
+  approvalPolicy: "standard-review" | "restricted-review" | "auto-approve";
+  starterNotebook?: string;
+  tenantId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SandboxLifecycleEvent {
+  id: string;
+  sandboxId: string;
+  tenantId: string;
+  action: string;
+  actorId: string;
+  actorType: "user" | "system";
+  details?: Record<string, unknown>;
+  outcome: "success" | "failure" | "partial";
+  timestamp: string;
+}

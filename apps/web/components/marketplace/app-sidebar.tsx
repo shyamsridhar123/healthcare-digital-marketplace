@@ -39,6 +39,7 @@ import {
   Menu,
   PanelLeft,
   X,
+  FlaskRound,
 } from "lucide-react"
 import { useAccount, useMsal } from "@azure/msal-react"
 import { Button } from "@/components/ui/button"
@@ -159,6 +160,22 @@ export const dataSubItems: NavItem[] = [
     badge: "Hub",
     badgeColor: "bg-sky-500/20 text-sky-400",
     description: "Curated healthcare datasets",
+  },
+]
+
+// Sandbox sub-navigation items
+export const sandboxSubItems: NavItem[] = [
+  {
+    label: "My Sandboxes",
+    href: "/sandbox",
+    icon: FlaskRound,
+    description: "Active workspaces",
+  },
+  {
+    label: "Request Sandbox",
+    href: "/sandbox/request",
+    icon: Upload,
+    description: "New workspace request",
   },
 ]
 
@@ -429,6 +446,96 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
   )
 }
 
+function SandboxSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
+  const pathname = usePathname()
+  const isSandbox = pathname === "/sandbox" || pathname.startsWith("/sandbox/")
+  const isMainActive = pathname === "/sandbox"
+  const [isOpen, setIsOpen] = React.useState(isSandbox)
+
+  React.useEffect(() => {
+    if (isSandbox) setIsOpen(true)
+  }, [isSandbox])
+
+  return (
+    <div className="mb-1">
+      <div
+        className={cn(
+          "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+          collapsed ? "justify-center px-2.5" : "",
+          isMainActive
+            ? "bg-secondary text-foreground"
+            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+        )}
+      >
+        <Link
+          href="/sandbox"
+          onClick={onNavigate}
+          title={collapsed ? "Sandboxes" : undefined}
+          className={cn("flex min-w-0 flex-1 items-center gap-3", collapsed && "justify-center")}
+        >
+          <span className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
+            isSandbox
+              ? "bg-teal-500/20 text-teal-400"
+              : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
+          )}>
+            <FlaskRound className="h-4 w-4" />
+          </span>
+          <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
+            <div className="flex items-center gap-2">
+              <span className="truncate">Sandboxes</span>
+              <span className="rounded bg-teal-500/20 px-1.5 py-0.5 text-xs font-medium text-teal-400">AML</span>
+            </div>
+            <p className="truncate text-xs text-muted-foreground/70">Governed ML workspaces</p>
+          </div>
+        </Link>
+        {!collapsed && (
+          <button
+            type="button"
+            aria-label={isOpen ? "Collapse Sandboxes menu" : "Expand Sandboxes menu"}
+            onClick={() => setIsOpen((c) => !c)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+          >
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-teal-400" : "text-muted-foreground/40")} />
+          </button>
+        )}
+      </div>
+      {isOpen && !collapsed && (
+        <ul className="mt-0.5 space-y-0.5 pl-2">
+          {sandboxSubItems.map((item) => {
+            const SubIcon = item.icon
+            const isActive = item.href === "/sandbox"
+              ? pathname === "/sandbox"
+              : pathname === item.href || pathname.startsWith(item.href + "/")
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={onNavigate}
+                  className={cn(
+                    "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
+                    isActive
+                      ? "bg-teal-500/10 text-teal-300"
+                      : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                  )}
+                >
+                  <span className={cn(
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors",
+                    isActive ? "text-teal-400" : "text-muted-foreground group-hover:text-foreground"
+                  )}>
+                    <SubIcon className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="flex-1 truncate">{item.label}</span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
   const isData = pathname === "/data" || pathname.startsWith("/data/")
@@ -673,6 +780,9 @@ function DevelopmentSection({ collapsed = false, onNavigate }: { collapsed?: boo
         </li>
         <li>
           <ImdeSection collapsed={collapsed} onNavigate={onNavigate} />
+        </li>
+        <li>
+          <SandboxSection collapsed={collapsed} onNavigate={onNavigate} />
         </li>
         <li>
           <NavSection collapsed={collapsed} onNavigate={onNavigate} items={[{ label: "One-Click Deploy", href: "/deployments", icon: Rocket, description: "CI/CD & deployment management" }]} />

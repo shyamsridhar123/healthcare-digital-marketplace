@@ -21,7 +21,7 @@ export default function AdminReviewPage() {
   const [distributionScope, setDistributionScope] = useState<"internal" | "external">("internal");
   const [submitting, setSubmitting] = useState(false);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
   useEffect(() => {
     fetch(`${apiBase}/submissions?status=submitted`)

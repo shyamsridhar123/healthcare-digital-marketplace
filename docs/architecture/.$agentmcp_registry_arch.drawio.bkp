@@ -1,0 +1,213 @@
+<mxfile host="app.diagrams.net" modified="2026-03-23T17:05:00Z" agent="Perplexity-GPT" version="22.0.0">
+  <diagram id="mcp-azure-aca-nginx" name="MCP Gateway Registry on Azure">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Clients group -->
+        <mxCell id="clients-group" value="AI Clients &amp; Tools" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=24;rounded=1;fillColor=#E1F5FE;strokeColor=#29B6F6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="260" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="client-ai-coding" value="AI Coding Assistants&#10;(Copilot / VS Code)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="clients-group">
+          <mxGeometry x="10" y="30" width="240" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="client-agents" value="Autonomous AI Agents&#10;(LLM Apps)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="clients-group">
+          <mxGeometry x="10" y="90" width="240" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="client-webui" value="Internal Web UIs&#10;(MCP Portal / Inspector)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="clients-group">
+          <mxGeometry x="10" y="150" width="240" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Container Apps Environment group -->
+        <mxCell id="aca-env" value="Azure Container Apps Environment (VNet-integrated)" style="swimlane;horizontal=1;startSize=28;rounded=1;fillColor=#E8F5E9;strokeColor=#43A047;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="360" y="40" width="800" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- NGINX Ingress (Container App) -->
+        <mxCell id="nginx" value="NGINX Ingress&#10;(Container App)&#10;TLS Termination + Routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000" vertex="1" parent="aca-env">
+          <mxGeometry x="40" y="60" width="220" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Gateway & Registry sub-group -->
+        <mxCell id="gw-reg-group" value="MCP Gateway &amp; Registry (Container Apps)" style="swimlane;horizontal=1;startSize=24;rounded=1;fillColor=#F1F8E9;strokeColor=#689F38;fontStyle=1" vertex="1" parent="aca-env">
+          <mxGeometry x="320" y="40" width="430" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- MCP Gateway API (use generic container icon; user can swap with Azure Container Apps icon) -->
+        <mxCell id="gwapi" value="MCP Gateway API&#10;(Container App)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000" vertex="1" parent="gw-reg-group">
+          <mxGeometry x="20" y="40" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- MCP Registry Service -->
+        <mxCell id="reg" value="MCP Registry Service&#10;(Container App)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000" vertex="1" parent="gw-reg-group">
+          <mxGeometry x="220" y="40" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Entra ID (Azure 2 icon placeholder: use Azure > Identity > Entra ID after import) -->
+        <mxCell id="entra" value="Microsoft Entra ID&#10;(OAuth2 / OIDC)" style="shape=mxgraph.azure2.identity;whiteSpace=wrap;html=1" vertex="1" parent="aca-env">
+          <mxGeometry x="360" y="290" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Key Vault (Azure 2) -->
+        <mxCell id="kv" value="Azure Key Vault&#10;(Secrets, TLS keys)" style="shape=mxgraph.azure2.security_key_vaults;whiteSpace=wrap;html=1" vertex="1" parent="aca-env">
+          <mxGeometry x="540" y="290" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Cosmos DB / SQL (Azure 2) -->
+        <mxCell id="cosmos" value="Registry Store&#10;(Cosmos DB / SQL)" style="shape=mxgraph.azure2.databases_cosmos_db;whiteSpace=wrap;html=1" vertex="1" parent="aca-env">
+          <mxGeometry x="720" y="290" width="150" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Service Bus (Azure 2) -->
+        <mxCell id="sb" value="Azure Service Bus&#10;(Change Events / Async)" style="shape=mxgraph.azure2.integration_service_bus;whiteSpace=wrap;html=1" vertex="1" parent="aca-env">
+          <mxGeometry x="720" y="390" width="150" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Monitor / Log Analytics (Azure 2) -->
+        <mxCell id="monitor" value="Azure Monitor / Log Analytics&#10;(Logs, Metrics)" style="shape=mxgraph.azure2.management_monitor;whiteSpace=wrap;html=1" vertex="1" parent="aca-env">
+          <mxGeometry x="420" y="390" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Upstream MCP Servers group -->
+        <mxCell id="mcp-group" value="Registered MCP Servers (Upstream Tools)" style="swimlane;horizontal=1;startSize=24;rounded=1;fillColor=#FFF3E0;strokeColor=#FB8C00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="60" width="280" height="260" as="geometry"/>
+        </mxCell>
+
+        <!-- MCP Server 1 (Azure Container Apps) -->
+        <mxCell id="mcp1" value="MCP Server 1&#10;(Azure Container Apps)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="mcp-group">
+          <mxGeometry x="20" y="40" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- MCP Server 2 (AKS / VM / On-prem) -->
+        <mxCell id="mcp2" value="MCP Server 2&#10;(AKS / VM / On-prem via VPN)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="mcp-group">
+          <mxGeometry x="20" y="110" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- MCP Server 3 (SaaS MCP) -->
+        <mxCell id="mcp3" value="SaaS / 3rd-party MCP&#10;(Internet)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="mcp-group">
+          <mxGeometry x="20" y="180" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Enterprise Data & APIs group -->
+        <mxCell id="data-group" value="Enterprise Data &amp; APIs" style="swimlane;horizontal=1;startSize=24;rounded=1;fillColor=#E3F2FD;strokeColor=#2196F3;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1200" y="360" width="280" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="db1" value="Business Data&#10;(Azure SQL / Cosmos DB)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="data-group">
+          <mxGeometry x="20" y="40" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="api1" value="Internal APIs&#10;(Azure Functions / Logic Apps)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="data-group">
+          <mxGeometry x="20" y="110" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="api2" value="External APIs&#10;(Internet)" style="rounded=1;whiteSpace=wrap;html=1" vertex="1" parent="data-group">
+          <mxGeometry x="20" y="180" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: Clients -> NGINX -->
+        <mxCell id="edge-client1-nginx" edge="1" parent="1" source="client-ai-coding" target="nginx" style="endArrow=block;rounded=0;orthogonalLoop=1;jettySize=auto;html=1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="100" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge-client2-nginx" edge="1" parent="1" source="client-agents" target="nginx" style="endArrow=block;rounded=0;orthogonalLoop=1;jettySize=auto;html=1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-client3-nginx" edge="1" parent="1" source="client-webui" target="nginx" style="endArrow=block;rounded=0;orthogonalLoop=1;jettySize=auto;html=1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: NGINX -> Gateway & Registry -->
+        <mxCell id="edge-nginx-gwapi" edge="1" parent="aca-env" source="nginx" target="gwapi" value="/gateway">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-nginx-reg" edge="1" parent="aca-env" source="nginx" target="reg" value="/registry">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: Gateway & Registry -> Entra ID -->
+        <mxCell id="edge-gwapi-entra" edge="1" parent="aca-env" source="gwapi" target="entra" value="OAuth2 / OIDC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-reg-entra" edge="1" parent="aca-env" source="reg" target="entra" value="OAuth2 / OIDC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: Gateway & Registry -> Key Vault -->
+        <mxCell id="edge-gwapi-kv" edge="1" parent="aca-env" source="gwapi" target="kv" value="Secrets / TLS keys">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-reg-kv" edge="1" parent="aca-env" source="reg" target="kv" value="Secrets">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: Registry -> Cosmos/SQL + Service Bus -->
+        <mxCell id="edge-reg-cosmos" edge="1" parent="aca-env" source="reg" target="cosmos" value="Metadata">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-reg-sb" edge="1" parent="aca-env" source="reg" target="sb" value="Events">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: NGINX, Gateway, Registry -> Monitor -->
+        <mxCell id="edge-nginx-monitor" edge="1" parent="aca-env" source="nginx" target="monitor" value="Logs / Metrics">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-gwapi-monitor" edge="1" parent="aca-env" source="gwapi" target="monitor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-reg-monitor" edge="1" parent="aca-env" source="reg" target="monitor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: Gateway API -> MCP Servers -->
+        <mxCell id="edge-gwapi-mcp1" edge="1" parent="1" source="gwapi" target="mcp1" value="MCP (SSE / HTTP)">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-gwapi-mcp2" edge="1" parent="1" source="gwapi" target="mcp2" value="MCP">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-gwapi-mcp3" edge="1" parent="1" source="gwapi" target="mcp3" value="MCP">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: MCP Servers -> Enterprise Data & APIs -->
+        <mxCell id="edge-mcp1-db1" edge="1" parent="1" source="mcp1" target="db1" value="Tool calls">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-mcp1-api1" edge="1" parent="1" source="mcp1" target="api1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-mcp2-db1" edge="1" parent="1" source="mcp2" target="db1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-mcp2-api2" edge="1" parent="1" source="mcp2" target="api2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge-api1-api2" edge="1" parent="1" source="api1" target="api2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

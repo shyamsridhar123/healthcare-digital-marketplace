@@ -316,6 +316,68 @@ resource orchestrationExecutionsContainer 'Microsoft.DocumentDB/databaseAccounts
   }
 }
 
+// ─── Sandbox Workspace ───────────────────────────────────────────────────────
+resource sandboxesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'sandboxes'
+  properties: {
+    resource: {
+      id: 'sandboxes'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+      }
+    }
+  }
+}
+
+resource sandboxTemplatesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'sandbox-templates'
+  properties: {
+    resource: {
+      id: 'sandbox-templates'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+    }
+  }
+}
+
+resource dataPackagesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'data-packages'
+  properties: {
+    resource: {
+      id: 'data-packages'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+    }
+  }
+}
+
+resource sandboxLifecycleEventsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'sandbox-lifecycle-events'
+  properties: {
+    resource: {
+      id: 'sandbox-lifecycle-events'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      defaultTtl: 7776000  // 90 days retention
+    }
+  }
+}
+
+resource sandboxCostUsageContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'sandbox-cost-usage'
+  properties: {
+    resource: {
+      id: 'sandbox-cost-usage'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+    }
+  }
+}
+
 output endpoint string = cosmosAccount.properties.documentEndpoint
 output primaryKey string = cosmosAccount.listKeys().primaryMasterKey
 output accountName string = cosmosAccount.name

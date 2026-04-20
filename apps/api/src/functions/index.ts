@@ -47,3 +47,8 @@ export * from "./policy/policies.js";
 // Orchestration Templates & Executions
 export * from "./orchestration/templates.js";
 export * from "./orchestration/executions.js";
+
+// Sandbox Workspace
+export * from "./sandbox/sandboxes.js";
+export * from "./sandbox/sandbox-templates.js";
+export * from "./sandbox/data-packages.js";

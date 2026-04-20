@@ -30,6 +30,18 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID ?? "",
     NEXT_PUBLIC_AZURE_TENANT_ID: process.env.AZURE_TENANT_ID ?? "",
   },
+  async rewrites() {
+    const apiBackend = process.env.API_BASE_URL ?? "http://localhost:7071/api";
+    return {
+      // "fallback" rewrites only fire when no Next.js page or API route matches
+      fallback: [
+        {
+          source: "/api/:path*",
+          destination: `${apiBackend}/:path*`,
+        },
+      ],
+    };
+  },
 };
 
 export default nextConfig;

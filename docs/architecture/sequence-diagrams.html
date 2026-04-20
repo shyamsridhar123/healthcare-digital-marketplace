@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Platform — Developer Experience Sequence Diagrams</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1a233b;
+      --accent: #0078d4;
+      --teal: #50e6c2;
+      --text: #e0e8f0;
+      --muted: #a0aec0;
+      --border: #303d55;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-bottom: 2px solid var(--accent);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header .title h1 { font-size: 1.5rem; color: #fff; }
+    header .title p  { color: var(--muted); font-size: .85rem; }
+    header .counter {
+      color: var(--teal);
+      font-size: 1rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── Navigation bar ─────────────────────────────────────── */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .6rem 2rem;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: .75rem;
+    }
+    .nav-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all .15s;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .nav-arrow:hover:not(:disabled) {
+      background: var(--accent);
+      color: #fff;
+    }
+    .nav-arrow:disabled {
+      opacity: .3;
+      cursor: default;
+    }
+    .nav-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      justify-content: center;
+      flex: 1;
+    }
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      cursor: pointer;
+      transition: all .15s;
+      padding: 0;
+    }
+    .nav-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 6px rgba(0,120,212,.6);
+      transform: scale(1.3);
+    }
+    .nav-dot:hover:not(.active) { background: var(--muted); }
+
+    /* ── Slide label bar ────────────────────────────────────── */
+    .slide-label {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem 2rem;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .slide-label .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 6px;
+      background: var(--accent);
+      font-size: .8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .slide-label h2 { font-size: 1.15rem; color: #fff; }
+    .slide-label .subtitle { color: var(--muted); font-size: .8rem; margin-left: auto; }
+    .slide-label .pattern-tag {
+      font-size: .7rem;
+      color: #8b5cf6;
+      border: 1px solid #8b5cf6;
+      border-radius: 4px;
+      padding: .1rem .5rem;
+      white-space: nowrap;
+    }
+
+    /* ── Diagram container ──────────────────────────────────── */
+    .diagram-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 2rem;
+      min-height: calc(100vh - 200px);
+    }
+    .mermaid-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    .mermaid { text-align: center; }
+
+    /* Slides hidden by default */
+    .slide { display: none; }
+    .slide.active { display: block; }
+
+    /* ── Keyboard hint ──────────────────────────────────────── */
+    .kbd-hint {
+      text-align: center;
+      padding: .5rem;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+    .kbd-hint kbd {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .1rem .4rem;
+      font-family: inherit;
+      font-size: .75rem;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: var(--muted);
+      font-size: .75rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="title">
+    <h1>AI Platform — Sequence Diagrams</h1>
+    <p>Developer experience &amp; RCM domain orchestration flows</p>
+  </div>
+  <div class="counter" id="counter">1 / 12</div>
+</header>
+
+<!-- Navigation -->
+<div class="nav-bar">
+  <button class="nav-arrow" id="prev" title="Previous (← arrow key)">&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-arrow" id="next" title="Next (→ arrow key)">&#8594;</button>
+</div>
+
+<!-- Slide label -->
+<div class="slide-label" id="slide-label"></div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="diagram-container">
+
+<!-- 1 -->
+<div class="slide" data-title="Agent Development Lifecycle" data-subtitle="From empty folder to a registered, discoverable A2A agent" data-tag="Scaffold → Code → Test → Register">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (VS Code)
+    participant Copilot as GitHub Copilot
+    participant SDK as MAF SDK
+    participant API as Local FastAPI
+    participant Cosmos as Cosmos DB Emulator
+    participant DevUI as MAF DevUI
+    participant Platform as AI Platform API
+    participant Registry as A2A Agent Registry
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Copilot: Phase 1 — Scaffold Project
+    Dev->>Copilot: @workspace create MAF agent for denial management with 3 tools
+    Copilot-->>Dev: Generated: main.py, tools.py, agent_card.json, Dockerfile
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, SDK: Phase 2 — Develop Agent + Tools
+    Dev->>SDK: pip install agent-framework
+    Dev->>Copilot: Generate @tool: map_denial_code(denial_code)
+    Copilot-->>Dev: def map_denial_code(code: Annotated[str, 'CARC code']) → DenialMapping
+    Dev->>SDK: agent = client.as_agent(name='DenialAnalyzer', tools=[map_denial_code])
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, DevUI: Phase 3 — Test Locally
+    Dev->>API: F5 → uvicorn main:app --port 8087
+    Dev->>DevUI: Open localhost:8087/devui → interactive chat
+    DevUI->>API: Test: "Analyze CO-4 denial from BCBS"
+    API->>DevUI: Tool called: map_denial_code('CO-4') → modifier error
+    API-->>DevUI: Analysis complete with appeal steps
+    Dev->>Cosmos: Verify chat history persisted
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Registry: Phase 4 — Register in Platform
+    Dev->>Platform: POST /api/a2a-agents {agentCard, endpointUrl, skills}
+    Platform->>Registry: Store AgentCard, health-check, status: active
+    Registry-->>Dev: ✅ Registered: denial-analyzer (discoverable)
+    end
+</pre></div></div>
+
+<!-- 2 -->
+<div class="slide" data-title="MCP Tool Development &amp; Registration" data-subtitle="Build tool server → test schema → publish to registry → agents discover it" data-tag="Build → Test → Publish → Discover">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (VS Code)
+    participant Copilot as GitHub Copilot
+    participant MCP as MCP Server (local)
+    participant Inspector as MCP Inspector
+    participant Platform as AI Platform API
+    participant ToolReg as MCP Tool Registry
+    participant Discovery as Tool Discovery
+    participant Agents as Agents (consumers)
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Copilot: Phase 1 — Scaffold MCP Server
+    Dev->>Copilot: @workspace create MCP server: query_fee_schedule, check_ncci_edits
+    Copilot-->>Dev: Generated: server.py (streamable-http), tool schemas
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, MCP: Phase 2 — Implement Tool Logic
+    Dev->>MCP: Implement query_fee_schedule: {CPT, payer} → contracted_rate
+    Dev->>MCP: Implement check_ncci_edits: {code1, code2} → bundled/modifier
+    Note right of MCP: Tools expose JSON Schema input/output
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Inspector: Phase 3 — Test with MCP Inspector
+    Dev->>Inspector: npx @modelcontextprotocol/inspector http://localhost:3001
+    Inspector->>MCP: tools/list → discover 2 tools + schemas
+    MCP-->>Inspector: [{name: query_fee_schedule, inputSchema: {...}}, ...]
+    Inspector->>MCP: tools/call: query_fee_schedule({CPT: '99213', payer: 'BCBS'})
+    MCP-->>Inspector: {contracted_rate: 125.50, effective_date: '2026-01-01'}
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, ToolReg: Phase 4 — Register in Platform
+    Dev->>Platform: POST /api/mcp-servers {name, endpointUrl, transport: streamable-http}
+    Platform->>Discovery: GET /tools/list → auto-discover + cache schemas
+    Discovery->>ToolReg: Store 2 tools with input schemas, link to server
+    ToolReg-->>Dev: ✅ Published: fee-schedule-svc (2 tools, healthy)
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Agents, ToolReg: Phase 5 — Agent Consumption
+    Agents->>ToolReg: GET /api/mcp-tools?tag=rcm → find fee-schedule tools
+    Agents->>MCP: tools/call: query_fee_schedule({CPT: '99213', payer: 'AETNA'})
+    MCP-->>Agents: {contracted_rate: 118.00}
+    end
+</pre></div></div>
+
+<!-- 3 -->
+<div class="slide" data-title="Orchestration Template Design" data-subtitle="Visual workflow builder → select agents → wire edges → attach policies → save" data-tag="Visual Builder in Marketplace Web UI">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (Browser)
+    participant Builder as Workflow Builder UI
+    participant A2A as A2A Agent Registry
+    participant Tools as MCP Tool Registry
+    participant Policies as Policy Registry
+    participant TplAPI as Template API
+    participant Cosmos as Cosmos DB
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Tools: Phase 1 — Open Builder and Load Palette
+    Dev->>Builder: Navigate to /orchestration/templates → New Template
+    Builder->>A2A: GET /api/a2a-agents → load agent palette
+    A2A-->>Builder: 12 agents: denial-analyzer, eligibility-verifier, coding-agent...
+    Builder->>Tools: GET /api/mcp-tools → load tool palette
+    Tools-->>Builder: 28 tools: query_fee_schedule, send_270, submit_837p...
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Builder: Phase 2 — Build the Workflow Graph
+    Dev->>Builder: Drag Start → Eligibility Agent → Condition node
+    Dev->>Builder: Wire True → Coding Agent, False → End
+    Dev->>Builder: Drag Scrub Agent after Coding → End
+    Note right of Builder: Canvas auto-layouts DAG
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, A2A: Phase 3 — Configure Nodes
+    Dev->>Builder: Select Coding Agent node → open Properties Panel
+    Builder->>A2A: GET /api/a2a-agents/agt-coding-001 → load skills, config
+    Dev->>Builder: Set model: GPT-4o, temperature: 0, attach tool: code_lookup
+    Dev->>Builder: Select Condition → expression: output.status === 'active'
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Policies: Phase 4 — Attach Policies
+    Dev->>Builder: Open Governance panel
+    Builder->>Policies: GET /api/policies?enabled=true
+    Policies-->>Builder: 8 policies: HIPAA-compliance, PHI-filter, rate-limit...
+    Dev->>Builder: Bind: HIPAA-compliance (pre), PHI-filter (post), cost-budget (pre)
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Cosmos: Phase 5 — Save Template
+    Dev->>Builder: Click Save → name: claims-submission, category: rcm
+    Builder->>TplAPI: POST /api/orchestration/templates {nodes, edges, policyIds}
+    TplAPI->>Cosmos: Store template v1.0.0 (tenantId: default)
+    TplAPI-->>Dev: ✅ Saved: claims-submission v1.0.0 (5 nodes, 3 policies)
+    end
+</pre></div></div>
+
+<!-- 4 -->
+<div class="slide" data-title="Local Testing &amp; Debugging" data-subtitle="Cosmos Emulator → F5 debug → test orchestration → inspect policy decisions" data-tag="VS Code Debug + Emulators">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (VS Code)
+    participant Cosmos as Cosmos DB Emulator
+    participant API as Local API (FastAPI)
+    participant Agent as Agent (port 8087)
+    participant MCP as MCP Server (port 3001)
+    participant Policy as Policy Engine
+    participant DevUI as MAF DevUI
+
+    rect rgb(30, 41, 59)
+    Note over Dev, MCP: Phase 1 — Start Local Stack
+    Dev->>Cosmos: docker run cosmos-emulator → localhost:8081
+    Dev->>MCP: Terminal 1: python mcp_server.py --port 3001
+    Dev->>Agent: Terminal 2: python main.py --port 8087
+    Dev->>API: F5 (launch.json) → uvicorn --port 8000 --reload
+    Note right of Dev: 4 terminals, breakpoints set
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Agent: Phase 2 — Test Individual Agent
+    Dev->>DevUI: Open localhost:8087/devui
+    DevUI->>Agent: "Analyze CO-4 denial for patient from BCBS"
+    Agent->>MCP: tool: map_denial_code('CO-4')
+    MCP-->>Agent: {category: modifier_error, action: verify_modifier}
+    Note right of Dev: 💡 Breakpoint hit → inspect variables
+    Agent-->>DevUI: Analysis: modifier error, appeal recommended
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Cosmos: Phase 3 — Test Full Orchestration
+    Dev->>API: POST /api/orchestration/executions {template: denial-intelligence}
+    API->>Policy: evaluatePolicies(pre, compliance) → ALLOW
+    API->>Agent: A2A: tasks/send {denial_codes: [CO-4]}
+    Agent->>MCP: tool: map_denial_code('CO-4')
+    MCP-->>Agent: denial mapping result
+    Agent-->>API: {root_causes, appeal_strategy}
+    API->>Policy: evaluatePolicies(post, PII-filter)
+    Policy-->>API: TRANSFORM: redact SSN in output
+    API->>Cosmos: Save execution + audit trail
+    API-->>Dev: 200 OK → inspect in Cosmos Explorer
+    end
+</pre></div></div>
+
+<!-- 5 -->
+<div class="slide" data-title="CI/CD Pipeline &amp; Deployment" data-subtitle="Git push → GitHub Actions → build container → deploy to Container Apps → verify" data-tag="azd up + GitHub Actions">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (VS Code)
+    participant Git as Git / GitHub
+    participant GHA as GitHub Actions
+    participant ACR as Azure ACR
+    participant ACA as Azure Container Apps
+    participant Cosmos as Cosmos DB (Serverless)
+    participant Prod as AI Platform (Prod)
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Git: Phase 1 — Push Code
+    Dev->>Git: git push origin main (feat: denial-analyzer agent)
+    Git->>GHA: Trigger: deploy-ai-marketplace.yml
+    end
+
+    rect rgb(30, 41, 59)
+    Note over GHA, ACR: Phase 2 — Build and Test
+    GHA->>GHA: pytest tests/ → 42 tests pass ✅
+    GHA->>GHA: ruff lint + pyright type-check + bandit security scan
+    GHA->>ACR: docker build → push ai-marketplace-api:v1.2.0
+    ACR-->>GHA: ✅ Image pushed to ACR
+    end
+
+    rect rgb(30, 41, 59)
+    Note over GHA, Cosmos: Phase 3 — Deploy Infrastructure
+    GHA->>ACA: azd deploy → update Container App revision
+    ACA->>Cosmos: Verify Cosmos DB connection + containers exist
+    ACA-->>GHA: ✅ Revision deployed, health probe OK
+    end
+
+    rect rgb(30, 41, 59)
+    Note over GHA, Prod: Phase 4 — Post-Deploy Verification
+    GHA->>Prod: Smoke: POST /api/health → 200
+    GHA->>Prod: Smoke: GET /api/a2a-agents → 12 agents
+    GHA->>Prod: Smoke: POST /api/orchestration/executions (smoke-test)
+    Prod-->>GHA: ✅ All smoke tests pass
+    end
+
+    rect rgb(30, 41, 59)
+    Note over GHA, Prod: Phase 5 — Register Prod Endpoints
+    GHA->>Prod: POST /api/a2a-agents/agt-001 → update prod URL
+    GHA->>Prod: POST /api/mcp-servers/srv-001 → update prod URL
+    Prod-->>Dev: ✅ v1.2.0 live — 12 agents, 28 tools
+    end
+</pre></div></div>
+
+<!-- 6 -->
+<div class="slide" data-title="Day-2: Monitor, Iterate &amp; Version" data-subtitle="Monitor executions → review policy violations → update agents → version templates" data-tag="Observe → Refine → Ship">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Dev as Developer (VS Code)
+    participant Dash as Marketplace Dashboard
+    participant Detail as Execution Detail Page
+    participant Audit as Policy Audit Trail
+    participant Tpl as Template Versioning
+    participant Registry as A2A Agent Registry
+    participant Cosmos as Cosmos DB
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Cosmos: Phase 1 — Monitor Production
+    Dev->>Dash: /orchestration/executions → filter: status=failed, 24h
+    Dash->>Cosmos: SELECT * FROM c WHERE c.status='failed'
+    Cosmos-->>Dash: 3 failed (2 policy-denied, 1 agent error)
+    Dev->>Detail: Click exec-7742 → node-by-node status
+    Detail-->>Dev: coding-agent: policy-denied (pre: model-allowlist)
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Audit: Phase 2 — Review Policy Audit
+    Dev->>Audit: GET /executions/exec-7742/audit
+    Audit-->>Dev: DENY: model 'gpt-3.5' not in allowlist
+    Note right of Dev: Fix: add gpt-3.5-turbo to allowedModels
+    Dev->>Dash: PATCH /api/policies/pol-model-02 → add gpt-3.5-turbo
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Registry: Phase 3 — Iterate on Agent
+    Dev->>Registry: Review: denial-analyzer latency 2.1s, success 94%
+    Dev->>Dev: Update system prompt for CO-167 handling
+    Dev->>Registry: POST /api/a2a-agents/agt-001 → version v1.3.0
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Dev, Tpl: Phase 4 — Version and Fork Templates
+    Dev->>Tpl: PATCH /templates/tmpl-claims → add Loop retry node
+    Tpl-->>Dev: Auto-bumped: v1.0.0 → v1.1.0 (nodes changed)
+    Dev->>Tpl: POST /templates/tmpl-claims/fork → A/B variant
+    Tpl-->>Dev: ✅ Forked: claims-submission-v2 (10% traffic)
+    end
+</pre></div></div>
+
+<!-- 7 -->
+<div class="slide" data-title="Denial Intelligence Workflow" data-subtitle="Analyze denials → classify root cause → recommend appeal strategy" data-tag="Conditional Router + Supervisor">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Billing User
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant A2A as A2A Registry
+    participant Denial as Denial Analyzer Agent
+    participant MCP as MCP: Payer Portal
+    participant LLM as Azure OpenAI
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: denial-intelligence, codes: [CO-4, CO-11]}
+    Orch->>Policy: evaluatePolicies(pre, compliance + rate-limit)
+    Policy-->>Orch: ✅ ALLOW (HIPAA compliant)
+    Orch->>A2A: GET /a2a-agents?skill=denial-analysis
+    A2A-->>Orch: AgentCard {denial-analyzer, skills: [map_denial_code]}
+
+    rect rgb(30, 41, 59)
+    Note over Orch, LLM: Sequential — Denial Analysis
+    Orch->>Denial: A2A tasks/send {codes: [CO-4, CO-11], payer: BCBS}
+    Denial->>MCP: tool: query_denials(BCBS, [CO-4, CO-11])
+    MCP-->>Denial: 12 claims, $45K total denied
+    Denial->>LLM: Classify root causes + pattern analysis
+    LLM-->>Denial: CO-4: modifier errors (8), CO-11: dx mismatch (4)
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Denial, MCP: Conditional — Route by Category
+    Denial->>MCP: tool: recommend_appeal_strategy(CO-4, BCBS)
+    MCP-->>Denial: Appeal strategy + 90-day deadline
+    Denial->>MCP: tool: draft_appeal_letter(CO-4, patient_info)
+    MCP-->>Denial: Professional appeal letter generated
+    end
+
+    Denial-->>Orch: {root_causes, strategies, draft_letters}
+    Orch->>Policy: evaluatePolicies(post, content-filter + PII)
+    Policy-->>Orch: TRANSFORM: redact SSN/MRN from output
+    Orch->>DB: upsert execution + audit trail
+    Orch-->>User: 200 OK {analysis, appeals, letters}
+</pre></div></div>
+
+<!-- 8 -->
+<div class="slide" data-title="Automated Medical Coding" data-subtitle="Clinical note → ICD-10/CPT suggestion → validation loop → final codes" data-tag="Sequential + Loop (Writer-Critic)">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Clinical User
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant Coder as Coding Agent
+    participant Validator as Validator Agent
+    participant MCP as MCP: Code Lookup
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: medical-coding, note: "Pt with chest pain..."}
+    Orch->>Policy: evaluatePolicies(pre, model-allowlist + compliance)
+    Policy-->>Orch: ✅ ALLOW (GPT-4o approved for PHI, BAA in place)
+
+    rect rgb(30, 41, 59)
+    Note over Orch, MCP: Sequential — Code Suggestion
+    Orch->>Coder: A2A: analyze clinical note → suggest ICD-10 + CPT
+    Coder->>MCP: tool: lookup_icd10('chest pain') + lookup_cpt('ECG')
+    MCP-->>Coder: ICD-10: R07.9, I20.9 | CPT: 93000, 99213
+    Coder-->>Orch: [{R07.9, 0.92}, {I20.9, 0.78}, {93000, 0.95}]
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Orch, Validator: Loop — Validation (max 3 iterations)
+    Orch->>Validator: validate codes vs clinical evidence
+    Validator->>MCP: tool: check_ncci_edits(93000, 99213)
+    MCP-->>Validator: NCCI result
+    Validator-->>Orch: ❌ REJECT: I20.9 lacks supporting evidence
+
+    Note over Orch, Coder: Iteration 2 — Re-code with feedback
+    Orch->>Coder: re-code: "I20.9 unsupported, suggest alternatives"
+    Coder-->>Orch: revised: [{R07.9, 0.95}, {R00.0, 0.82}, {93000}]
+    Orch->>Validator: validate revised codes
+    Validator-->>Orch: ✅ PASS: all codes clinically supported
+    end
+
+    Orch->>DB: save coding session + audit (2 iterations)
+    Orch-->>User: 200 OK {final_codes, confidence_scores, audit_trail}
+</pre></div></div>
+
+<!-- 9 -->
+<div class="slide" data-title="Claims Submission Pipeline" data-subtitle="Eligibility → Coding → Scrub → Submit to Clearinghouse" data-tag="Sub-Workflow + Sequential">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Billing Staff
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant Elig as Eligibility Sub-WF
+    participant Coder as Coding Agent
+    participant Scrub as Scrub Agent
+    participant CH as MCP: Clearinghouse
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: claims-submission, encounter, patient, payer}
+    Orch->>Policy: evaluatePolicies(pre, cost-budget + rate-limit)
+    Policy-->>Orch: ✅ ALLOW (within 500 claims/hr budget)
+
+    rect rgb(30, 41, 59)
+    Note over Orch, Elig: Sub-Workflow — Eligibility Verification
+    Orch->>Elig: invoke sub-workflow: verify_eligibility(patient, payer, DOS)
+    Elig-->>Orch: ✅ ACTIVE: PPO, deductible met, copay $30
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Orch, Scrub: Sequential — Code + Scrub
+    Orch->>Coder: A2A: auto-code encounter (ICD-10, CPT, modifiers)
+    Coder-->>Orch: codes: [E11.9, 99214-25, 36415]
+    Orch->>Scrub: A2A: scrub claim (NCCI, LCD/NCD, payer rules)
+    Scrub-->>Orch: ✅ CLEAN: no edits triggered
+    end
+
+    Orch->>Policy: evaluatePolicies(post, compliance + data-access)
+    Policy-->>Orch: ✅ ALLOW
+
+    rect rgb(30, 41, 59)
+    Note over Orch, CH: Submit to Clearinghouse
+    Orch->>CH: tool: submit_837p(claim_data, payer_id=BCBS)
+    CH-->>Orch: claim_ref: CLM-2026-44821, status: accepted
+    end
+
+    Orch->>DB: save execution {status: completed, claim_ref}
+    Orch-->>User: 200 OK {claim_ref, codes, eligibility, scrub_result}
+</pre></div></div>
+
+<!-- 10 -->
+<div class="slide" data-title="Eligibility Verification" data-subtitle="Real-time 270/271 check via MCP tool + AI benefit summary" data-tag="Sequential + MCP Tool Call">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Front Desk Staff
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant A2A as A2A Registry
+    participant Agent as Eligibility Agent
+    participant MCP as MCP: 270/271 Gateway
+    participant LLM as Azure OpenAI
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: eligibility-check, patient, member_id, payer: BCBS}
+    Orch->>Policy: evaluatePolicies(pre, rate-limit + data-access)
+    Policy-->>Orch: ✅ ALLOW (payer-portal source permitted)
+    Orch->>A2A: GET /a2a-agents?skill=eligibility-verification
+    A2A-->>Orch: AgentCard {eligibility-verifier, tools: [verify_eligibility]}
+
+    rect rgb(30, 41, 59)
+    Note over Orch, LLM: Agent Execution
+    Orch->>Agent: A2A tasks/send {patient, member_id, payer, DOS}
+    Agent->>MCP: tool: send_270(member_id, payer_id, provider_npi)
+    MCP-->>Agent: 271: {active, plan: PPO-500, deductible: $1500, met: $1200}
+    Agent->>LLM: Generate plain-English benefit summary
+    LLM-->>Agent: "Patient has active BCBS PPO. $300 remaining on deductible..."
+    Note right of Agent: Flag: near deductible limit
+    end
+
+    Agent-->>Orch: {status: active, benefits_summary, flags: [near_deductible]}
+    Orch->>Policy: evaluatePolicies(post, PII compliance)
+    Policy-->>Orch: TRANSFORM: mask member_id in logs
+    Orch->>DB: save verification + audit
+    Orch-->>User: 200 OK {summary, copay: $30, flags}
+</pre></div></div>
+
+<!-- 11 -->
+<div class="slide" data-title="Prior Authorization Workflow" data-subtitle="Generate auth request → submit → pause for payer decision → resume" data-tag="Human-in-the-Loop + Handoff">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Provider Office
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant ClinDoc as Clinical Doc Agent
+    participant PriorAuth as Prior Auth Agent
+    participant MCP as MCP: Payer Auth Portal
+    participant Gate as ⏸ Approval Gate
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: prior-auth, procedure: MRI-Knee, dx: M23.21}
+    Orch->>Policy: evaluatePolicies(pre, human-gate + compliance)
+    Policy-->>Orch: ✅ ALLOW + human-gate attached
+
+    rect rgb(30, 41, 59)
+    Note over Orch, ClinDoc: Sequential — Gather Clinical Documentation
+    Orch->>ClinDoc: A2A: compile clinical justification for MRI + M23.21
+    ClinDoc-->>Orch: {history, imaging_rationale, dx_support}
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Orch, MCP: Handoff → Prior Auth Agent
+    Orch->>PriorAuth: A2A: generate auth request (AETNA format)
+    PriorAuth->>MCP: tool: submit_prior_auth(procedure, dx, clinical_pkg)
+    MCP-->>PriorAuth: auth_ref: PA-2026-8891, status: PENDING_REVIEW
+    PriorAuth-->>Orch: submitted, awaiting payer decision
+    end
+
+    rect rgb(30, 60, 59)
+    Note over Orch, Gate: ⏸ Human-in-the-Loop: Payer Decision (hours/days)
+    Orch->>Gate: PAUSE execution
+    Orch->>DB: save state (status: paused, auth_ref)
+    Note right of Gate: ⏸ Zero compute cost during wait
+    Gate->>Orch: EVENT: payer approved (webhook / manual)
+    end
+
+    Orch->>PriorAuth: resume: auth approved
+    Orch->>DB: update (status: completed, auth: APPROVED)
+    Orch-->>User: 200 OK {auth_number: PA-2026-8891, APPROVED}
+</pre></div></div>
+
+<!-- 12 -->
+<div class="slide" data-title="Payment Posting &amp; Reconciliation" data-subtitle="Batch ERA (835) → map each claim line → detect underpayments → reconcile" data-tag="Map-Reduce + Fan-Out / Fan-In">
+<div class="mermaid-wrapper"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as Finance Team
+    participant Orch as Orchestration API
+    participant Policy as Policy Engine
+    participant Split as Splitter Node
+    participant Workers as Payment Agent ×N
+    participant MCP as MCP: Fee Schedule
+    participant Analyzer as Underpay Analyzer
+    participant DB as Cosmos DB
+
+    User->>Orch: POST /executions {template: payment-reconciliation, era_file: ERA-835.edi}
+    Orch->>Policy: evaluatePolicies(pre, cost-budget + data-access)
+    Policy-->>Orch: ✅ ALLOW (within daily budget)
+
+    rect rgb(30, 41, 59)
+    Note over Orch, Split: MAP Phase — Split ERA
+    Orch->>Split: parse ERA-835 → extract claim line items
+    Split-->>Orch: 47 claim lines ready
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Orch, MCP: Fan-Out — Process each line (×47 parallel)
+    Orch->>Workers: A2A: process_payment(claim_line[0..46])
+    Workers->>MCP: tool: get_contracted_rate(CPT, payer) ×47
+    MCP-->>Workers: contracted rates for all 47 lines
+    Note right of Workers: Compare: paid vs contracted rate
+    Workers-->>Orch: 47 results: [{posted, variance, flag}...]
+    end
+
+    rect rgb(30, 41, 59)
+    Note over Orch, Analyzer: REDUCE Phase — Aggregate
+    Orch->>Analyzer: analyze {5 underpaid, 2 overpaid, 40 matched}
+    Analyzer-->>Orch: {appeal 3 claims ($2,400), write-off 2 ($180)}
+    end
+
+    Orch->>Policy: evaluatePolicies(post, compliance + audit)
+    Policy-->>Orch: ✅ ALLOW (within audit thresholds)
+    Orch->>DB: save reconciliation {47 lines, 5 variances}
+    Orch-->>User: 200 OK {posted: 47, variances: 5, appeal: $2,400}
+</pre></div></div>
+
+</div><!-- /diagram-container -->
+
+<div class="kbd-hint">
+  <kbd>←</kbd> / <kbd>→</kbd> arrow keys to navigate &nbsp;&bull;&nbsp; click dots to jump
+</div>
+
+<footer>
+  AI Marketplace — Orchestration Platform &bull; Microsoft Agent Framework &bull; Azure Container Apps &bull; Cosmos DB &bull; Azure OpenAI
+</footer>
+
+<script>
+  // ── Carousel logic ──────────────────────────────────────────
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('dots');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const counter = document.getElementById('counter');
+  const labelEl = document.getElementById('slide-label');
+  const total = slides.length;
+  let current = 0;
+  let rendered = new Set();
+
+  // Build dot buttons
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot';
+    dot.title = slides[i].dataset.title;
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+  const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+
+    // Update label bar
+    const s = slides[current];
+    labelEl.innerHTML =
+      '<span class="badge">' + (current + 1) + '</span>' +
+      '<h2>' + s.dataset.title + '</h2>' +
+      '<span class="subtitle">' + s.dataset.subtitle + '</span>' +
+      '<span class="pattern-tag">' + s.dataset.tag + '</span>';
+
+    // Lazy-render mermaid for this slide (only on first visit)
+    if (!rendered.has(current)) {
+      rendered.add(current);
+      var pre = slides[current].querySelector('pre.mermaid');
+      if (pre && !pre.dataset.processed) {
+        var code = pre.textContent;
+        var id = 'mermaid-' + current;
+        mermaid.render(id, code).then(function(result) {
+          pre.innerHTML = result.svg;
+          pre.dataset.processed = 'true';
+        });
+      }
+    }
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Arrow buttons
+  prevBtn.addEventListener('click', function() { goTo(current - 1); });
+  nextBtn.addEventListener('click', function() { goTo(current + 1); });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'Home')       goTo(0);
+    if (e.key === 'End')        goTo(total - 1);
+  });
+
+  // Initialize mermaid (lazy — we render per slide)
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a233b',
+      primaryBorderColor: '#0078d4',
+      primaryTextColor: '#e0e8f0',
+      secondaryColor: '#303d55',
+      tertiaryColor: '#0f172a',
+      lineColor: '#00e5ff',
+      textColor: '#e0e8f0',
+      actorBkg: '#0078d4',
+      actorBorder: '#0078d4',
+      actorTextColor: '#ffffff',
+      activationBorderColor: '#00e5ff',
+      activationBkgColor: '#1a233b',
+      sequenceNumberColor: '#000000',
+      signalColor: '#00e5ff',
+      signalTextColor: '#ffffff',
+      noteBkgColor: '#303d55',
+      noteTextColor: '#f5e6c2',
+      noteBorderColor: '#f59e0b',
+      labelBoxBkgColor: '#1e293b',
+      labelBoxBorderColor: '#0078d4',
+      labelTextColor: '#e0e8f0',
+    },
+    sequence: {
+      diagramMarginX: 30,
+      diagramMarginY: 15,
+      actorMargin: 60,
+      width: 180,
+      height: 50,
+      boxMargin: 6,
+      boxTextMargin: 8,
+      noteMargin: 12,
+      messageMargin: 40,
+      mirrorActors: true,
+      useMaxWidth: true,
+      wrap: true,
+      wrapPadding: 15,
+    },
+    fontFamily: '"Segoe UI", system-ui, sans-serif',
+    fontSize: 13,
+  });
+
+  // Show first slide
+  goTo(0);
+</script>
+
+</body>
+</html>

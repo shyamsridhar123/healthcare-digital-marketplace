@@ -17,7 +17,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // This avoids baking them in as NEXT_PUBLIC_ build-time vars, so the
     // same Docker image works across environments.
     fetch("/api/auth-config")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`auth-config returned ${res.status}`);
+        return res.json();
+      })
       .then(async ({ clientId, tenantId }: { clientId: string; tenantId: string }) => {
         const inst = new PublicClientApplication(buildMsalConfig(clientId, tenantId))
         await inst.initialize()

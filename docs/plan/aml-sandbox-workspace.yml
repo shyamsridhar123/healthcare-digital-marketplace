@@ -1,0 +1,15 @@
+$schema: https://azuremlschemas.azureedge.net/latest/workspace.schema.json
+name: aml-sandbox-personal-dev
+location: eastus
+description: >
+  Personal sandbox workspace for Healthcare AI Marketplace.
+  Governed Azure ML environment for RCM data science workloads.
+display_name: Healthcare AI Marketplace — Personal Sandbox (Dev)
+storage_account: /subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/Microsoft.Storage/storageAccounts/aimarketstorp7a65r22uhdx
+key_vault: /subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/Microsoft.KeyVault/vaults/aimarket-kv-p7a65r22uhdx
+application_insights: /subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/microsoft.insights/components/aimarket-appins
+tags:
+  environment: dev
+  project: ai-marketplace
+  sandbox-type: personal
+  managed-by: ai-marketplace-platform

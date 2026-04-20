@@ -171,4 +171,10 @@ export const CONTAINERS = {
   POLICIES: "policies",
   ORCHESTRATION_TEMPLATES: "orchestration-templates",
   ORCHESTRATION_EXECUTIONS: "orchestration-executions",
+  // Sandbox Workspace
+  SANDBOXES: "sandboxes",
+  SANDBOX_TEMPLATES: "sandbox-templates",
+  DATA_PACKAGES: "data-packages",
+  SANDBOX_LIFECYCLE_EVENTS: "sandbox-lifecycle-events",
+  SANDBOX_COST_USAGE: "sandbox-cost-usage",
 } as const;

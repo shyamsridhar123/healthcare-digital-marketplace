@@ -243,7 +243,7 @@ app.http("healthSummary", {
           .fetchAll(),
       ]);
 
-      const allResources = [
+      const allResources: Record<string, unknown>[] = [
         ...serversResp.resources.map((r: Record<string, unknown>) => ({ ...r, resourceType: "mcp-server" })),
         ...agentsResp.resources.map((r: Record<string, unknown>) => ({ ...r, resourceType: "a2a-agent" })),
       ];
@@ -253,7 +253,7 @@ app.http("healthSummary", {
       const degraded = allResources.filter((r) => r.healthStatus === "degraded").length;
       const unhealthy = allResources.filter((r) => r.healthStatus === "unhealthy").length;
       const unknown = allResources.filter((r) => !r.healthStatus || r.healthStatus === "unknown").length;
-      const autoDisabled = allResources.filter((r) => r.status === "disabled" && (r.consecutiveFailures as number) > 0).length;
+      const autoDisabled = allResources.filter((r) => r.status === "disabled" && Number(r.consecutiveFailures) > 0).length;
 
       return {
         status: 200,

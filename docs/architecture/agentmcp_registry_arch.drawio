@@ -1,0 +1,88 @@
+<mxfile host="Electron" modified="2026-03-23T00:00:00.000Z" agent="GitHub Copilot" version="24.0.0" compressed="false">
+    <diagram id="agentmcp-registry-azure-icons" name="MCP Gateway Registry on Azure">
+        <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" background="#ffffff" math="0" shadow="1">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+
+                <mxCell id="title" value="MCP Gateway Registry on Azure" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#0b3b69;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="18" width="1360" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" value="Presentation view with explicit control-plane and data-plane separation" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#5b6573;fontStyle=2;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="52" width="1280" height="22" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="clients-zone" value="Clients" style="swimlane;startSize=30;fillColor=#f0f7ff;strokeColor=#7ea6d8;fontStyle=1;fontSize=15;fontColor=#1f4e79;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="120" width="220" height="610" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-ide" value="Coding Assistants&#xa;Copilot and VS Code" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/general/10787-icon-service-Code.svg;html=1;fontColor=#333333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="clients-zone">
+                    <mxGeometry x="24" y="56" width="72" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-agent" value="Autonomous Agents&#xa;LLM workflow apps" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10165-icon-service-Bot-Services.svg;html=1;fontColor=#333333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="clients-zone">
+                    <mxGeometry x="74" y="210" width="72" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="client-portal" value="Portal and Inspector&#xa;Internal Web UI" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/general/10783-icon-service-Browser.svg;html=1;fontColor=#333333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="clients-zone">
+                    <mxGeometry x="124" y="364" width="72" height="72" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="control-plane" value="Control Plane" style="swimlane;startSize=34;fillColor=#eef6ff;strokeColor=#5b9bd5;fontStyle=1;fontSize=16;fontColor=#0b5394;rounded=1;arcSize=8;" vertex="1" parent="1">
+                    <mxGeometry x="270" y="120" width="1180" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-edge" value="Azure Front Door" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/networking/10073-icon-service-Front-Door-and-CDN-Profiles.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="40" y="74" width="84" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-apim" value="API Management" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10042-icon-service-API-Management-Services.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="220" y="74" width="84" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-identity" value="Entra ID and Key Vault" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/security/10245-icon-service-Key-Vaults.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="420" y="74" width="84" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-platform" value="Container Apps Control Plane&#xa;Gateway and Registry Services" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02989-icon-service-Container-Apps-Environments.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="650" y="68" width="92" height="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-events" value="Service Bus" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10836-icon-service-Azure-Service-Bus.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="860" y="74" width="84" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-ops" value="Azure Monitor and ACR" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00001-icon-service-Monitor.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="control-plane">
+                    <mxGeometry x="1040" y="74" width="84" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="cp-note" value="Control plane handles ingress, identity, policy, registry management, deployment artifacts, and asynchronous control events." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#5b9bd5;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="control-plane">
+                    <mxGeometry x="36" y="210" width="1090" height="52" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="data-plane" value="Data Plane" style="swimlane;startSize=34;fillColor=#fff7e8;strokeColor=#d79b33;fontStyle=1;fontSize=16;fontColor=#9c6500;rounded=1;arcSize=8;" vertex="1" parent="1">
+                    <mxGeometry x="270" y="450" width="1180" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp-mcp" value="Registered MCP Servers" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02884-icon-service-Worker-Container-App.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="data-plane">
+                    <mxGeometry x="150" y="70" width="88" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp-functions" value="Functions-Based Tools" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/compute/10029-icon-service-Function-Apps.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="data-plane">
+                    <mxGeometry x="400" y="70" width="88" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp-cosmos" value="Cosmos DB&#xa;Registry Metadata" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10121-icon-service-Azure-Cosmos-DB.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="data-plane">
+                    <mxGeometry x="650" y="70" width="88" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp-enterprise" value="Enterprise Data and APIs" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10130-icon-service-SQL-Database.svg;html=1;fontColor=#333333;fontSize=13;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="data-plane">
+                    <mxGeometry x="900" y="70" width="88" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="dp-note" value="Data plane executes MCP tool calls and accesses business systems while the registry persists only discovery and control metadata." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d79b33;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="data-plane">
+                    <mxGeometry x="86" y="206" width="1010" height="40" as="geometry"/>
+                </mxCell>
+
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f81bd;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="client-ide" target="cp-edge"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f81bd;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="client-agent" target="cp-edge"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f81bd;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="client-portal" target="cp-edge"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#5b9bd5;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-edge" target="cp-apim"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e5" value="policy and auth" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#9a6fd1;fontColor=#9a6fd1;fontSize=10;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-identity" target="cp-apim"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#5b9bd5;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-apim" target="cp-platform"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e7" value="control events" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#5b9bd5;fontColor=#5b9bd5;fontSize=10;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-platform" target="cp-events"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e8" value="telemetry and images" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#d9965b;fontColor=#d9965b;fontSize=10;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-platform" target="cp-ops"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a64d79;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-platform" target="dp-mcp"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a64d79;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-platform" target="dp-functions"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e11" value="metadata" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b33;fontColor=#d79b33;fontSize=10;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="cp-platform" target="dp-cosmos"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e12" value="tool calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b33;fontColor=#d79b33;fontSize=10;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="dp-mcp" target="dp-enterprise"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b33;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="dp-functions" target="dp-enterprise"><mxGeometry relative="1" as="geometry"/></mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
