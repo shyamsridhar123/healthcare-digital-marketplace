@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ATV Security Target - Submitted AI Asset Security Review</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.example.invalid/chart.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">ATV</div>
+        <div>
+          <strong>AI Asset Review</strong>
+          <span>Submitted bundle</span>
+        </div>
+      </div>
+      <nav aria-label="Submitted asset review sections">
+        <a href="#review-packet">Review Packet</a>
+        <a href="#queue">Risky Payload</a>
+        <a href="#agents">Agents</a>
+        <a href="#mcp">MCP Tools</a>
+        <a href="#skills">Skills</a>
+        <a href="#llm">LLM Console</a>
+      </nav>
+    </aside>
+
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Submitted AI asset security review</p>
+          <h1>Marketplace Publication Gate</h1>
+          <p class="subhead">Claims data is the risky domain payload inside this intentionally vulnerable submitted bundle.</p>
+        </div>
+        <button id="loginButton" class="primary">Login as Demo Admin</button>
+      </header>
+
+      <section id="review-packet" class="review-packet panel" aria-label="Marketplace Review Packet">
+        <div class="panel-header">
+          <div>
+            <h2>Marketplace Review Packet</h2>
+            <p>Claims Triage Agent Bundle from Contoso Health AI Studio requests: Publish to enterprise AI Asset Marketplace.</p>
+            <p>Local-only demo fixture. Synthetic data. Seeded fallback report ready. Not a production publication workflow.</p>
+          </div>
+          <span id="reviewStatus" class="badge high">needs remediation</span>
+        </div>
+        <div id="assetSummary" class="packet-grid"></div>
+        <div class="split compact-split">
+          <div>
+            <h3>Bundle Inventory</h3>
+            <div id="bundleInventory" class="stack compact-stack"></div>
+          </div>
+          <div>
+            <h3>Requested Permissions</h3>
+            <div id="requestedPermissions" class="stack compact-stack"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Security demo metrics">
+        <div><span id="caseCount">0</span><p>Synthetic cases</p></div>
+        <div><span id="agentCount">0</span><p>Submitted agents</p></div>
+        <div><span id="toolCount">0</span><p>MCP tools</p></div>
+        <div><span>Block</span><p>Publication decision</p></div>
+      </section>
+
+      <section id="queue" class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Risky Claims Payload</h2>
+            <p>SQLite-backed synthetic claims cases used as scan evidence for access-control, injection, and disclosure risks.</p>
+          </div>
+          <div class="toolbar">
+            <input id="statusFilter" placeholder="Filter by status" aria-label="Filter synthetic cases by status" />
+            <button id="refreshCases">Refresh</button>
+          </div>
+        </div>
+        <div id="caseList" class="grid-list"></div>
+      </section>
+
+      <section class="split">
+        <div id="agents" class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Submitted Agents</h2>
+              <p>Agent definitions that call the demo LLM gateway and MCP tools.</p>
+            </div>
+          </div>
+          <div id="agentList" class="stack"></div>
+        </div>
+
+        <div id="mcp" class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>MCP Tool Evidence</h2>
+              <p>Tool registry exposed to the submitted agents.</p>
+            </div>
+          </div>
+          <div id="toolList" class="stack"></div>
+        </div>
+      </section>
+
+      <section class="split">
+        <div id="skills" class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Submitted Skills</h2>
+              <p>Reusable workflows packaged with the asset bundle.</p>
+            </div>
+          </div>
+          <div id="skillList" class="stack"></div>
+        </div>
+
+        <div id="llm" class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>LLM Console Fixture</h2>
+              <p>Mock gateway path for showing where claims context would flow.</p>
+            </div>
+          </div>
+          <textarea id="promptInput">Summarize case-200 and recommend next action.</textarea>
+          <button id="runLlm" class="primary">Run Mock LLM</button>
+          <pre id="llmOutput"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

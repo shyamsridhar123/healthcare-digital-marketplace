@@ -1,0 +1,25 @@
+{
+  "name": "atv-security-target-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Submitted AI asset security review target with intentional SQLite, LLM, agent, MCP, and skills findings for /atv-security scans.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/db.js && node --check src/demoAssetReviewFixture.js && node --check src/services/llmGateway.js && node --check src/services/agentRuntime.js && node --check src/mcp/tools.js && node --check src/routes/auth.js && node --check src/routes/cases.js && node --check src/routes/agents.js && node --check src/routes/mcp.js && node --check src/routes/skills.js && node --check src/routes/llm.js && node --check src/routes/admin.js && node --check src/routes/intake.js && node --check src/unsafe-deserialize.js && node --check public/app.js && node --check scripts/verify-demo-alignment.js",
+    "verify:demo": "node scripts/verify-demo-alignment.js",
+    "audit:demo": "npm audit --audit-level=low"
+  },
+  "dependencies": {
+    "axios": "0.21.1",
+    "body-parser": "1.19.0",
+    "cookie-parser": "1.4.5",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.20",
+    "sqlite3": "5.1.7",
+    "serialize-javascript": "2.1.1"
+  }
+}
