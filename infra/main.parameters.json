@@ -16,6 +16,12 @@
     },
     "azureAdTenantId": {
       "value": "${AZURE_AD_TENANT_ID}"
+    },
+    "githubWebhookSecret": {
+      "value": "${GITHUB_WEBHOOK_SECRET}"
+    },
+    "deploymentOutputsSecret": {
+      "value": "${DEPLOYMENT_OUTPUTS_SECRET}"
     }
   }
 }

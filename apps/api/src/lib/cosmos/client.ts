@@ -6,6 +6,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { CosmosClient, type Container } from "@azure/cosmos";
+
 // ── types ────────────────────────────────────────────────────────────────────
 
 interface QueryParameter {
@@ -16,6 +18,20 @@ interface QueryParameter {
 interface QuerySpec {
   query: string;
   parameters?: QueryParameter[];
+}
+
+interface MarketplaceContainer {
+  readonly items: {
+    create: <T = any>(body: T) => Promise<{ resource: T | undefined }>;
+    upsert: <T = any>(body: T) => Promise<{ resource: T | undefined }>;
+    query: <T = any>(spec: QuerySpec | string) => {
+      fetchAll: () => Promise<{ resources: T[] }>;
+    };
+  };
+  item(id: string, partitionKey?: string): {
+    delete: () => Promise<any>;
+    read: <T = any>() => Promise<{ resource: T | undefined }>;
+  };
 }
 
 // ── in-memory store ──────────────────────────────────────────────────────────
@@ -81,7 +97,7 @@ function buildPredicate(
 
 // ── fake Container ────────────────────────────────────────────────────────────
 
-class InMemoryContainer {
+class InMemoryContainer implements MarketplaceContainer {
   constructor(private readonly containerName: string) {}
 
   /** Mimic CosmosDB Container.items */
@@ -135,20 +151,97 @@ class InMemoryContainer {
   }
 }
 
+class CosmosContainerAdapter implements MarketplaceContainer {
+  constructor(private readonly container: Container) {}
+
+  readonly items = {
+    create: async <T = any>(body: T): Promise<{ resource: T | undefined }> => {
+      const { resource } = await this.container.items.create(body as any);
+      return { resource: resource as T | undefined };
+    },
+
+    upsert: async <T = any>(body: T): Promise<{ resource: T | undefined }> => {
+      const { resource } = await this.container.items.upsert(body as any);
+      return { resource: resource as T | undefined };
+    },
+
+    query: <T = any>(spec: QuerySpec | string) => {
+      const queryIterator = this.container.items.query<T>(spec as any);
+      return {
+        fetchAll: async (): Promise<{ resources: T[] }> => queryIterator.fetchAll(),
+      };
+    },
+  };
+
+  item(id: string, partitionKey?: string) {
+    return {
+      delete: async (): Promise<any> => {
+        return this.container.item(id, requirePartitionKey(partitionKey)).delete();
+      },
+      read: async <T = any>(): Promise<{ resource: T | undefined }> => {
+        const { resource } = await this.container.item(id, requirePartitionKey(partitionKey)).read<any>();
+        return { resource };
+      },
+    };
+  }
+}
+
+function requirePartitionKey(partitionKey: string | undefined): string {
+  if (!partitionKey) {
+    throw new Error('Cosmos item read/delete requires an explicit partitionKey.');
+  }
+
+  return partitionKey;
+}
+
 // ── public API ────────────────────────────────────────────────────────────────
+
+let cosmosClient: CosmosClient | undefined;
+
+function getCosmosContainer(containerName: string): MarketplaceContainer | null {
+  const endpoint = process.env.COSMOS_ENDPOINT;
+  const key = process.env.COSMOS_KEY;
+  const databaseName = process.env.COSMOS_DATABASE ?? "ai-marketplace";
+
+  if (!endpoint || !key) {
+    return null;
+  }
+
+  cosmosClient ??= new CosmosClient({ endpoint, key });
+  return new CosmosContainerAdapter(cosmosClient.database(databaseName).container(containerName));
+}
 
 export async function getContainer(
   containerName: string
-): Promise<InMemoryContainer> {
-  return new InMemoryContainer(containerName);
+): Promise<MarketplaceContainer> {
+  const cosmosContainer = getCosmosContainer(containerName);
+  if (cosmosContainer) {
+    return cosmosContainer;
+  }
+
+  if (allowsInMemoryCosmos()) {
+    return new InMemoryContainer(containerName);
+  }
+
+  throw new Error("Cosmos configuration missing. Set COSMOS_ENDPOINT and COSMOS_KEY, or set UAP_USE_IN_MEMORY_COSMOS=true for local development.");
+}
+
+function allowsInMemoryCosmos(): boolean {
+  return process.env.UAP_USE_IN_MEMORY_COSMOS === "true"
+    || process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development"
+    || process.env.NODE_ENV === "test";
 }
 
 export const CONTAINERS = {
   ASSETS: "assets",
   PUBLISHERS: "publishers",
   SUBMISSIONS: "submissions",
+  AGENT_CARDS: "agent-cards",
+  REPO_BINDINGS: "repo-bindings",
+  TENANT_POLICIES: "tenant-policies",
   WORKFLOWS: "workflows",
   AUDIT_LOG: "audit-log",
+  AUDIT_EVENTS: "audit-events",
   RATINGS: "ratings",
   PROJECTS: "projects",
   VERSION_PINS: "version-pins",
@@ -167,6 +260,7 @@ export const CONTAINERS = {
   // Ops
   SERVER_HEALTH: "server-health",
   SECURITY_SCANS: "security-scans",
+  SEARCH_REINDEX_REQUESTS: "search-reindex-requests",
   // Policy & Orchestration
   POLICIES: "policies",
   ORCHESTRATION_TEMPLATES: "orchestration-templates",

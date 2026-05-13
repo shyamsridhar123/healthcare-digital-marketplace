@@ -7,7 +7,10 @@ param location string
 @description('Database name')
 param databaseName string = 'ai-marketplace'
 
-resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
+@description('Reference an existing Cosmos DB account instead of creating/updating account-level settings.')
+param useExistingAccount bool = false
+
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = if (!useExistingAccount) {
   name: accountName
   location: location
   kind: 'GlobalDocumentDB'
@@ -33,12 +36,16 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
   }
 }
 
+resource existingCosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existing = if (useExistingAccount) {
+  name: accountName
+}
+
 resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15' = {
-  parent: cosmosAccount
-  name: databaseName
+  name: '${accountName}/${databaseName}'
   properties: {
     resource: { id: databaseName }
   }
+  dependsOn: useExistingAccount ? [] : [cosmosAccount]
 }
 
 // ─── Containers with partition keys ─────────────────────────────────────────
@@ -92,6 +99,64 @@ resource submissionsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabase
   }
 }
 
+resource agentCardsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'agent-cards'
+  properties: {
+    resource: {
+      id: 'agent-cards'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+        compositeIndexes: [
+          [
+            { path: '/name', order: 'ascending' }
+            { path: '/lifecycle/last_active_version', order: 'ascending' }
+          ]
+          [
+            { path: '/risk_tier', order: 'ascending' }
+            { path: '/lifecycle/created_at', order: 'descending' }
+          ]
+        ]
+      }
+    }
+  }
+}
+
+resource repoBindingsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'repo-bindings'
+  properties: {
+    resource: {
+      id: 'repo-bindings'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+      }
+    }
+  }
+}
+
+resource tenantPoliciesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'tenant-policies'
+  properties: {
+    resource: {
+      id: 'tenant-policies'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+      }
+    }
+  }
+}
+
 resource workflowsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: database
   name: 'workflows'
@@ -111,6 +176,18 @@ resource auditLogContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/c
       id: 'audit-log'
       partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
       defaultTtl: 7776000  // 90 days TTL
+    }
+  }
+}
+
+resource auditEventsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'audit-events'
+  properties: {
+    resource: {
+      id: 'audit-events'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      defaultTtl: 7776000
     }
   }
 }
@@ -378,6 +455,7 @@ resource sandboxCostUsageContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDat
   }
 }
 
-output endpoint string = cosmosAccount.properties.documentEndpoint
-output primaryKey string = cosmosAccount.listKeys().primaryMasterKey
-output accountName string = cosmosAccount.name
+output endpoint string = useExistingAccount ? existingCosmosAccount.properties.documentEndpoint : cosmosAccount.properties.documentEndpoint
+@secure()
+output primaryKey string = useExistingAccount ? existingCosmosAccount.listKeys().primaryMasterKey : cosmosAccount.listKeys().primaryMasterKey
+output accountName string = accountName

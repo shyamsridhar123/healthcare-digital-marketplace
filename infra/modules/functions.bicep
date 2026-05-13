@@ -10,6 +10,9 @@ param storageAccountName string
 @description('Application Insights instrumentation key')
 param appInsightsInstrumentationKey string
 
+@description('Application Insights connection string')
+param appInsightsConnectionString string
+
 @description('Cosmos DB endpoint')
 param cosmosEndpoint string
 
@@ -17,11 +20,29 @@ param cosmosEndpoint string
 @secure()
 param cosmosKey string
 
+@description('GitHub webhook HMAC secret (or Key Vault reference string)')
+@secure()
+param githubWebhookSecret string
+
+@description('Deployment outputs HMAC secret (or Key Vault reference string)')
+@secure()
+param deploymentOutputsSecret string
+
 @description('Key Vault name — used to grant the Function App Secrets User role')
 param keyVaultName string = ''
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    allowBlobPublicAccess: false
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+  }
 }
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
@@ -58,6 +79,12 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' }
         { name: 'WEBSITE_NODE_DEFAULT_VERSION', value: '~20' }
         { name: 'APPINSIGHTS_INSTRUMENTATIONKEY', value: appInsightsInstrumentationKey }
+        { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsightsConnectionString }
+        { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
+        { name: 'COSMOS_KEY', value: cosmosKey }
+        { name: 'COSMOS_DATABASE', value: 'ai-marketplace' }
+        { name: 'GITHUB_WEBHOOK_SECRET', value: githubWebhookSecret }
+        { name: 'DEPLOYMENT_OUTPUTS_SECRET', value: deploymentOutputsSecret }
       ]
       cors: {
         allowedOrigins: ['*']  // Tighten in production

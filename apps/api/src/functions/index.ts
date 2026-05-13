@@ -35,6 +35,15 @@ export * from "./security/scans.js";
 // Health Monitoring
 export * from "./health/server-health.js";
 
+// Onboarding foundation
+export * from "./onboarding/telemetry.js";
+export * from "./onboarding/github-webhook.js";
+export * from "./onboarding/deployment-outputs.js";
+export * from "./onboarding/submissions.js";
+export * from "./onboarding/gate.js";
+export * from "./onboarding/eval-report.js";
+export * from "./onboarding/evidence.js";
+
 // Enhanced Audit Log
 export * from "./audit/audit-log.js";
 

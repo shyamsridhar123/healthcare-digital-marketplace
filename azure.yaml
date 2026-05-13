@@ -16,7 +16,10 @@ services:
   api:
     project: ./apps/api
     language: ts
-    host: function
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: .
 
 infra:
   provider: bicep
