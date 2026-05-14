@@ -15,12 +15,15 @@ test('activateSubmissionDeployment writes active AgentCard projections and updat
       id: submissionId,
       tenantId,
       status: 'approved',
-      assetName: 'Claims Copilot',
       type: 'Agent',
-      description: 'Assists claims analysts with document summarization and routing.',
-      version: '1.0.0',
-      capabilities: ['claims-summary'],
-      rai: { tags: ['human-in-the-loop'], data_categories: ['pii'] },
+      manifest: {
+        name: 'Claims Copilot',
+        description: 'Assists claims analysts with document summarization and routing.',
+        version: '1.0.0',
+        capabilities: ['claims-summary'],
+        rai: { tags: ['human-in-the-loop'], data_categories: ['pii'] },
+        network: { egress: false },
+      },
       submittedAt: new Date().toISOString(),
     });
 
@@ -45,7 +48,11 @@ test('activateSubmissionDeployment writes active AgentCard projections and updat
     }).fetchAll();
     assert.equal(activeAgents.length, 1);
     assert.equal(activeAgents[0].status, 'active');
+    assert.equal(activeAgents[0].agentCard.name, 'Claims Copilot');
+    assert.equal(activeAgents[0].agentCard.description, 'Assists claims analysts with document summarization and routing.');
+    assert.equal(activeAgents[0].agentCard.version, '1.0.0');
     assert.equal(activeAgents[0].agentCard.url, 'https://claims-copilot.example.com/a2a');
+    assert.deepEqual(activeAgents[0].tags, ['claims-summary']);
 
     const { resource: updatedSubmission } = await submissions.item(submissionId, tenantId).read();
     assert.equal(updatedSubmission.status, 'active');

@@ -38,16 +38,24 @@ export async function activateSubmissionDeployment(input: ActivateSubmissionDepl
 
   const now = new Date().toISOString();
   const agentId = String(submission.agentId ?? `agent-${input.submissionId}`);
-  const version = String(submission.version ?? '1.0.0');
-  const name = String(submission.assetName ?? submission.name ?? 'Onboarded Agent');
-  const description = String(submission.description ?? 'Onboarded marketplace agent.');
+  const manifest = submission.manifest && typeof submission.manifest === 'object' ? submission.manifest : {};
+  const version = String(submission.version ?? manifest.version ?? '1.0.0');
+  const name = String(submission.assetName ?? submission.name ?? manifest.name ?? 'Onboarded Agent');
+  const description = String(submission.description ?? manifest.description ?? 'Onboarded marketplace agent.');
   const dataCategories = Array.isArray(submission.rai?.data_categories)
     ? submission.rai.data_categories
+    : Array.isArray(manifest.rai?.data_categories)
+      ? manifest.rai.data_categories
     : Array.isArray(submission.dataCategories)
       ? submission.dataCategories
       : ['none'];
-  const capabilities: string[] = Array.isArray(submission.capabilities) ? submission.capabilities.map(String) : [];
-  const riskTier = classifyRiskTier({ dataCategories: dataCategories.map(String), networkEgress: submission.network?.egress === true });
+  const capabilities: string[] = Array.isArray(submission.capabilities)
+    ? submission.capabilities.map(String)
+    : Array.isArray(manifest.capabilities)
+      ? manifest.capabilities.map(String)
+      : [];
+  const networkEgress = submission.network?.egress === true || manifest.network?.egress === true;
+  const riskTier = classifyRiskTier({ dataCategories: dataCategories.map(String), networkEgress });
 
   const agentCard = {
     name,
