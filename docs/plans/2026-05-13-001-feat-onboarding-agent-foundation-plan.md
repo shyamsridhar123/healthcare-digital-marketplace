@@ -45,7 +45,7 @@ It does not implement the Publisher API, MAF Onboarding Agent, GitHub App, Terra
 - Create: `apps/api/test/phi-scrubber.test.js`
 - Modify: `apps/api/package.json`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `apps/api/test/phi-scrubber.test.js`:
 
@@ -122,7 +122,7 @@ Modify `apps/api/package.json` scripts:
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run from `apps/api`:
 
@@ -132,7 +132,7 @@ npm run test:onboarding
 
 Expected: FAIL because `dist/src/lib/telemetry/phi-scrubber.js` does not exist.
 
-- [ ] **Step 3: Implement minimal scrubber**
+- [x] **Step 3: Implement minimal scrubber**
 
 Create `apps/api/src/lib/telemetry/phi-scrubber.ts`:
 
@@ -199,7 +199,7 @@ export function summarizePhiFindings(value: string): PhiFindingSummary {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run from `apps/api`:
 
@@ -216,7 +216,7 @@ Expected: PASS with 3 tests passing.
 **Files:**
 - Modify: `infra/modules/cosmos.bicep`
 
-- [ ] **Step 1: Write the failing structural check**
+- [x] **Step 1: Write the failing structural check**
 
 Run from repo root:
 
@@ -226,7 +226,7 @@ powershell -NoProfile -Command "$content = Get-Content infra/modules/cosmos.bice
 
 Expected: FAIL with `Missing container agent-cards`.
 
-- [ ] **Step 2: Add containers**
+- [x] **Step 2: Add containers**
 
 Append after the existing `submissionsContainer` in `infra/modules/cosmos.bicep`:
 
@@ -290,7 +290,7 @@ resource tenantPoliciesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
 }
 ```
 
-- [ ] **Step 3: Verify structural check passes**
+- [x] **Step 3: Verify structural check passes**
 
 Run the same PowerShell command from Step 1.
 
@@ -305,7 +305,7 @@ Expected: exit 0.
 - Modify: `infra/modules/appinsights.bicep`
 - Modify: `infra/main.bicep`
 
-- [ ] **Step 1: Write the failing structural check**
+- [x] **Step 1: Write the failing structural check**
 
 Run from repo root:
 
@@ -315,7 +315,7 @@ powershell -NoProfile -Command "$required = 'Microsoft.Insights/workbooks','Micr
 
 Expected: FAIL because the module does not exist.
 
-- [ ] **Step 2: Add workspace output to App Insights module**
+- [x] **Step 2: Add workspace output to App Insights module**
 
 Modify `infra/modules/appinsights.bicep` to include:
 
@@ -323,7 +323,7 @@ Modify `infra/modules/appinsights.bicep` to include:
 output workspaceId string = workspace.id
 ```
 
-- [ ] **Step 3: Create onboarding monitoring module**
+- [x] **Step 3: Create onboarding monitoring module**
 
 Create `infra/modules/onboarding-monitoring.bicep`:
 
@@ -426,7 +426,7 @@ resource scheduledAlerts 'Microsoft.Insights/scheduledQueryRules@2023-12-01' = [
 output workbookId string = workbook.id
 ```
 
-- [ ] **Step 4: Wire module in `infra/main.bicep`**
+- [x] **Step 4: Wire module in `infra/main.bicep`**
 
 Add after the `appInsights` module:
 
@@ -448,7 +448,7 @@ Also add to `infra/modules/appinsights.bicep`:
 output resourceId string = appInsights.id
 ```
 
-- [ ] **Step 5: Verify structural check passes**
+- [x] **Step 5: Verify structural check passes**
 
 Run Step 1's PowerShell command again.
 
@@ -461,7 +461,7 @@ Expected: exit 0.
 **Files:**
 - All files from Tasks 1-3
 
-- [ ] **Step 1: Run API onboarding tests**
+- [x] **Step 1: Run API onboarding tests**
 
 Run from `apps/api`:
 
@@ -471,7 +471,7 @@ npm run test:onboarding
 
 Expected: PASS with PHI scrubber tests passing.
 
-- [ ] **Step 2: Run API build**
+- [x] **Step 2: Run API build**
 
 Run from repo root:
 
@@ -481,7 +481,7 @@ npm run api:build
 
 Expected: TypeScript build completes with exit code 0.
 
-- [ ] **Step 3: Run Bicep build**
+- [x] **Step 3: Run Bicep build**
 
 Run from repo root:
 
@@ -491,7 +491,7 @@ az bicep build --file infra/main.bicep
 
 Expected: Bicep compilation succeeds and writes `infra/main.json`.
 
-- [ ] **Step 4: Check git diff for scope**
+- [x] **Step 4: Check git diff for scope**
 
 Run from repo root:
 
@@ -505,7 +505,7 @@ Expected: diff is limited to the files in this plan.
 
 ## Self-Review Checklist
 
-- [ ] Spec coverage: PHI scrubber, Cosmos containers, monitoring workbook/alerts are covered.
-- [ ] Placeholder scan: no `TBD`, `TODO`, `FIXME`, `implement later`, or vague instructions.
-- [ ] Type consistency: exported TypeScript names match test imports.
-- [ ] Verification: tests/build/Bicep compile run fresh before completion claims.
+- [x] Spec coverage: PHI scrubber, Cosmos containers, monitoring workbook/alerts are covered.
+- [x] Placeholder scan: no `TBD`, `TODO`, `FIXME`, `implement later`, or vague instructions.
+- [x] Type consistency: exported TypeScript names match test imports.
+- [x] Verification: tests/build/Bicep compile run fresh before completion claims.
