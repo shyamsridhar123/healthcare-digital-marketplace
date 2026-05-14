@@ -33,6 +33,10 @@ export interface Asset {
   publishedDate: string // Initial publish date
   orchestrationUsage: number // Number of orchestrations/projects using this asset
   capabilities: string[] // List of key capabilities
+  installCommand?: string
+  invocation?: string
+  uiHref?: string
+  docsHref?: string
 }
 
 export type WorkflowNodeType =

@@ -40,6 +40,7 @@ import {
   PanelLeft,
   X,
   FlaskRound,
+  ClipboardCheck,
 } from "lucide-react"
 import { useAccount, useMsal } from "@azure/msal-react"
 import { Button } from "@/components/ui/button"
@@ -186,6 +187,14 @@ const developmentItems: NavItem[] = [
     href: "/orchestration",
     icon: Workflow,
     description: "Visual workflow designer",
+  },
+  {
+    label: "Onboard Agent",
+    href: "/onboarding/new",
+    icon: ClipboardCheck,
+    badge: "Skill",
+    badgeColor: "bg-emerald-500/20 text-emerald-400",
+    description: "Publish via VS Code, CLI, or UI",
   },
   {
     label: "IMDE",
@@ -776,7 +785,7 @@ function DevelopmentSection({ collapsed = false, onNavigate }: { collapsed?: boo
       )}
       <ul className="space-y-1">
         <li>
-          <NavSection collapsed={collapsed} onNavigate={onNavigate} items={[{ label: "Agent Builder", href: "/orchestration", icon: Workflow, description: "Visual workflow designer" }]} />
+          <NavSection collapsed={collapsed} onNavigate={onNavigate} items={developmentItems.slice(0, 2)} />
         </li>
         <li>
           <ImdeSection collapsed={collapsed} onNavigate={onNavigate} />

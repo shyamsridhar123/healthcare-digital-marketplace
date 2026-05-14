@@ -59,7 +59,7 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
   const Icon = iconMap[asset.icon] || Brain
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`npx azure-ai add ${asset.id}`)
+    navigator.clipboard.writeText(asset.installCommand ?? `npx azure-ai add ${asset.id}`)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -241,6 +241,13 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
                   Add to Workflow
                 </Button>
               </Link>
+              {asset.uiHref && (
+                <Link href={asset.uiHref}>
+                  <Button variant="secondary" className="mt-2 w-full">
+                    Onboard via UI
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" className="mt-2 w-full">
                 Install Standalone
               </Button>
@@ -249,7 +256,7 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
                 <p className="mb-2 text-xs text-muted-foreground">Install via CLI</p>
                 <div className="flex items-center gap-2">
                   <code className="flex-1 truncate font-mono text-xs text-foreground">
-                    npx azure-ai add {asset.id}
+                    {asset.installCommand ?? `npx azure-ai add ${asset.id}`}
                   </code>
                   <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCopy}>
                     {copied ? (
@@ -260,6 +267,12 @@ export default function AssetDetailPage({ params }: { params: Promise<{ id: stri
                   </Button>
                 </div>
               </div>
+              {asset.invocation && (
+                <div className="mt-3 rounded-md border border-border bg-background/60 p-3">
+                  <p className="mb-1 text-xs text-muted-foreground">Invoke in VS Code</p>
+                  <code className="font-mono text-xs text-foreground">{asset.invocation}</code>
+                </div>
+              )}
             </div>
 
             <div className="rounded-lg border border-border bg-card p-4">

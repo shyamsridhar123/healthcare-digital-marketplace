@@ -2,6 +2,30 @@ import { Asset, Workflow } from "./types"
 
 export const assets: Asset[] = [
   {
+    id: "uap-onboarding-agent",
+    name: "UAP Onboarding Agent",
+    description: "VS Code-ready onboarding agent skill for publishing domain agents into AI Marketplace. It guides manifest authoring, CLI submission, GitHub push onboarding, evidence gates, eval ingestion, and activation checks.",
+    summary: "Onboard domain agents from VS Code, CLI, GitHub, or portal",
+    type: "agent",
+    category: "AI Agents",
+    publisher: "AI Marketplace Platform",
+    publisherVerified: true,
+    version: "1.0.0",
+    downloads: 1,
+    rating: 5.0,
+    tags: ["onboarding", "vscode", "github", "governance"],
+    pricing: "Enterprise",
+    icon: "Workflow",
+    lastUpdated: "2026-05-13",
+    publishedDate: "2026-05-13",
+    orchestrationUsage: 1,
+    capabilities: ["VS Code Skill", "Manifest Authoring", "CLI Guidance", "UI Onboarding"],
+    installCommand: "Copy-Item -Recurse .github/skills/uap-onboarding $env:USERPROFILE\\.copilot\\skills\\uap-onboarding -Force",
+    invocation: "/uap-onboarding",
+    uiHref: "/onboarding/new",
+    docsHref: "/docs/onboarding/domain-engineer-quickstart.md"
+  },
+  {
     id: "agent-1",
     name: "Claims Processing Agent",
     description: "AI-powered claims processing agent that automates claim submission, validation, and adjudication with payer-specific rules engine.",
