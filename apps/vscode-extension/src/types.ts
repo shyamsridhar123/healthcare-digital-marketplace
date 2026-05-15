@@ -37,7 +37,7 @@ export function parseFrontmatter(markdown: string): ParsedSkill {
     const key = line.slice(0, colon).trim();
     let value: string = line.slice(colon + 1).trim();
     if (value.startsWith("[") && value.endsWith("]")) {
-      fm[key] = value.slice(1, -1).split(",").map(v => v.trim().replace(/^["']|["']$/g, "")).filter(Boolean);
+      fm[key] = splitArrayItems(value.slice(1, -1));
       continue;
     }
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
@@ -46,4 +46,23 @@ export function parseFrontmatter(markdown: string): ParsedSkill {
     fm[key] = value;
   }
   return { frontmatter: fm, body: match[2] ?? "" };
+}
+
+function splitArrayItems(inner: string): string[] {
+  const items: string[] = [];
+  let buf = "";
+  let quote: '"' | "'" | null = null;
+  for (const ch of inner) {
+    if (quote) {
+      if (ch === quote) quote = null;
+      else buf += ch;
+      continue;
+    }
+    if (ch === '"' || ch === "'") { quote = ch; continue; }
+    if (ch === ",") { const t = buf.trim(); if (t) items.push(t); buf = ""; continue; }
+    buf += ch;
+  }
+  const last = buf.trim();
+  if (last) items.push(last);
+  return items;
 }

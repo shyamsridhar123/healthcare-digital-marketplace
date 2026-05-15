@@ -28,4 +28,9 @@ body content`;
     const { frontmatter } = parseFrontmatter(`---\nname: "quoted"\n---\nx`);
     expect(frontmatter.name).toBe("quoted");
   });
+
+  it("preserves commas inside quoted array items", () => {
+    const { frontmatter } = parseFrontmatter(`---\ntriggers: ["when X, then Y", "plain"]\n---\nx`);
+    expect(frontmatter.triggers).toEqual(["when X, then Y", "plain"]);
+  });
 });
