@@ -1,0 +1,68 @@
+{
+  "name": "ai-marketplace-skills",
+  "displayName": "AI Marketplace Skills",
+  "description": "Browse and install AI Marketplace skills directly in VS Code.",
+  "publisher": "ai-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "engines": { "vscode": "^1.95.0" },
+  "categories": ["Other", "AI"],
+  "main": "./out/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "aiMarketplace", "title": "AI Marketplace", "icon": "resources/marketplace-icon.svg" }
+      ]
+    },
+    "views": {
+      "aiMarketplace": [{ "id": "skillsTreeView", "name": "Skills" }]
+    },
+    "commands": [
+      { "command": "marketplace.installSkill",   "title": "Install Skill",   "category": "AI Marketplace" },
+      { "command": "marketplace.uninstallSkill", "title": "Uninstall Skill", "category": "AI Marketplace" },
+      { "command": "marketplace.refreshSkills",  "title": "Refresh",         "category": "AI Marketplace", "icon": "$(refresh)" },
+      { "command": "marketplace.openInBrowser",  "title": "Open in Browser", "category": "AI Marketplace" },
+      { "command": "marketplace.openSkillDetail","title": "Open Skill",      "category": "AI Marketplace" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "marketplace.refreshSkills", "when": "view == skillsTreeView", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "marketplace.installSkill",   "when": "view == skillsTreeView && viewItem == skill-available", "group": "inline" },
+        { "command": "marketplace.uninstallSkill", "when": "view == skillsTreeView && viewItem == skill-installed", "group": "inline" },
+        { "command": "marketplace.openInBrowser",  "when": "view == skillsTreeView && viewItem =~ /^skill-/" }
+      ]
+    },
+    "configuration": {
+      "title": "AI Marketplace",
+      "properties": {
+        "aiMarketplace.apiUrl":     { "type": "string", "default": "http://localhost:7071/api", "description": "Base URL of the AI Marketplace registry API." },
+        "aiMarketplace.githubRepo": { "type": "string", "default": "rajesh-ms/ai-marketplace",  "description": "owner/repo used as fallback when the API is unreachable." }
+      }
+    },
+    "chatParticipants": [
+      { "id": "ai-marketplace.marketplace", "name": "marketplace", "description": "Browse and install AI Marketplace skills", "isSticky": true }
+    ]
+  },
+  "scripts": {
+    "build":   "node esbuild.js --production",
+    "watch":   "node esbuild.js --watch",
+    "test:unit":        "vitest run",
+    "test:integration": "node ./out/tests/integration/runTest.js",
+    "test":    "npm run test:unit && npm run build && npm run test:integration",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "mocha": "^10.7.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.0"
+  }
+}

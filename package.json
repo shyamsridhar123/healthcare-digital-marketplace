@@ -5,7 +5,8 @@
   "description": "Root workspace manifest for the AI Asset Marketplace monorepo.",
   "workspaces": [
     "apps/web",
-    "apps/api"
+    "apps/api",
+    "apps/vscode-extension"
   ],
   "scripts": {
     "dev": "npm run dev --workspace ai-marketplace-web --",
@@ -15,7 +16,11 @@
     "type-check": "npm run type-check --workspace ai-marketplace-web --",
     "api:build": "npm run build --workspace ai-marketplace-api --",
     "api:dev": "npm run dev --workspace ai-marketplace-api --",
-    "api:start": "npm run start --workspace ai-marketplace-api --"
+    "api:start": "npm run start --workspace ai-marketplace-api --",
+    "ext:build": "npm run build   --workspace ai-marketplace-skills --",
+    "ext:watch": "npm run watch   --workspace ai-marketplace-skills --",
+    "ext:test": "npm run test    --workspace ai-marketplace-skills --",
+    "ext:package": "npm run package --workspace ai-marketplace-skills --"
   },
   "engines": {
     "node": ">=20"
