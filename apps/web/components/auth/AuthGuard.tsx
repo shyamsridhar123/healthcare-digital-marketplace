@@ -11,6 +11,11 @@ import { Building2, LogIn } from "lucide-react"
  * Place this inside <AuthProvider> in the root layout.
  */
 export function AuthGuard({ children }: { children: ReactNode }) {
+  // Demo/E2E bypass — set NEXT_PUBLIC_AUTH_DISABLED=true to skip Entra sign-in.
+  if (process.env.NEXT_PUBLIC_AUTH_DISABLED === "true") {
+    return <>{children}</>
+  }
+
   const { instance, inProgress } = useMsal()
   const isAuthenticated = useIsAuthenticated()
 
