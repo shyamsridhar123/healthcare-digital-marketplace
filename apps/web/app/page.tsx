@@ -20,7 +20,7 @@ export default function MarketplacePage() {
         selectedTab === "agents" ? asset.type === "agent" :
         selectedTab === "tools"  ? (asset.type === "mcp-tool" || asset.type === "mcp-server") :
         selectedTab === "models" ? asset.type === "model" :
-        selectedTab === "skills" ? asset.type === "workflow-template" :
+        selectedTab === "skills" ? asset.type === "workflow-template" || asset.tags.includes("skill") || asset.capabilities.includes("VS Code Skill") :
         true // stats / mcp / default: show all
 
       const matchesSearch =
@@ -38,7 +38,7 @@ export default function MarketplacePage() {
     agents: assets.filter(a => a.type === "agent").length,
     mcp:    assets.filter(a => a.type === "mcp-tool" || a.type === "mcp-server").length,
     models: assets.filter(a => a.type === "model").length,
-    skills: assets.reduce((acc, a) => acc + a.capabilities.length, 0),
+    skills: assets.filter(a => a.type === "workflow-template" || a.tags.includes("skill") || a.capabilities.includes("VS Code Skill")).length,
   }
 
   // Get tab title

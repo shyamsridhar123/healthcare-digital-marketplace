@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import SkillCard from "@/components/registry/SkillCard";
 import type { RegistrySkill } from "@/lib/types";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:7071/api";
+
 export default function SkillsRegistryPage() {
   const [skills, setSkills] = useState<RegistrySkill[]>([]);
   const [total, setTotal] = useState(0);
@@ -22,7 +24,7 @@ export default function SkillsRegistryPage() {
     const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
     if (search) params.set("search", search);
     if (category) params.set("category", category);
-    const resp = await fetch(`/api/registry/skills?${params}`);
+    const resp = await fetch(`${API_BASE_URL}/registry/skills?${params}`);
     if (resp.ok) {
       const d = await resp.json() as { items: RegistrySkill[]; total: number };
       setSkills(d.items ?? []);
@@ -38,7 +40,7 @@ export default function SkillsRegistryPage() {
     if (!importUrl.trim()) return;
     setImporting(true);
     setImportMsg(null);
-    const resp = await fetch("/api/registry/skills/import", {
+    const resp = await fetch(`${API_BASE_URL}/registry/skills/import`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sourceUrl: importUrl }),
@@ -55,7 +57,7 @@ export default function SkillsRegistryPage() {
   }
 
   async function handleStar(id: string) {
-    await fetch(`/api/registry/skills/${id}/star`, { method: "POST" });
+    await fetch(`${API_BASE_URL}/registry/skills/${id}/star`, { method: "POST" });
     setSkills((prev) => prev.map((s) => s.id === id ? { ...s, stars: s.stars + 1 } : s));
   }
 

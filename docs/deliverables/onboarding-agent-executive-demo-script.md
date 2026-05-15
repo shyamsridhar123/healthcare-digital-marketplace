@@ -11,6 +11,8 @@ Show how AI Marketplace reduces domain-agent onboarding from a manual platform-e
 - Local API: `http://localhost:7071/api`
 - Demo repo: `demos/optum-uhg`
 - GitHub repo: `https://github.com/rajesh-ms/optum-uhg`
+- Marketplace branch: `feat/onboarding-agent-flow`
+- Skills Registry: `http://127.0.0.1:3000/registry/skills`
 
 ## Storyline
 
@@ -32,6 +34,21 @@ Point out:
 - `/uap-onboarding` invocation
 - `Onboard via UI` button
 
+Then open the Skills experience:
+
+- Marketplace Skills tab on `http://127.0.0.1:3000`
+- Skills Registry at `http://127.0.0.1:3000/registry/skills`
+
+Talk track:
+
+> The same onboarding capability is also published as a downloadable VS Code skill. Domain engineers can discover it under Skills, install it locally, and use the same guided workflow without leaving VS Code.
+
+Point out:
+
+- `UAP Onboarding VS Code Skill` in the marketplace Skills tab
+- `uap-onboarding` in the Agent Skills Registry
+- trigger phrases such as `uap-onboarding` and `onboard domain agent`
+
 ### 3. Show The Demo Agent Repo
 
 Open `demos/optum-uhg`.
@@ -45,6 +62,8 @@ Show:
 - `agent-manifest.json`
 - `src/agent.js`
 - `.github/workflows/marketplace-onboarding.yml`
+- `.github/scripts/post-validation-evidence.ps1`
+- `.github/scripts/publish-to-marketplace.ps1`
 
 ### 4. Run Local Validation
 
@@ -70,7 +89,7 @@ Show the workflow file:
 
 Talk track:
 
-> On push to `main`, GitHub Actions runs the agent tests, validates the manifest, and invokes the onboarding agent through `POST /api/onboarding/submissions` with source `github-app-webhook`.
+> On PR, GitHub Actions runs the agent tests, validates the manifest, invokes the onboarding agent through `POST /api/onboarding/submissions`, and posts provenance plus scan evidence. After merge to `main`, the publish lane can approve the demo, open the onboarding gate, post eval evidence, sign deployment outputs, and activate the AgentCard in the marketplace registry.
 
 For the live demo, either push to the GitHub repo or run the same submission helper locally:
 
@@ -78,6 +97,9 @@ For the live demo, either push to the GitHub repo or run the same submission hel
 $env:MARKETPLACE_API_URL="http://localhost:7071"
 $env:MARKETPLACE_TENANT_ID="contoso"
 pwsh .\.github\scripts\submit-onboarding.ps1
+pwsh .\.github\scripts\post-validation-evidence.ps1 -SubmissionId <submission-id>
+$env:DEPLOYMENT_OUTPUTS_SECRET="local-demo-deployment-secret"
+pwsh .\.github\scripts\publish-to-marketplace.ps1 -SubmissionId <submission-id>
 ```
 
 Validated local result:
@@ -91,6 +113,20 @@ Validated local result:
 ```
 
 For a GitHub-hosted Actions run, set `MARKETPLACE_API_URL` to a deployed API endpoint or an HTTPS tunnel to the local Functions host. GitHub-hosted runners cannot call `localhost` on the developer machine directly.
+
+To confirm the local marketplace and skill records are seeded, run:
+
+```powershell
+Invoke-RestMethod "http://localhost:7071/api/registry/skills?pageSize=5" | ConvertTo-Json -Depth 6
+Invoke-RestMethod "http://localhost:7071/api/assets?type=Connector&pageSize=10" | ConvertTo-Json -Depth 6
+Invoke-RestMethod "http://localhost:7071/api/assets?type=Agent&pageSize=20" | ConvertTo-Json -Depth 6
+```
+
+Expected records:
+
+- `uap-onboarding` in the Skills Registry
+- `uap-onboarding-vscode-skill` as a Skills-compatible marketplace asset
+- `uap-onboarding-agent` as the Onboarding Agent asset
 
 ### 6. Show UI Submission Path
 

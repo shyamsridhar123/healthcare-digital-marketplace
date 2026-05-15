@@ -2,6 +2,30 @@ import { Asset, Workflow } from "./types"
 
 export const assets: Asset[] = [
   {
+    id: "uap-onboarding-vscode-skill",
+    name: "UAP Onboarding VS Code Skill",
+    description: "Downloadable VS Code/GHCP skill package for invoking /uap-onboarding and guiding domain engineers through manifest authoring, GitHub evidence gates, deployment output activation, and marketplace registration.",
+    summary: "Install /uap-onboarding locally in VS Code",
+    type: "workflow-template",
+    category: "Workflow Templates",
+    publisher: "AI Marketplace Platform",
+    publisherVerified: true,
+    version: "1.0.0",
+    downloads: 1,
+    rating: 5.0,
+    tags: ["skill", "vscode", "onboarding", "github"],
+    pricing: "Enterprise",
+    icon: "Workflow",
+    lastUpdated: "2026-05-14",
+    publishedDate: "2026-05-14",
+    orchestrationUsage: 1,
+    capabilities: ["VS Code Skill", "Local Install", "Manifest Guidance", "GitHub Evidence"],
+    installCommand: "Copy-Item -Recurse .github/skills/uap-onboarding $env:USERPROFILE\\.copilot\\skills\\uap-onboarding -Force",
+    invocation: "/uap-onboarding",
+    uiHref: "/onboarding/new",
+    docsHref: "https://github.com/rajesh-ms/test-onboardingagent/tree/main/.github/skills/uap-onboarding"
+  },
+  {
     id: "uap-onboarding-agent",
     name: "UAP Onboarding Agent",
     description: "VS Code-ready onboarding agent skill for publishing domain agents into AI Marketplace. It guides manifest authoring, CLI submission, GitHub push onboarding, evidence gates, eval ingestion, and activation checks.",

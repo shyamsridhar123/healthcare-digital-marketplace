@@ -15,6 +15,54 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { getContainer, CONTAINERS } from "../../lib/cosmos/client.js";
 
+const UAP_ONBOARDING_SKILL_CONTENT = `---
+name: uap-onboarding
+description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the AI Marketplace from VS Code, GitHub, CLI, or the Publisher Portal."
+version: 1.0.0
+category: Agent Onboarding
+tags: [uap, onboarding, vscode, github, governance]
+triggers: [uap-onboarding, onboard domain agent, publish agent to marketplace, validate agent manifest]
+---
+
+# UAP Onboarding
+
+Guides a domain engineer from local agent code to a governed AI Marketplace submission. It supports manifest authoring, VS Code submission, GitHub PR validation, evidence ingestion, deployment output activation, and troubleshooting.
+`;
+
+const UAP_ONBOARDING_SKILL = {
+  id: "uap-onboarding",
+  name: "uap-onboarding",
+  description: "VS Code/GHCP skill for onboarding domain agents into AI Marketplace through manifest authoring, GitHub evidence gates, eval ingestion, and activation checks.",
+  content: UAP_ONBOARDING_SKILL_CONTENT,
+  version: "1.0.0",
+  tags: ["uap", "onboarding", "vscode", "github", "governance"],
+  category: "Agent Onboarding",
+  triggerPhrases: ["uap-onboarding", "onboard domain agent", "publish agent to marketplace", "validate agent manifest"],
+  sourceUrl: "https://github.com/rajesh-ms/test-onboardingagent/blob/main/.github/skills/uap-onboarding/SKILL.md",
+  author: "AI Marketplace Platform",
+  license: "Enterprise",
+  tenantId: "default",
+  visibility: "public",
+  frontmatter: {
+    name: "uap-onboarding",
+    description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the AI Marketplace from VS Code, GitHub, CLI, or the Publisher Portal.",
+    version: "1.0.0",
+    category: "Agent Onboarding",
+    tags: ["uap", "onboarding", "vscode", "github", "governance"],
+  },
+  stars: 0,
+  starCount: 0,
+  downloadCount: 1,
+  registeredAt: "2026-05-14T00:00:00.000Z",
+  updatedAt: "2026-05-14T00:00:00.000Z",
+};
+
+async function ensureSkillSeeds(): Promise<void> {
+  const container = await getContainer(CONTAINERS.SKILLS);
+  const { resource } = await container.item(UAP_ONBOARDING_SKILL.id, UAP_ONBOARDING_SKILL.tenantId).read();
+  if (!resource) await container.items.create(UAP_ONBOARDING_SKILL);
+}
+
 // ── Schemas ───────────────────────────────────────────────────────────────────
 
 const RegisterSkillSchema = z.object({
@@ -90,6 +138,7 @@ app.http("registerSkill", {
         updatedAt: now,
       };
 
+      await ensureSkillSeeds();
       const container = await getContainer(CONTAINERS.SKILLS);
       const { resource } = await container.items.create(skill);
       return { status: 201, jsonBody: resource };
@@ -169,6 +218,7 @@ app.http("importSkill", {
         updatedAt: now,
       };
 
+      await ensureSkillSeeds();
       const container = await getContainer(CONTAINERS.SKILLS);
       const { resource } = await container.items.create(skill);
       return { status: 201, jsonBody: resource };
@@ -195,6 +245,7 @@ app.http("listSkills", {
       const pageSize = Math.min(parseInt(req.query.get("pageSize") ?? "24", 10), 100);
       const offset = (page - 1) * pageSize;
 
+      await ensureSkillSeeds();
       const container = await getContainer(CONTAINERS.SKILLS);
       const conditions = ["c.tenantId = @tenantId"];
       const parameters: { name: string; value: unknown }[] = [{ name: "@tenantId", value: tenantId }];
@@ -222,8 +273,9 @@ app.http("listSkills", {
         container.items.query({ query, parameters }).fetchAll(),
         container.items.query({ query: countQ, parameters }).fetchAll(),
       ]);
+      const total = typeof countRes[0] === "number" ? countRes[0] : items.length;
 
-      return { status: 200, jsonBody: { items, total: countRes[0] ?? 0, page, pageSize } };
+      return { status: 200, jsonBody: { items, total, page, pageSize } };
     } catch (err) {
       ctx.error("listSkills error:", err);
       return { status: 500, jsonBody: { error: "Internal server error" } };
@@ -313,6 +365,45 @@ app.http("deleteSkill", {
       return { status: 204 };
     } catch (err) {
       ctx.error("deleteSkill error:", err);
+      return { status: 500, jsonBody: { error: "Internal server error" } };
+    }
+  },
+});
+
+// ── GET /api/registry/skills/{id}/download ───────────────────────────────────
+
+app.http("downloadSkill", {
+  methods: ["GET"],
+  authLevel: "anonymous",
+  route: "registry/skills/{id}/download",
+  handler: async (req: HttpRequest, ctx: InvocationContext): Promise<HttpResponseInit> => {
+    const { id } = req.params;
+    try {
+      await ensureSkillSeeds();
+      const container = await getContainer(CONTAINERS.SKILLS);
+      const { resources } = await container.items
+        .query({ query: "SELECT * FROM c WHERE c.id = @id", parameters: [{ name: "@id", value: id }] })
+        .fetchAll();
+      if (!resources.length) return { status: 404, jsonBody: { error: "Skill not found" } };
+
+      const skill = resources[0];
+      container.items.upsert({ ...skill, downloadCount: (skill.downloadCount ?? 0) + 1 }).catch(() => {});
+
+      const skillName = (skill.name as string).replace(/[^a-z0-9-]/gi, "-").toLowerCase();
+
+      return {
+        status: 200,
+        body: skill.content as string,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Content-Disposition": `attachment; filename="SKILL.md"`,
+          "X-Skill-Name": skillName,
+          "X-Skill-Version": skill.version as string,
+          "Access-Control-Expose-Headers": "X-Skill-Name, X-Skill-Version",
+        },
+      };
+    } catch (err) {
+      ctx.error("downloadSkill error:", err);
       return { status: 500, jsonBody: { error: "Internal server error" } };
     }
   },
