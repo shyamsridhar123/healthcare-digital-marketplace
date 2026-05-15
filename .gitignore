@@ -14,6 +14,7 @@ apps/api/local.settings.json
 apps/vscode-extension/node_modules/
 apps/vscode-extension/out/
 apps/vscode-extension/*.vsix
+apps/vscode-extension/.vscode-test/
 
 # azd state
 .azure/
