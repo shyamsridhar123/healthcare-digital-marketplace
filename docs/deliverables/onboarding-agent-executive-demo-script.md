@@ -13,6 +13,7 @@ Show how AI Marketplace reduces domain-agent onboarding from a manual platform-e
 - GitHub repo: `https://github.com/rajesh-ms/optum-uhg`
 - Marketplace branch: `feat/onboarding-agent-flow`
 - Skills Registry: `http://127.0.0.1:3000/registry/skills`
+- VS Code extension VSIX: `http://127.0.0.1:3000/downloads/ai-marketplace-skills-0.1.0.vsix`
 
 ## Storyline
 
@@ -41,13 +42,27 @@ Then open the Skills experience:
 
 Talk track:
 
-> The same onboarding capability is also published as a downloadable VS Code skill. Domain engineers can discover it under Skills, install it locally, and use the same guided workflow without leaving VS Code.
+> The same onboarding capability is also published as a downloadable VS Code skill. Domain engineers install our marketplace extension once, then discover and install skills directly from the sidebar or from Copilot Chat — no leaving VS Code.
 
 Point out:
 
 - `UAP Onboarding VS Code Skill` in the marketplace Skills tab
 - `uap-onboarding` in the Agent Skills Registry
 - trigger phrases such as `uap-onboarding` and `onboard domain agent`
+- **Download VS Code Extension (.vsix)** button on the skill detail page (`/registry/skills/uap-onboarding`)
+
+Then demonstrate the extension in VS Code:
+
+```powershell
+code --install-extension apps/web/public/downloads/ai-marketplace-skills-0.1.0.vsix
+```
+
+Reload VS Code and walk the audience through:
+
+- AI Marketplace icon in the Activity Bar — sidebar shows `Installed` and `Available` skills
+- click `uap-onboarding` → Markdown preview opens with an `Install skill` CodeLens
+- click the CodeLens → toast confirms install to `~/.copilot/skills/uap-onboarding/SKILL.md`, prompt to reload
+- Copilot Chat: `@marketplace list`, `@marketplace help uap-onboarding`, `@marketplace install uap-onboarding`
 
 ### 3. Show The Demo Agent Repo
 
@@ -146,7 +161,8 @@ Close with measurable productivity improvements:
 - repeatable GitHub push workflow for every agent team
 - deterministic evidence capture for governance and audit
 - faster path from domain code to marketplace discovery
-- one workflow usable from VS Code, CLI, GitHub, or UI
+- one workflow usable from VS Code (sidebar + `@marketplace` chat), CLI, GitHub, or UI
+- governed skill distribution: signed VSIX from the marketplace, installs into the standard `~/.copilot/skills/` location
 
 ## Expected Demo Result
 
