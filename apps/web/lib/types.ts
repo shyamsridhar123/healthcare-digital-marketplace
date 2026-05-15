@@ -174,3 +174,5 @@ export interface ModelCardData {
   evaluationRunId?: string       // Foundry evaluation run ID
   source: "foundry" | "mock"     // indicates whether data came from live Foundry or fallback
 }
+
+export type { RegistrySkill } from "../src/lib/types";
