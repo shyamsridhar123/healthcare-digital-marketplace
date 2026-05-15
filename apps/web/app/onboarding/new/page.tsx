@@ -1,7 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { Suspense, useMemo, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,6 +19,12 @@ type SubmissionResult = {
 const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:7071/api"
 
 export default function OnboardingPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-background" />}><OnboardingContent /></Suspense>
+}
+
+function OnboardingContent() {
+  const searchParams = useSearchParams()
+  const handoffAgentId = searchParams.get("agentId")
   const [tenantId, setTenantId] = useState("contoso")
   const [name, setName] = useState("Claims Copilot")
   const [version, setVersion] = useState("1.0.0")
@@ -81,11 +88,13 @@ export default function OnboardingPage() {
             <div className="mb-2 flex items-center gap-2">
               <Badge variant="outline">Onboarding Agent</Badge>
               <Badge className="bg-emerald-500/15 text-emerald-400">VS Code Skill Ready</Badge>
+              {handoffAgentId && <Badge className="bg-sky-500/15 text-sky-400">Global Orchestrator handoff</Badge>}
             </div>
             <h1 className="text-2xl font-semibold text-foreground">Onboard a Domain Agent</h1>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
               Submit an ACA-backed agent manifest through the same governed pipeline used by GitHub and the VS Code UAP onboarding skill.
             </p>
+            {handoffAgentId && <p className="mt-2 text-sm text-sky-300">Registration context: {handoffAgentId}</p>}
           </div>
           <Link href="/asset/uap-onboarding-agent">
             <Button variant="outline" className="gap-2">

@@ -57,6 +57,10 @@ export * from "./policy/policies.js";
 export * from "./orchestration/templates.js";
 export * from "./orchestration/executions.js";
 
+// Global Orchestrator control plane
+export * from "./global-orchestrator/executions.js";
+export * from "./global-orchestrator/routability.js";
+
 // Sandbox Workspace
 export * from "./sandbox/sandboxes.js";
 export * from "./sandbox/sandbox-templates.js";

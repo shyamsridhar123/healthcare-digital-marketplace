@@ -136,6 +136,34 @@ export interface DeploymentConfig {
   policies: string[]
 }
 
+export type GlobalPolicyConcern =
+  | "global-routing"
+  | "global-pre-flight"
+  | "global-post-flight"
+  | "channel-hitl"
+  | "tenant"
+  | "domain"
+  | "asset"
+
+export type GlobalPolicyScope =
+  | { target: "tenant" }
+  | { target: "domain"; domainId: string }
+  | { target: "asset"; assetId: string; domainId?: string }
+
+export interface GlobalPolicyLaunchContext {
+  tenantId: string
+  concern: GlobalPolicyConcern
+  scope: GlobalPolicyScope
+  source?: {
+    traceId?: string
+    decisionId?: string
+    gate?: string
+  }
+  returnTo: string
+  requestedBy: string
+  createdAt: string
+}
+
 // ── Azure AI Foundry Model Card types ─────────────────────────────────────────
 
 export interface EvaluationMetric {

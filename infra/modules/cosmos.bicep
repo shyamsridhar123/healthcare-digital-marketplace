@@ -393,6 +393,34 @@ resource orchestrationExecutionsContainer 'Microsoft.DocumentDB/databaseAccounts
   }
 }
 
+resource globalExecutionRecordsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'global-execution-records'
+  properties: {
+    resource: {
+      id: 'global-execution-records'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      defaultTtl: 7776000
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+        compositeIndexes: [
+          [
+            { path: '/tenantId', order: 'ascending' }
+            { path: '/updatedAt', order: 'descending' }
+          ]
+          [
+            { path: '/tenantId', order: 'ascending' }
+            { path: '/currentStage', order: 'ascending' }
+            { path: '/updatedAt', order: 'descending' }
+          ]
+        ]
+      }
+    }
+  }
+}
+
 // ─── Sandbox Workspace ───────────────────────────────────────────────────────
 resource sandboxesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: database

@@ -41,6 +41,7 @@ import {
   X,
   FlaskRound,
   ClipboardCheck,
+  Network,
 } from "lucide-react"
 import { useAccount, useMsal } from "@azure/msal-react"
 import { Button } from "@/components/ui/button"
@@ -215,6 +216,14 @@ const developmentItems: NavItem[] = [
 // UAP Governance & Operations
 const governanceItems: NavItem[] = [
   {
+    label: "Global Orchestrator",
+    href: "/global-orchestrator",
+    icon: Network,
+    badge: "Control",
+    badgeColor: "bg-sky-500/20 text-sky-400",
+    description: "Execution status & routability",
+  },
+  {
     label: "Governance",
     href: "/governance",
     icon: Shield,
@@ -301,7 +310,7 @@ function NavSection({
           const isExternal = item.external ?? item.href.startsWith("http")
           const isActive = indent
             ? pathname === item.href || (item.href !== "/imde" && pathname.startsWith(item.href))
-            : isExternal ? false : pathname === item.href
+            : isExternal ? false : item.href === "/" ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`)
 
           return (
             <li key={item.href}>

@@ -19,6 +19,7 @@ test('activateSubmissionDeployment writes active AgentCard projections and updat
       type: 'Agent',
       description: 'Assists claims analysts with document summarization and routing.',
       version: '1.0.0',
+      owner: { team: 'claims-platform', email: 'claims@example.com' },
       capabilities: ['claims-summary'],
       rai: { tags: ['human-in-the-loop'], data_categories: ['pii'] },
       submittedAt: new Date().toISOString(),
@@ -46,6 +47,7 @@ test('activateSubmissionDeployment writes active AgentCard projections and updat
     assert.equal(activeAgents.length, 1);
     assert.equal(activeAgents[0].status, 'active');
     assert.equal(activeAgents[0].agentCard.url, 'https://claims-copilot.example.com/a2a');
+    assert.deepEqual(activeAgents[0].owner, { team: 'claims-platform', email: 'claims@example.com' });
 
     const { resource: updatedSubmission } = await submissions.item(submissionId, tenantId).read();
     assert.equal(updatedSubmission.status, 'active');
@@ -56,6 +58,7 @@ test('activateSubmissionDeployment writes active AgentCard projections and updat
     assert.equal(agentCardProjection.status, 'active');
     assert.equal(agentCardProjection.submissionId, submissionId);
     assert.equal(agentCardProjection.risk_tier, 'medium');
+    assert.deepEqual(agentCardProjection.owner, { team: 'claims-platform', email: 'claims@example.com' });
     assert.equal(agentCardProjection.deploymentOutputs.endpointUrl, 'https://claims-copilot.example.com/a2a');
     assert.ok(agentCardProjection.lifecycle.activated_at);
 

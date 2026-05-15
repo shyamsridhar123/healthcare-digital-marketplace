@@ -2,6 +2,8 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { getContainer, CONTAINERS } from "../../lib/cosmos/client.js";
+import { AuthError, getAuthorizationContext, verifyConfiguredBearerToken } from "../../lib/auth/context.js";
+import { createPolicyLaunchContext } from "../../lib/policy/launch-context.js";
 import { evaluatePolicies } from "../../lib/policy/engine.js";
 import type { PolicyContext } from "../../lib/policy/engine.js";
 
@@ -43,6 +45,22 @@ const CreatePolicySchema = z.object({
   rules: z.array(PolicyRuleSchema).min(1),
   action: z.enum(["allow", "deny", "transform", "pending-approval"]),
   tenantId: z.string().min(1),
+});
+
+const PolicyLaunchContextSchema = z.object({
+  tenantId: z.string().min(1).optional(),
+  concern: z.enum(['global-routing', 'global-pre-flight', 'global-post-flight', 'channel-hitl', 'tenant', 'domain', 'asset']),
+  scope: z.union([
+    z.object({ target: z.literal('tenant') }),
+    z.object({ target: z.literal('domain'), domainId: z.string().min(1) }),
+    z.object({ target: z.literal('asset'), assetId: z.string().min(1), domainId: z.string().min(1).optional() }),
+  ]),
+  source: z.object({
+    traceId: z.string().min(1).optional(),
+    decisionId: z.string().min(1).optional(),
+    gate: z.string().min(1).optional(),
+  }).optional(),
+  returnTo: z.string().min(1),
 });
 
 // ── Handlers ──────────────────────────────────────────────────────────────────
@@ -182,11 +200,36 @@ async function getPolicySummary(req: HttpRequest, _ctx: InvocationContext): Prom
   };
 }
 
+async function createPolicyLaunch(req: HttpRequest, ctx: InvocationContext): Promise<HttpResponseInit> {
+  try {
+    const auth = await getAuthorizationContext(req, {
+      allowLocalDevFallback: process.env.UAP_AUTH_LOCAL_DEV_BYPASS === 'true'
+        && process.env.AZURE_FUNCTIONS_ENVIRONMENT === 'Development',
+      verifyBearerToken: verifyConfiguredBearerToken,
+    });
+    const parsed = PolicyLaunchContextSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return { status: 400, jsonBody: { error: 'Validation failed', details: parsed.error.flatten() } };
+    }
+
+    const launchContext = createPolicyLaunchContext({ auth, ...parsed.data });
+    return { status: 200, jsonBody: launchContext };
+  } catch (err) {
+    if (err instanceof AuthError) return { status: err.status, jsonBody: { error: err.message } };
+    if (err instanceof Error && /permission|tenant|return/i.test(err.message)) {
+      return { status: 403, jsonBody: { error: err.message } };
+    }
+    ctx.error('createPolicyLaunch error:', err);
+    return { status: 500, jsonBody: { error: 'Internal server error' } };
+  }
+}
+
 // ── Registration ──────────────────────────────────────────────────────────────
 
 app.http("createPolicy", { methods: ["POST"], authLevel: "anonymous", route: "policies", handler: createPolicy });
 app.http("listPolicies", { methods: ["GET"], authLevel: "anonymous", route: "policies", handler: listPolicies });
 app.http("getPolicySummary", { methods: ["GET"], authLevel: "anonymous", route: "policies/summary", handler: getPolicySummary });
+app.http("createPolicyLaunch", { methods: ["POST"], authLevel: "anonymous", route: "policies/launch-context", handler: createPolicyLaunch });
 app.http("evaluatePolicyEndpoint", { methods: ["POST"], authLevel: "anonymous", route: "policies/evaluate", handler: evaluatePolicy });
 app.http("getPolicy", { methods: ["GET"], authLevel: "anonymous", route: "policies/{id}", handler: getPolicy });
 app.http("updatePolicy", { methods: ["PATCH"], authLevel: "anonymous", route: "policies/{id}", handler: updatePolicy });

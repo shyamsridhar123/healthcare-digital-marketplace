@@ -236,3 +236,24 @@ test('scrubTelemetryAttributes preserves repeated non-cyclic object references',
     second: { prompt: 'MRN [REDACTED:mrn]' },
   });
 });
+
+test('Global Orchestrator cockpit metadata is scrubbed before telemetry export', () => {
+  const actual = buildOnboardingTelemetryEvent('global_orchestrator.execution_projection.updated', {
+    traceId: 'trace-123',
+    safeDomainSummary: {
+      stage: 'domain-execution',
+      note: 'MRN 1234567 awaiting payer callback 212-555-0188',
+    },
+  });
+
+  assert.deepEqual(actual, {
+    name: 'global_orchestrator.execution_projection.updated',
+    properties: {
+      traceId: 'trace-123',
+      safeDomainSummary: {
+        stage: 'domain-execution',
+        note: 'MRN [REDACTED:mrn] awaiting payer callback [REDACTED:phone]',
+      },
+    },
+  });
+});

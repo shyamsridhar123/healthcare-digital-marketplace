@@ -20,12 +20,24 @@ interface QuerySpec {
   parameters?: QueryParameter[];
 }
 
+interface QueryOptions {
+  partitionKey?: string;
+  maxItemCount?: number;
+  continuationToken?: string;
+}
+
+interface QueryPage<T> {
+  resources: T[];
+  continuationToken?: string;
+}
+
 interface MarketplaceContainer {
   readonly items: {
     create: <T = any>(body: T) => Promise<{ resource: T | undefined }>;
     upsert: <T = any>(body: T) => Promise<{ resource: T | undefined }>;
-    query: <T = any>(spec: QuerySpec | string) => {
+    query: <T = any>(spec: QuerySpec | string, options?: QueryOptions) => {
       fetchAll: () => Promise<{ resources: T[] }>;
+      fetchNext: () => Promise<QueryPage<T>>;
     };
   };
   item(id: string, partitionKey?: string): {
@@ -95,6 +107,30 @@ function buildPredicate(
   return (item) => checks.every((fn) => fn(item));
 }
 
+function applyOrder<T = any>(query: string, items: T[]): T[] {
+  const orderMatch = query.match(/ORDER\s+BY\s+c\.(\w+)\s+(ASC|DESC)/i);
+  if (!orderMatch) return items;
+
+  const [, field, direction] = orderMatch;
+  const multiplier = direction.toUpperCase() === 'DESC' ? -1 : 1;
+  return [...items].sort((a: any, b: any) => {
+    const left = a[field];
+    const right = b[field];
+    if (left === right) return 0;
+    return left > right ? multiplier : -multiplier;
+  });
+}
+
+function encodeContinuation(offset: number): string {
+  return Buffer.from(String(offset), 'utf8').toString('base64url');
+}
+
+function decodeContinuation(token: string | undefined): number {
+  if (!token) return 0;
+  const decoded = Number(Buffer.from(token, 'base64url').toString('utf8'));
+  return Number.isFinite(decoded) && decoded > 0 ? decoded : 0;
+}
+
 // ── fake Container ────────────────────────────────────────────────────────────
 
 class InMemoryContainer implements MarketplaceContainer {
@@ -118,7 +154,7 @@ class InMemoryContainer implements MarketplaceContainer {
       return { resource: record };
     },
 
-    query: <T = any>(spec: QuerySpec | string) => {
+    query: <T = any>(spec: QuerySpec | string, options: QueryOptions = {}) => {
       const querySpec: QuerySpec =
         typeof spec === "string" ? { query: spec, parameters: [] } : spec;
       const predicate = buildPredicate(
@@ -126,10 +162,26 @@ class InMemoryContainer implements MarketplaceContainer {
         querySpec.parameters ?? []
       );
       const name = this.containerName;
+      const readAll = (): T[] => {
+        const all = Array.from(getStore(name).values())
+          .filter((item) => !options.partitionKey || item.tenantId === options.partitionKey)
+          .filter(predicate);
+        return applyOrder<T>(querySpec.query, all as T[]);
+      };
       return {
         fetchAll: async (): Promise<{ resources: T[] }> => {
-          const all = Array.from(getStore(name).values());
-          return { resources: all.filter(predicate) as T[] };
+          return { resources: readAll() };
+        },
+        fetchNext: async (): Promise<QueryPage<T>> => {
+          const all = readAll();
+          const start = decodeContinuation(options.continuationToken);
+          const pageSize = options.maxItemCount ?? all.length;
+          const resources = all.slice(start, start + pageSize);
+          const nextOffset = start + resources.length;
+          return {
+            resources,
+            continuationToken: nextOffset < all.length ? encodeContinuation(nextOffset) : undefined,
+          };
         },
       };
     },
@@ -165,10 +217,17 @@ class CosmosContainerAdapter implements MarketplaceContainer {
       return { resource: resource as T | undefined };
     },
 
-    query: <T = any>(spec: QuerySpec | string) => {
-      const queryIterator = this.container.items.query<T>(spec as any);
+    query: <T = any>(spec: QuerySpec | string, options: QueryOptions = {}) => {
+      const queryIterator = this.container.items.query<T>(spec as any, options as any);
       return {
         fetchAll: async (): Promise<{ resources: T[] }> => queryIterator.fetchAll(),
+        fetchNext: async (): Promise<QueryPage<T>> => {
+          const response = await queryIterator.fetchNext();
+          return {
+            resources: response.resources ?? [],
+            continuationToken: response.continuationToken,
+          };
+        },
       };
     },
   };
@@ -265,6 +324,7 @@ export const CONTAINERS = {
   POLICIES: "policies",
   ORCHESTRATION_TEMPLATES: "orchestration-templates",
   ORCHESTRATION_EXECUTIONS: "orchestration-executions",
+  GLOBAL_EXECUTION_RECORDS: "global-execution-records",
   // Sandbox Workspace
   SANDBOXES: "sandboxes",
   SANDBOX_TEMPLATES: "sandbox-templates",

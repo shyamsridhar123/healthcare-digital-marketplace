@@ -48,6 +48,7 @@ export async function activateSubmissionDeployment(input: ActivateSubmissionDepl
       : ['none'];
   const capabilities: string[] = Array.isArray(submission.capabilities) ? submission.capabilities.map(String) : [];
   const riskTier = classifyRiskTier({ dataCategories: dataCategories.map(String), networkEgress: submission.network?.egress === true });
+  const owner = typeof submission.owner === 'object' && submission.owner !== null ? submission.owner : undefined;
 
   const agentCard = {
     name,
@@ -83,6 +84,7 @@ export async function activateSubmissionDeployment(input: ActivateSubmissionDepl
     tags: capabilities,
     visibility: 'private',
     category: 'onboarded-agent',
+    owner,
     status: 'active',
     versions: [{ version, endpointUrl: input.deploymentOutputs.endpointUrl, registeredAt: now, active: true }],
     healthStatus: 'unknown',
@@ -105,6 +107,7 @@ export async function activateSubmissionDeployment(input: ActivateSubmissionDepl
     version,
     risk_tier: riskTier,
     status: 'active',
+    owner,
     endpointUrl: input.deploymentOutputs.endpointUrl,
     deploymentOutputs: input.deploymentOutputs,
     lifecycle: {
