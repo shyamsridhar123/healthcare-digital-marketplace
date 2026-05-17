@@ -1,0 +1,14 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+name: claims_training
+version: "12"
+description: >
+  De-identified RCM claims training dataset.
+  Includes diagnosis codes (ICD-10), procedure codes (CPT), payer info,
+  and adjudication outcomes. For denial prediction and revenue optimization models.
+type: uri_folder
+path: azureml://datastores/workspaceblobstore/paths/datasets/claims_training/v12/
+tags:
+  classification: internal
+  domain: rcm
+  source: ai-marketplace
+  managed-by: ai-marketplace-platform

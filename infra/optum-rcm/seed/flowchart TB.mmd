@@ -1,0 +1,81 @@
+flowchart TB
+  classDef user fill:#e8f0fe,stroke:#4a6ee0,color:#0f172a
+  classDef edge fill:#e0f2fe,stroke:#0284c7,color:#0f172a
+  classDef app fill:#dcfce7,stroke:#16a34a,color:#052e16
+  classDef data fill:#f3e8ff,stroke:#9333ea,color:#3b0764
+  classDef ops fill:#fff7ed,stroke:#ea580c,color:#431407
+  classDef ext fill:#f1f5f9,stroke:#64748b,color:#0f172a
+
+  subgraph Users[Operations Roles]
+    Billing[Billing Reviewer]
+    Utilization[Utilization Reviewer]
+    Finance[Finance Reviewer]
+    Admin[Platform Admin]
+  end
+
+  subgraph Azure[Azure Subscription - Optum RCM Real MVP]
+    subgraph Access[Access and Security Boundary]
+      Entra[Microsoft Entra ID\nSSO and RBAC]
+      APIM[Azure API Management\nInternal gateway and policy enforcement]
+    end
+
+    subgraph Apps[Application Tier]
+      Web[Azure Container Apps\nInternal Operations Console]
+      Func[Azure Functions Flex Consumption\nOrchestration API and connectors]
+    end
+
+    subgraph Runtime[Workflow Runtime]
+      ServiceBus[Azure Service Bus\nResume events and async work queues]
+      Cosmos[Azure Cosmos DB for NoSQL\nTemplates, executions, tasks, audit log]
+      Foundry[Azure AI Foundry\nApproved models and agent capabilities]
+    end
+
+    subgraph Controls[Secrets, Monitoring, Network]
+      KeyVault[Azure Key Vault\nSecrets and certificates]
+      AppInsights[Application Insights\nand Log Analytics]
+      VNet[Virtual Network plus\nPrivate Endpoints and Private DNS]
+    end
+  end
+
+  subgraph Enterprise[Enterprise Systems]
+    EHR[EHR and FHIR APIs]
+    Payer[Payer Portal and Prior Auth Gateway]
+    Clearinghouse[Clearinghouse and Claim Status]
+    ERA[ERA 835 and Payment Feeds]
+    WorkQueue[Internal work queue or ITSM]
+  end
+
+  Billing --> Web
+  Utilization --> Web
+  Finance --> Web
+  Admin --> Web
+
+  Web --> Entra
+  Web --> APIM
+  APIM --> Func
+
+  Func --> ServiceBus
+  ServiceBus --> Func
+  Func --> Cosmos
+  Func --> Foundry
+  Func --> KeyVault
+  Func --> AppInsights
+
+  Func --> EHR
+  Func --> Payer
+  Func --> Clearinghouse
+  Func --> ERA
+  Func --> WorkQueue
+
+  APIM -. private access .-> VNet
+  Func -. private access .-> VNet
+  Cosmos -. private endpoint .-> VNet
+  KeyVault -. private endpoint .-> VNet
+  Foundry -. private endpoint .-> VNet
+
+  class Billing,Utilization,Finance,Admin user
+  class Entra,APIM edge
+  class Web,Func app
+  class ServiceBus,Cosmos,Foundry data
+  class KeyVault,AppInsights,VNet ops
+  class EHR,Payer,Clearinghouse,ERA,WorkQueue ext

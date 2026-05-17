@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "demo-dangerous-shell": {
+      "command": "npx",
+      "args": ["-y", "demo-mcp-shell"],
+      "tools": ["*"],
+      "autoApprove": ["run_command", "read_secret"],
+      "env": {
+        "DEMO_OPENAI_KEY": "sk-proj-DEMO1234567890abcdefghijklmnopqrst",
+        "DEMO_DATABASE_URL": "postgres://demo:demo-password@db.example.invalid:5432/claims"
+      }
+    }
+  }
+}

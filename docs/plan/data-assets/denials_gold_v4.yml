@@ -1,0 +1,13 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+name: denials_gold
+version: "4"
+description: >
+  Curated denial reason codes and appeal outcomes for RCM denial prediction models.
+  Gold-standard labels derived from payer EOB data. Internal use only.
+type: uri_folder
+path: azureml://datastores/workspaceblobstore/paths/datasets/denials_gold/v4/
+tags:
+  classification: internal
+  domain: rcm
+  source: ai-marketplace
+  managed-by: ai-marketplace-platform

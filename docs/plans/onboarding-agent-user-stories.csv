@@ -1,0 +1,101 @@
+ID,Epic,Persona,Title,User Story,Description / Details,Acceptance Criteria,Priority,Stage (7-Stage Pipeline),Dependencies
+US-OB-01a,Submission,Agent / Tool Publisher,Submit via Publisher Portal (UI),"As an agent developer using the web portal, I want to submit my agent or MCP tool via a guided form with package upload, so that I can onboard without installing tooling or wiring up CI.","Publisher Portal (Next.js) provides a multi-step wizard: (1) asset type (agent / MCP server / tool / model); (2) metadata form (name, version semver, owner, description, capability tags, RAI tags, data categories); (3) package upload (zip / container image ref / git URL) with client-side AgentCard/manifest preview; (4) review + submit. Form posts to Publisher & Submission API; uploads stream to Blob via SAS URL.","- Given a signed-in publisher, when the wizard is completed and submitted, then a submissionId is returned within 5s and shown on the confirmation screen.
+- Drafts auto-save every 30s and resumable from My Submissions.
+- Client-side schema validation surfaces field-level errors before submit.
+- Large packages (> 100 MB) upload directly to Blob via SAS, not through API.
+- Submission appears in Cosmos DB with status=submitted, source=portal, tenantId partition.
+- Audit log entry created (who, when, source=portal, package hash).",P0,1 - Submission,"Publisher Portal, Publisher API, Entra ID auth, Blob SAS"
+US-OB-01b,Submission,Agent / Tool Publisher,Submit via CLI / REST API,"As a developer working locally or scripting submissions, I want to submit my agent via a `uap` CLI (and the underlying REST API), so that I can onboard from my terminal or automate from any tool.","Cross-platform `uap` CLI (Node/Go) wraps the Publisher & Submission REST API. Commands: `uap login` (device code / Entra), `uap init` (scaffold agent.yaml), `uap validate` (local schema + lint), `uap submit [--path .] [--version x.y.z]` (packages source, uploads, returns submissionId), `uap status <id>`, `uap logs <id>`. REST API documented via OpenAPI; same auth (Entra bearer / OIDC) and same backend as Portal.","- `uap submit` returns submissionId within 5s for packages up to 100 MB.
+- CLI exits non-zero on validation failure with field-level errors before any upload.
+- `uap login` supports device code + service principal + workload identity.
+- REST API endpoints documented in OpenAPI spec served at /api/openapi.json.
+- Submission record has source=cli or source=api with client_id captured.
+- CLI is distributable via npm, brew, and a single binary release.
+- Audit log entry created (who, when, source, package hash).",P0,1 - Submission,"Publisher API, Entra ID (device code + SP), OpenAPI spec"
+US-OB-01c,Submission,Agent / Tool Publisher,Submit via CI (GitHub Actions / Azure Pipelines),"As a publisher with a Git repo, I want a CI workflow that submits on tag/release using OIDC federation, so that production submissions are reproducible, auditable, and never use long-lived secrets.","Provide a reusable GitHub Action (`uap/submit-action@v1`) and an Azure DevOps task that authenticate to Entra via OIDC workload identity federation (no client secrets), build the package, and call the Publisher API. Triggered on git tag matching semver. Captures git_sha, repo, run_id, workflow_ref into the submission record for SLSA-style provenance.","- Workflow authenticates to Entra via OIDC; no PAT or client secret required.
+- Tag push (e.g., `v1.2.0`) triggers the action and produces a submission within 5 min including build.
+- Submission record includes git_sha, repo URL, workflow_ref, run_id, runner identity.
+- Action fails the build (non-zero exit) on validation, scan, or approval-rejection terminal states.
+- Provenance attestation (SLSA-style) attached to submission and visible on asset detail page.
+- Action is versioned and pinnable by SHA; minimal required permissions documented.
+- Audit log entry created (who=workflow identity, when, source=ci, package hash).",P0,1 - Submission,"Publisher API, Entra ID OIDC federation, GitHub Actions / ADO"
+US-OB-02,Submission,Agent / Tool Publisher,Real-time submission status,"As a publisher, I want to see live progress of my submission across all 7 stages, so that I know exactly where it is and what's blocking it.","Submission detail page (and CLI `uap status <id>`) shows each of the 7 stages with state (pending/running/passed/failed/waiting-approval), timestamps, and links to logs/artifacts. Backed by SSE/WebSocket stream from Orchestration API; trace_id propagated via OTel for cross-stage correlation.","- Stage transitions appear in UI within 2s of state change.
+- Each stage shows started_at, completed_at, duration, outcome.
+- Failed stages link to scanner report / test report / approver comment.
+- CLI exits non-zero on terminal failure; streams stage events.
+- trace_id visible and copyable for App Insights lookup.",P0,All,"US-OB-01, App Insights"
+US-OB-03,Validation,Agent / Tool Publisher,Actionable validation feedback,"As a publisher, I want to receive specific schema, dependency, and security-scan failures with remediation hints, so that I can fix and resubmit quickly without guessing.","Validation stage runs: (a) AgentCard/MCP manifest schema validation; (b) dependency audit (CVE scan, license check); (c) Security Scanner static rules (PHI/PII patterns, secrets, risky deps). Each finding includes severity, file:line, rule_id, message, and remediation link.","- Schema errors return JSON Pointer paths and expected types.
+- CVE findings include CVE id, severity, fixed-in version.
+- Secrets detection blocks submission with severity=critical.
+- Each finding has a `remediation_url` to platform docs.
+- Resubmission with fixes clears prior findings and proceeds.",P0,2 - Validation,"Security Scanner, dependency scanner"
+US-OB-04,Registration,Agent / Tool Publisher,Auto-generate AgentCard,"As a publisher, I want my agent automatically registered as an AgentCard in the registry, so that it's immediately discoverable by capability tags.","On Validation pass, Onboarding Agent calls A2A Agent Registry / MCP Server Registry to create an AgentCard from submitted metadata: name, version, owner, endpointUrl, skills, capability tags, RAI tags, data categories. Indexed in AI Search for capability + semantic discovery.","- AgentCard created with status=registered (not yet active).
+- Capability tags normalized against controlled vocabulary.
+- Searchable in AI Search within 30s of registration.
+- Duplicate name+version returns HTTP 409.
+- Asset Catalog reflects new entry with lineage to submissionId.",P0,3 - Registration,"A2A/MCP Registry, Asset Catalog, AI Search"
+US-OB-05,Lifecycle,Agent / Tool Publisher,Publish a new version,"As a publisher, I want to push a new semantic version (MAJOR.MINOR.PATCH) of an existing agent, so that it coexists with prior versions and follows canary rollout.","Submitting an existing name with a higher semver triggers the same 7-stage pipeline but, on Deployment, configures ACA revision-based traffic split: 5% → 25% → 50% → 100% gated by Evaluation Agent metrics. Prior versions remain active for backward compatibility.","- Semver bump enforced (reject equal/lower).
+- MAJOR bump requires explicit `breaking_change=true` flag and re-approval.
+- New revision deployed alongside current; traffic split observable in Admin Dashboard.
+- Each step gate requires success_rate ≥ baseline − 2%.
+- Rollback to prior revision in < 60s on regression.",P0,5-7,"US-OB-12, ACA revisions, Evaluation Agent"
+US-OB-06,Provisioning,Agent / Tool Publisher,Auto-provisioned infra & secrets,"As a publisher, I want AKS/ACA workloads, Key Vault secrets, APIM routes, and managed identities provisioned automatically, so that I don't write Bicep or file infra tickets.","Provisioning stage executes Bicep template parameterized by AgentCard: creates ACA app (or AKS deployment), Key Vault access policy via Managed Identity, APIM operation + product binding, NSG/private endpoint membership. Idempotent — re-runs are safe.","- Provisioning completes in < 5 min for standard agents.
+- Managed identity assigned least-privilege roles (no secrets in env).
+- APIM route reachable via LLM/Agent Gateway with Entra-issued token.
+- All resources tagged with tenantId, ownerId, submissionId.
+- Failures emit structured error + auto-rollback of partial resources.",P0,5 - Provisioning,"Bicep modules, Key Vault, APIM, ACA, Entra ID"
+US-OB-07,Submission,Agent / Tool Publisher,CI/CD template scaffolding,"As a publisher, I want a CI/CD pipeline template generated for my agent on first onboarding, so that future updates flow through the same gated pipeline.","On first successful onboarding, Onboarding Agent opens a PR (or downloadable bundle) into the publisher's repo containing: GitHub Actions workflow (build + test + `uap submit`), Dockerfile (if missing), agent.yaml, sample tests. Wires repo to Publisher API via OIDC federation.","- PR created with workflow that triggers on tag push.
+- Workflow uses OIDC (no long-lived secrets).
+- Local dev instructions generated in README section.
+- Subsequent submissions auto-tagged with git_sha + build_id.
+- Template is opinionated but overridable.",P1,1 - Submission,"GitHub OIDC, Publisher API"
+US-OB-08,Approval,Security / RAI Reviewer,Approval gate routing,"As a security reviewer, I want sensitive or production-bound submissions auto-routed to me with full context, so that I can approve/reject without hunting for artifacts.","Approval stage classifies submission risk (data categories, PHI access, model tier, network egress) and routes via Logic Apps + Teams notification to the appropriate reviewer queue. Reviewer sees AgentCard, scan results, RAI tags, dependency tree, and prior version diff in the Admin Dashboard.","- Risk score computed and visible (low/med/high/critical).
+- Low-risk auto-approves with audit entry; med+ requires human.
+- Reviewer can approve, reject (with reason), or request changes.
+- SLA timer visible; escalation after 24h to backup approver.
+- Decision persisted immutably in Audit Log.",P0,4 - Approval,"Policy Engine, Admin Dashboard, Logic Apps"
+US-OB-09,Validation,RAI Reviewer,PHI/PII & content scan visibility,"As an RAI board member, I want automated scans of prompts, plans, and dependencies for PHI/PII and disallowed content surfaced before approval, so that HIPAA risks are caught pre-deployment.","Security Scanner runs static scans on prompts, system messages, and code; Azure AI Content Safety filters sample outputs from Playground test runs. Findings tagged with HIPAA/PHI/PII categories, displayed inline on the approval screen.","- Hard-coded PHI patterns (SSN, MRN, DOB) blocked at submit.
+- Prompt injection patterns flagged as warnings.
+- Content Safety category scores visible per sampled response.
+- Reviewer can mark findings as accepted-risk with justification.
+- All findings + justifications stored in Audit Log.",P0,2 & 4,"Security Scanner, Azure AI Content Safety"
+US-OB-10,Approval,Compliance Officer,Sign-off audit trail,"As a compliance officer, I want every approval, rejection, and override logged with reviewer identity and timestamp, so that we have provable governance for audits.","Audit Log writes immutable records (Cosmos DB with TTL aligned to retention policy) for each approval event: who (Entra OID), action, decision, justification, scope (submissionId, version), evidence_refs (scan reports, RAI tags). Exportable to ADLS for long-term retention.","- Records are append-only; no update/delete API exists.
+- Includes reviewer Entra OID + display name + role at time of decision.
+- Linked to submissionId, agentId, version, traceId.
+- Exportable via signed URL (admin RBAC only).
+- Tamper-evident (hash chain or Cosmos change feed snapshot).",P0,4 - Approval,"Audit Log container, Entra ID"
+US-OB-11,Test,Platform / Ops Engineer,Automated integration test execution,"As a platform engineer, I want the integration test suite plus Evaluation Agent quality checks to run automatically in stage 6, so that only passing builds reach canary.","Integration Test stage spins ephemeral test environment, runs publisher-supplied tests + platform smoke tests + Evaluation Agent (LLM-as-a-judge: accuracy, relevance, toxicity). Produces structured test_report.json with pass/fail per check and quality scores.","- Test env provisioned in < 3 min, torn down after run.
+- Pipeline blocks on any test failure or quality score below threshold.
+- Test report linked from submission detail page.
+- Flaky test retries capped at 2; persistent flakes surface warning.
+- Quality metrics persisted for trend analysis.",P0,6 - Integration Test,"Evaluation Agent, ACA test env"
+US-OB-12,Deployment,SRE,Canary rollout with auto-rollback,"As an SRE, I want traffic to shift 5% → 25% → 50% → 100% with Evaluation Agent metrics gating each step and instant rollback on regression, so that bad releases never reach 100% of traffic.","Deployment stage uses ACA revision traffic-splitting. Each step waits N minutes (configurable per asset), Evaluation Agent compares success_rate, p95_latency, toxicity vs baseline. Regression triggers traffic revert to prior stable revision in < 60s and notifies on-call via Teams.","- Traffic split configurable per asset (default 5/25/50/100).
+- Gate criteria: success_rate ≥ baseline − 2%, p95 ≤ baseline × 1.2.
+- Rollback completes within 60s of detection.
+- Rollback events paged to on-call + logged.
+- Manual promote/abort controls available in Admin Dashboard.",P0,7 - Deployment,"ACA revisions, Evaluation Agent, Azure Monitor alerts"
+US-OB-13,Observability,Platform Engineer,Onboarding pipeline observability,"As a platform engineer, I want OTel traces of every onboarding stage in App Insights, so that I can debug failed onboardings.","Onboarding Agent emits OTel spans for each stage with attributes: submissionId, agentId, version, tenantId, stage, outcome, duration. Logs correlate via trace_id. Dashboard surfaces stage durations, failure rates, and bottleneck stages.","- Every stage emits a span with standardized attributes.
+- App Insights workbook shows funnel from submit → live.
+- Failure-rate alert fires when stage failures > 10% over 1h.
+- Trace search by submissionId returns full waterfall.
+- Logs scrubbed of PHI before ingest.",P1,All,"OpenTelemetry SDK, App Insights"
+US-OB-14,Discovery,Workflow Author,Discover newly onboarded agents,"As an orchestrator workflow author, I want successfully onboarded agents to appear immediately in the AI Marketplace Portal with capability tags, evaluation scores, and certification status, so that I can reuse them across domains.","On Deployment success, Onboarding Agent flips AgentCard status=active and triggers AI Search reindex. Marketplace catalog filters: capability, domain, RAI tags, certification level, evaluation score, owner team. Visual Orchestration canvas palette refreshes.","- Active agents searchable within 30s of go-live.
+- Filters return results in < 500ms p95.
+- Capability tags drive Visual Orchestration palette grouping.
+- Deprecated/inactive agents hidden by default but filterable.
+- Each card shows version, owner, last_eval_score, certification.",P0,7 - Deployment,"AI Search, Asset Catalog, Marketplace UI"
+US-OB-15,Discovery,Consumer,Trust signals on agent listings,"As a consumer, I want lineage, RAI tags, audit info, and evaluation scores visible on each AgentCard, so that I can make an informed adoption decision.","Asset detail page shows: source repo + commit, build provenance (SLSA-style), RAI tags + data categories, last security scan date + result, continuous evaluation trend chart, approval history, ratings & reviews, dependency graph (which workflows use it).","- Detail page loads in < 1s with all trust panels.
+- Provenance link resolves to immutable build record.
+- Eval trend chart shows last 30 runs.
+- Reverse-dependency view shows consuming workflows (RBAC-gated).
+- Stale-scan badge shown when last scan > 30 days.",P1,Post-Deployment,"Asset Catalog, Evaluation Agent, Audit Log"
+US-OB-16,Reporting,Business Owner,Onboarding SLA reporting,"As a business owner, I want metrics on submission-to-production time (target: hours, not weeks), so that I can measure platform ROI and identify pipeline bottlenecks.","Admin Dashboard shows: median + p95 lead time per stage, weekly throughput (submissions, approvals, deploys), failure reasons taxonomy, time-in-approval per reviewer, top blockers. Backed by KQL queries over App Insights + Cosmos audit data.","- Dashboard refreshes every 15 min.
+- Date range + tenant + risk-tier filters.
+- Drill-down from aggregate to individual submission trace.
+- Export to CSV/PNG for exec reporting.
+- Lead-time SLO (e.g., p95 < 8h) tracked with alerting.",P1,N/A,"App Insights workbooks, Audit Log"
+US-OB-17,Lifecycle,Asset Owner,Deprecation & decommission,"As an owner of a published agent, I want to trigger a 90-day deprecation notice and auto-decommission flow through the same agent, so that sunset is as governed as onboarding.","Deprecation request runs a mirrored mini-pipeline: notify dependents (Teams/email), set status=deprecated (still callable, warning header), enforce 90-day grace, then run decommission stage that drains traffic, deletes ACA revisions, retires APIM route, archives AgentCard, retains audit log per retention policy.","- Deprecation notice posted to all dependent workflow owners.
+- Calls return `Deprecation` HTTP header during grace period.
+- Auto-decommission blocked if active workflows still depend on it (force flag overrides with approval).
+- Resources removed; AgentCard moved to archive with `decommissioned_at`.
+- Audit Log preserved per retention policy (e.g., 7y for HIPAA).",P1,Post-Deployment,"Asset Catalog, dependency graph, Approval gate"

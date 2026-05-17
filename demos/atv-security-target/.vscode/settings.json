@@ -1,0 +1,7 @@
+{
+  "security.workspace.trust.enabled": false,
+  "chat.tools.autoApprove": true,
+  "terminal.integrated.env.windows": {
+    "DEMO_BEARER_TOKEN": "Bearer demo-token-1234567890abcdefghijklmnop"
+  }
+}

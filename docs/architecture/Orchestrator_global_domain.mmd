@@ -1,0 +1,21 @@
+flowchart TD
+    A[Client / App Request<br/>via AI Gateway] --> B[Global Orchestrator<br/>Ingress]
+    B --> C[Classify Intent & Phase<br/>Model /classify]
+    C --> D[Governance Pre-flight<br/>Entitlements, PHI classification,<br/>Budgets, Global HITL rules]
+    D --> E[Select Domain Orchestrator<br/>from Domain Orchestrator Registry]
+    E --> F[Select Declarative Plan Template DPT<br/>from Plan Registry]
+    F --> G[Resolve Plan Steps<br/>Bind Agents via Agent Registry<br/>Bind Tools via Tool Registry]
+    G --> H[Create Delegation Envelope<br/>Plan + Constraints + Budgets<br/>Least-privilege Inputs]
+    H --> I[Send Envelope to<br/>Domain Orchestrator]
+    I --> J[Domain Orchestrator<br/>Execute delegated workflow]
+    J --> W[Return Structured Result<br/>+ Evidence Map<br/>To Global Orchestrator]
+    W --> X[Global Post-flight Checks<br/>Redaction, PHI, Channel HITL]
+    X --> Y[Normalize Response<br/>Standard Schema<br/>Add Provenance & trace_id]
+    Y --> ZZ[Return Final Response<br/>to Client / App]
+
+    classDef obs fill:#fff3cd,stroke:#f0ad4e,stroke-width:1px,color:#333
+    AA[Observability & Metrics<br/>Latency, Errors, Retrieval Quality,<br/>Token/Cost, Cache Hit Rates,<br/>HITL and Remediation Rates]:::obs
+
+    B --> AA
+    J --> AA
+    X --> AA

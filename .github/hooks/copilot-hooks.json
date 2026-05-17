@@ -1,0 +1,53 @@
+{
+  "hooks": {
+    "errorOccurred": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js errorOccurred",
+        "powershell": "node .github/hooks/scripts/observe.js errorOccurred",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ],
+    "postToolUse": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js postToolUse",
+        "powershell": "node .github/hooks/scripts/observe.js postToolUse",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ],
+    "preToolUse": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js preToolUse",
+        "powershell": "node .github/hooks/scripts/observe.js preToolUse",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js sessionEnd",
+        "powershell": "node .github/hooks/scripts/observe.js sessionEnd",
+        "timeoutSec": 10,
+        "type": "command"
+      }
+    ],
+    "sessionStart": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js sessionStart",
+        "powershell": "node .github/hooks/scripts/observe.js sessionStart",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "bash": "node .github/hooks/scripts/observe.js userPromptSubmitted",
+        "powershell": "node .github/hooks/scripts/observe.js userPromptSubmitted",
+        "timeoutSec": 5,
+        "type": "command"
+      }
+    ]
+  },
+  "version": 1
+}

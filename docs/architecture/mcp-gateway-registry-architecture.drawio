@@ -1,0 +1,127 @@
+<mxfile host="65bd71144e" compressed="false">
+    <diagram name="MCP Gateway Registry Architecture" id="mcpgw-registry-azure-arch">
+        <mxGraphModel dx="522" dy="409" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="MCP Gateway &amp; Registry — Azure Deployment Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=22;fontStyle=1;fontColor=#0b3b69;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="14" width="1400" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="zone-edge" value="Edge, Identity and Secrets" style="swimlane;startSize=26;fillColor=#e8f5e9;strokeColor=#43a047;fontStyle=1;fontSize=13;fontColor=#1b5e20;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="60" width="1520" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-client" value="Clients&#xa;Browser, IDE, Agents" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/general/10783-icon-service-Browser.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="30" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-fd" value="Front Door&#xa;WAF + TLS + CDN" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/networking/10073-icon-service-Front-Door-and-CDN-Profiles.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="200" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-apim" value="API Management&#xa;MCP Gateway Routes" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10042-icon-service-API-Management-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="380" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-entra" value="Entra ID&#xa;OAuth / OIDC / SSO" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/identity/10231-icon-service-Entra-ID-Protection.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="560" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-mi" value="Managed Identity&#xa;Service-to-Service" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/identity/10227-icon-service-Entra-Managed-Identities.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="740" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-kv" value="Key Vault&#xa;Secrets and Certs" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/security/10245-icon-service-Key-Vaults.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="920" y="36" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-desc" value="Clients connect via Front Door (global routing + WAF) then APIM (auth, throttle, MCP policy). Entra ID issues tokens. Managed Identity authenticates services. Key Vault stores secrets." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#43a047;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="zone-edge">
+                    <mxGeometry x="1040" y="38" width="460" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="zone-aca" value="Container Apps — MCP Registry Control Plane" style="swimlane;startSize=28;fillColor=#eef6ff;strokeColor=#5b9bd5;fontStyle=1;fontSize=14;fontColor=#0b5394;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="240" width="1520" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-env" value="ACA Environment&#xa;VNet + Autoscale" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02989-icon-service-Container-Apps-Environments.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="30" y="40" width="64" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-registry" value="Registry API&#xa;FastAPI Control Plane" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/web/10035-icon-service-App-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="190" y="42" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-gateway" value="MCP Gateway API&#xa;Tool Routing" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02884-icon-service-Worker-Container-App.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="350" y="42" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-ui" value="Admin Frontend&#xa;React SPA" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/web/01007-icon-service-Static-Apps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="510" y="42" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-scan" value="Scan Worker&#xa;Security Checks" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/security/10241-icon-service-Microsoft-Defender-for-Cloud.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="670" y="42" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="aca-desc" value="Registry API manages server, agent, skill, and virtual-server registrations with semantic discovery and federation. Gateway API routes MCP tool calls to upstream servers. Scan Worker validates registrations against policy. All apps run stateless in ACA with private networking." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#5b9bd5;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="zone-aca">
+                    <mxGeometry x="30" y="148" width="1460" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="zone-backends" value="Registered MCP Servers and A2A Agents" style="swimlane;startSize=26;fillColor=#fbf4ff;strokeColor=#b58cd8;fontStyle=1;fontSize=13;fontColor=#7b3fa3;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="490" width="1520" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-aca" value="MCP on ACA&#xa;Containerized Tools" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02884-icon-service-Worker-Container-App.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-func" value="MCP on Functions&#xa;Stateless Tools" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/compute/10029-icon-service-Function-Apps.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="200" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-agents" value="A2A Agents&#xa;Specialist Bots" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10165-icon-service-Bot-Services.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="370" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-saas" value="External SaaS&#xa;3rd-party MCP" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10213-icon-service-Software-as-a-Service.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="540" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-fed" value="Peer Federation&#xa;Cross-Registry" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/general/10831-icon-service-Resource-Linked.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="710" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="be-desc" value="MCP servers register through the Registry API and are discovered via semantic search. Gateway routes tool calls to the correct upstream. A2A agents communicate peer-to-peer after registry discovery. Federation enables cross-registry lookups between multiple deployments." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#efe3fb;strokeColor=#b58cd8;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="zone-backends">
+                    <mxGeometry x="30" y="132" width="1460" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="zone-data" value="Data and Deployment Services" style="swimlane;startSize=26;fillColor=#fff7e8;strokeColor=#d79b33;fontStyle=1;fontSize=13;fontColor=#9c6500;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="710" width="740" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-cosmos" value="Cosmos DB&#xa;Registry State" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/databases/10121-icon-service-Azure-Cosmos-DB.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+                    <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-acr" value="Container Registry&#xa;Image Supply Chain" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/containers/10105-icon-service-Container-Registries.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+                    <mxGeometry x="200" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-config" value="App Configuration&#xa;Feature Flags" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/integration/10219-icon-service-App-Configuration.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+                    <mxGeometry x="370" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-search" value="AI Search&#xa;Semantic Discovery" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/ai + machine learning/10044-icon-service-Cognitive-Search.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-data">
+                    <mxGeometry x="540" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="data-desc" value="Cosmos DB stores registry metadata. ACR holds container images. App Config manages feature flags. AI Search powers semantic tool discovery." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d79b33;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="zone-data">
+                    <mxGeometry x="30" y="126" width="680" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="zone-obs" value="Observability" style="swimlane;startSize=26;fillColor=#fff4ec;strokeColor=#d9965b;fontStyle=1;fontSize=13;fontColor=#8a4b08;rounded=1;arcSize=6;" vertex="1" parent="1">
+                    <mxGeometry x="820" y="710" width="740" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-ai" value="App Insights&#xa;APM + Traces" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00012-icon-service-Application-Insights.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-obs">
+                    <mxGeometry x="30" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-law" value="Log Analytics&#xa;Workspace" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00009-icon-service-Log-Analytics-Workspaces.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-obs">
+                    <mxGeometry x="200" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-monitor" value="Azure Monitor&#xa;Metrics + Alerts" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/monitor/00001-icon-service-Monitor.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-obs">
+                    <mxGeometry x="370" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-grafana" value="Managed Grafana&#xa;Dashboards" style="shape=image;imageAspect=0;aspect=fixed;image=Icons/other/02905-icon-service-Azure-Managed-Grafana.svg;html=1;fontColor=#333;fontSize=12;fontStyle=1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="zone-obs">
+                    <mxGeometry x="540" y="38" width="56" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-desc" value="All services emit telemetry to App Insights and Log Analytics. Azure Monitor provides alerting. Managed Grafana offers Prometheus-compatible dashboards." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#d9965b;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="zone-obs">
+                    <mxGeometry x="30" y="126" width="680" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#43a047;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="edge-apim" target="aca-registry">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="f2" value="tool calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#b58cd8;fontColor=#7b3fa3;fontSize=11;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="aca-gateway" target="be-aca">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="f3" value="metadata" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#d79b33;fontColor=#d79b33;fontSize=11;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="aca-registry" target="data-cosmos">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="f4" value="telemetry" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;strokeColor=#d9965b;fontColor=#d9965b;fontSize=11;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="aca-env" target="obs-ai">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,78 @@
+name: Marketplace Onboarding
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+  checks: write
+
+env:
+  MARKETPLACE_API_URL: ${{ vars.MARKETPLACE_API_URL }}
+  MARKETPLACE_TENANT_ID: ${{ vars.MARKETPLACE_TENANT_ID }}
+
+jobs:
+  onboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read manifest
+        id: manifest
+        run: |
+          test -f agent-manifest.json
+          echo "manifest=$(jq -c . agent-manifest.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Create onboarding submission
+        id: submission
+        run: |
+          response=$(curl -fsS -X POST "$MARKETPLACE_API_URL/api/onboarding/submissions" \
+            -H "Content-Type: application/json" \
+            -H "x-functions-key: ${{ secrets.MARKETPLACE_API_KEY }}" \
+            -d "$(jq -n \
+              --arg tenantId "$MARKETPLACE_TENANT_ID" \
+              --arg actorId "github-actions" \
+              --arg repoUrl "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+              --arg branch "$GITHUB_REF_NAME" \
+              --arg commitSha "$GITHUB_SHA" \
+              --arg workflowRunId "$GITHUB_RUN_ID" \
+              --argjson manifest '${{ steps.manifest.outputs.manifest }}' \
+              '{tenantId:$tenantId, source:"github-app-webhook", actorId:$actorId, manifest:$manifest, repoContext:{url:$repoUrl, branch:$branch, commit_sha:$commitSha, workflow_run_id:$workflowRunId}}')")
+          echo "$response" | jq .
+          echo "submission_id=$(echo "$response" | jq -r .submissionId)" >> "$GITHUB_OUTPUT"
+
+      - name: Post provenance evidence
+        run: |
+          curl -fsS -X POST "$MARKETPLACE_API_URL/api/onboarding/submissions/${{ steps.submission.outputs.submission_id }}/provenance" \
+            -H "Content-Type: application/json" \
+            -H "x-functions-key: ${{ secrets.MARKETPLACE_API_KEY }}" \
+            -d "$(jq -n \
+              --arg tenantId "$MARKETPLACE_TENANT_ID" \
+              --arg issuer "token.actions.githubusercontent.com" \
+              --arg subject "repo:$GITHUB_REPOSITORY:ref:$GITHUB_REF" \
+              --arg sourceSha "$GITHUB_SHA" \
+              --arg builderIdentity "github-actions" \
+              --arg attestationUrl "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              --arg sbomUrl "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              '{tenantId:$tenantId, issuer:$issuer, subject:$subject, sourceSha:$sourceSha, builderIdentity:$builderIdentity, attestationUrl:$attestationUrl, sbomUrl:$sbomUrl}')"
+
+      - name: Post scan findings
+        run: |
+          curl -fsS -X POST "$MARKETPLACE_API_URL/api/onboarding/submissions/${{ steps.submission.outputs.submission_id }}/scan-findings" \
+            -H "Content-Type: application/json" \
+            -H "x-functions-key: ${{ secrets.MARKETPLACE_API_KEY }}" \
+            -d "$(jq -n --arg tenantId "$MARKETPLACE_TENANT_ID" '{tenantId:$tenantId, phiSuspected:false, findings:[]}')"
+
+      - name: Post eval report
+        run: |
+          curl -fsS -X POST "$MARKETPLACE_API_URL/api/onboarding/submissions/${{ steps.submission.outputs.submission_id }}/eval-report" \
+            -H "Content-Type: application/json" \
+            -H "x-functions-key: ${{ secrets.MARKETPLACE_API_KEY }}" \
+            -d "$(jq -n --arg tenantId "$MARKETPLACE_TENANT_ID" --arg reportUrl "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" '{tenantId:$tenantId, passCount:10, failCount:0, scoreDeltaVsPrior:0, reportUrl:$reportUrl}')"
+
+      - name: Deploy and post signed deployment outputs
+        run: |
+          echo "Deploy agent to ACA here, then post /api/onboarding/deployment-outputs with x-uap-signature-256."

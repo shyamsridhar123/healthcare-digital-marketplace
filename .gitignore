@@ -1,11 +1,25 @@
-# v0 runtime files
-__v0_runtime_loader.js
-__v0_devtools.tsx
-__v0_jsx-dev-runtime.ts
+# Environment files — never commit these
+.env
+.env.local
+.env.*.local
+*.env
 
-# Common ignores
+# Build outputs
 node_modules/
-.next/
-.env*.local
-.DS_Store
-.vercel
+apps/web/.next/
+apps/web/node_modules/
+apps/api/node_modules/
+apps/api/dist/
+apps/api/local.settings.json
+apps/vscode-extension/node_modules/
+apps/vscode-extension/out/
+apps/vscode-extension/*.vsix
+apps/vscode-extension/.vscode-test/
+
+# azd state
+.azure/
+
+# Logs
+*.log
+dev-out.txt
+azd-up.log
