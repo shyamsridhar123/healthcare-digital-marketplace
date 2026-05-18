@@ -18,6 +18,7 @@ export default function MarketplacePage() {
     return assets.filter((asset) => {
       const matchesTab =
         selectedTab === "agents" ? asset.type === "agent" :
+        selectedTab === "spaces" ? asset.type === "space" :
         selectedTab === "tools"  ? (asset.type === "mcp-tool" || asset.type === "mcp-server") :
         selectedTab === "models" ? asset.type === "model" :
         selectedTab === "skills" ? asset.type === "workflow-template" || asset.tags.includes("skill") || asset.capabilities.includes("VS Code Skill") :
@@ -36,6 +37,7 @@ export default function MarketplacePage() {
   // Counts for tabs
   const counts = {
     agents: assets.filter(a => a.type === "agent").length,
+    spaces: assets.filter(a => a.type === "space").length,
     mcp:    assets.filter(a => a.type === "mcp-tool" || a.type === "mcp-server").length,
     models: assets.filter(a => a.type === "model").length,
     skills: assets.filter(a => a.type === "workflow-template" || a.tags.includes("skill") || a.capabilities.includes("VS Code Skill")).length,
@@ -45,6 +47,7 @@ export default function MarketplacePage() {
   const getTabTitle = () => {
     switch (selectedTab) {
       case "agents": return "Discover Agents"
+      case "spaces": return "Discover Spaces"
       case "tools":  return "Discover MCP Servers & Tools"
       case "models": return "Discover Models"
       case "skills": return "Discover Skills"
@@ -56,6 +59,7 @@ export default function MarketplacePage() {
   const getTabDescription = () => {
     switch (selectedTab) {
       case "agents": return "AI agents for healthcare RCM automation and intelligent workflows."
+      case "spaces": return "Runnable internal demos published from IMDE sandboxes. Try chat-only agent snapshots, then seed your own sandbox."
       case "tools":  return "MCP servers and tools to extend agent capabilities."
       case "models": return `${counts.models} foundation models deployed on Azure AI Foundry — click any card to view the live Model Card with benchmarks and safety metrics.`
       case "skills": return "Reusable skills that power agent actions and integrations."
@@ -131,8 +135,9 @@ export default function MarketplacePage() {
         {selectedTab === "stats" && (
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Agents",      value: counts.agents, color: "text-[var(--accent)]" },
-              { label: "MCP Servers & Tools", value: counts.mcp,    color: "text-[var(--success)]" },
+               { label: "Agents",      value: counts.agents, color: "text-[var(--accent)]" },
+               { label: "Spaces",      value: counts.spaces, color: "text-violet-400" },
+               { label: "MCP Servers & Tools", value: counts.mcp,    color: "text-[var(--success)]" },
               { label: "Models",      value: counts.models, color: "text-purple-400" },
               { label: "Skills",      value: counts.skills, color: "text-[var(--brand-teal)]" },
             ].map(({ label, value, color }) => (

@@ -7,6 +7,7 @@ import {
   Globe,
   BarChart3,
   Brain,
+  MessageSquare,
 } from "lucide-react"
 
 interface NavTabsProps {
@@ -17,12 +18,14 @@ interface NavTabsProps {
     mcp: number
     skills: number
     models: number
+    spaces: number
   }
 }
 
 export function NavTabs({ selectedTab, onTabChange, counts }: NavTabsProps) {
   const tabs = [
     { id: "agents",  label: "Agents",  icon: Bot,      count: counts.agents },
+    { id: "spaces",  label: "Spaces",  icon: MessageSquare, count: counts.spaces },
     { id: "tools",   label: "MCP",     icon: Globe,    count: counts.mcp },
     { id: "models",  label: "Models",  icon: Brain,    count: counts.models },
     { id: "skills",  label: "Skills",  icon: Zap,      count: counts.skills },
@@ -45,8 +48,9 @@ export function NavTabs({ selectedTab, onTabChange, counts }: NavTabsProps) {
           >
             <tab.icon className={cn(
               "h-4 w-4",
-              tab.id === "agents"  && "text-[var(--accent)]",
-              tab.id === "tools"   && "text-[var(--success)]",
+               tab.id === "agents"  && "text-[var(--accent)]",
+               tab.id === "spaces"  && "text-violet-400",
+               tab.id === "tools"   && "text-[var(--success)]",
               tab.id === "models"  && "text-purple-400",
               tab.id === "skills"  && "text-[var(--brand-teal)]",
               tab.id === "stats"   && "text-[var(--info)]"
