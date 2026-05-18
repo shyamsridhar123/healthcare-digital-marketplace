@@ -36,9 +36,10 @@ export function AssetCard({ asset }: AssetCardProps) {
   const skillCount = asset.capabilities.length
   // Derive script count deterministically from asset id to avoid hydration mismatch
   const scriptCount = (asset.id.charCodeAt(asset.id.length - 1) % 6) + 1
+  const href = asset.uiHref && asset.type === "space" ? asset.uiHref : `/asset/${asset.id}`
 
   return (
-    <Link href={`/asset/${asset.id}`} className="group block">
+    <Link href={href} className="group block">
       <div className="flex h-full flex-col rounded-lg border border-border bg-card p-4 transition-all duration-200 hover:border-[var(--accent)]/40">
         {/* Header with name and rating */}
         <div className="mb-1 flex items-start justify-between">

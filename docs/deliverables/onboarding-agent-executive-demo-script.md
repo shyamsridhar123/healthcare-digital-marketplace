@@ -6,14 +6,14 @@ Show how AI Marketplace reduces domain-agent onboarding from a manual platform-e
 
 ## Setup
 
-- AI Marketplace web: `http://127.0.0.1:3000`
-- Onboarding UI: `http://127.0.0.1:3000/onboarding/new`
+- AI Marketplace web: `http://localhost:3000`
+- Onboarding UI: `http://localhost:3000/onboarding/new`
 - Local API: `http://localhost:7071/api`
 - Demo repo: `demos/optum-uhg`
 - GitHub repo: `https://github.com/rajesh-ms/optum-uhg`
 - Marketplace branch: `feat/onboarding-agent-flow`
-- Skills Registry: `http://127.0.0.1:3000/registry/skills`
-- VS Code extension VSIX: `http://127.0.0.1:3000/downloads/ai-marketplace-skills-0.1.0.vsix`
+- Skills Registry: `http://localhost:3000/registry/skills`
+- VS Code extension VSIX: `http://localhost:3000/downloads/ai-marketplace-skills-0.1.0.vsix`
 
 ## Storyline
 
@@ -23,7 +23,7 @@ Domain engineering teams can build useful agents quickly, but production onboard
 
 ### 2. Show The Marketplace Asset
 
-Open `http://127.0.0.1:3000/asset/uap-onboarding-agent`.
+Open `http://localhost:3000/asset/uap-onboarding-agent`.
 
 Talk track:
 
@@ -37,8 +37,8 @@ Point out:
 
 Then open the Skills experience:
 
-- Marketplace Skills tab on `http://127.0.0.1:3000`
-- Skills Registry at `http://127.0.0.1:3000/registry/skills`
+- Marketplace Skills tab on `http://localhost:3000`
+- Skills Registry at `http://localhost:3000/registry/skills`
 
 Talk track:
 
@@ -145,7 +145,7 @@ Expected records:
 
 ### 6. Show UI Submission Path
 
-Open `http://127.0.0.1:3000/onboarding/new`.
+Open `http://localhost:3000/onboarding/new`.
 
 Talk track:
 
