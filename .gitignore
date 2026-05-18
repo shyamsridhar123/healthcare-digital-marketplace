@@ -23,3 +23,6 @@ apps/vscode-extension/.vscode-test/
 *.log
 dev-out.txt
 azd-up.log
+
+# ATV local telemetry
+.atv/

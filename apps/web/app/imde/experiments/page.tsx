@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -262,7 +262,7 @@ export default function IMDEExperimentsPage() {
                 </thead>
                 <tbody>
                   {runs.map((run) => (
-                    <React.Fragment key={run.id}>
+                    <Fragment key={run.id}>
                       <tr
                         className={cn(
                           "border-b border-border/50 hover:bg-secondary/20 cursor-pointer transition-colors",
@@ -357,7 +357,7 @@ export default function IMDEExperimentsPage() {
                           </td>
                         </tr>
                       )}
-                    </React.Fragment>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
