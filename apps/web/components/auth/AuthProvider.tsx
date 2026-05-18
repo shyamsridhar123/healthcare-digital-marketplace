@@ -11,6 +11,11 @@ import { buildMsalConfig } from "@/lib/auth/msal-config"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [instance, setInstance] = useState<PublicClientApplication | null>(null)
+  const [configError, setConfigError] = useState<string | null>(null)
+
+  if (process.env.NEXT_PUBLIC_AUTH_DISABLED === "true") {
+    return <>{children}</>
+  }
 
   useEffect(() => {
     // Fetch client ID + tenant ID from the server API route at runtime.
@@ -39,8 +44,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setInstance(inst)
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error("[AuthProvider] MSAL init failed:", err)
+        setConfigError(err instanceof Error ? err.message : "MSAL configuration failed")
+      })
   }, [])
+
+  if (configError) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-background p-6">
+        <div className="max-w-lg rounded-xl border border-red-500/30 bg-red-500/5 p-6 text-center">
+          <h1 className="text-lg font-semibold text-foreground">Authentication is not configured</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            The app could not load a valid Entra client ID and tenant ID, so sign-in was not started.
+          </p>
+          <p className="mt-4 rounded-lg bg-secondary px-3 py-2 text-left font-mono text-xs text-muted-foreground">
+            Set AZURE_CLIENT_ID and AZURE_TENANT_ID, or run local demos with NEXT_PUBLIC_AUTH_DISABLED=true.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (!instance) {
     return (

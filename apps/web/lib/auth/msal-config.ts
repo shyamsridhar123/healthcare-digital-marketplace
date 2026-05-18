@@ -4,7 +4,7 @@ import { type Configuration, LogLevel } from "@azure/msal-browser"
  * Builds MSAL configuration from values resolved at runtime.
  *
  * clientId and tenantId come from /api/auth-config (a Next.js API route that
- * reads AZURE_AD_CLIENT_ID / AZURE_AD_TENANT_ID server-side env vars).
+ * reads browser-app Entra IDs from server-side env vars).
  * These are public values — safe to expose in the browser.
  */
 export function buildMsalConfig(clientId: string, tenantId: string): Configuration {
