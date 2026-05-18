@@ -233,6 +233,49 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
           <CodeBlock code={cliCmd} lang="shell" />
         </div>
 
+        {/* API Installation */}
+        <div className="mt-5 pt-4 border-t border-gray-100">
+          <p className="text-xs font-medium text-gray-500 mb-3">Install via API</p>
+          
+          <div className="space-y-3">
+            {/* Fetch skill content via API */}
+            <div>
+              <p className="text-xs text-gray-600 mb-1">1. Fetch skill content from registry</p>
+              <CodeBlock
+                code={`curl -s ${API_BASE_URL}/registry/skills/${skill.id} | jq .`}
+                lang="bash"
+              />
+            </div>
+
+            {/* Download via API */}
+            <div>
+              <p className="text-xs text-gray-600 mb-1">2. Download skill file directly</p>
+              <CodeBlock
+                code={`curl -fsSL ${downloadUrl} -o ./SKILL.md`}
+                lang="bash"
+              />
+            </div>
+
+            {/* PowerShell API installation */}
+            <div>
+              <p className="text-xs text-gray-600 mb-1">3. Install via PowerShell (from API)</p>
+              <CodeBlock
+                code={`$skill = Invoke-RestMethod -Uri "${API_BASE_URL}/registry/skills/${skill.id}"\n$dest = "$env:USERPROFILE\\.copilot\\skills\\${skillDir}"\nNew-Item -ItemType Directory -Force $dest | Out-Null\n$skill.content | Out-File "$dest\\SKILL.md" -Encoding UTF8`}
+                lang="PowerShell"
+              />
+            </div>
+
+            {/* List all skills via API */}
+            <div>
+              <p className="text-xs text-gray-600 mb-1">4. Programmatically list all available skills</p>
+              <CodeBlock
+                code={`curl -s "${API_BASE_URL}/registry/skills?page=1&pageSize=50" | jq '.items[] | {id, name, version, description}'`}
+                lang="bash"
+              />
+            </div>
+          </div>
+        </div>
+
         <p className="text-xs text-gray-400 mt-4">
           After installation, restart or reload VS Code so Copilot discovers the new skill.
         </p>
