@@ -455,6 +455,22 @@ resource sandboxCostUsageContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDat
   }
 }
 
+resource modelExperiencesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: database
+  name: 'model-experiences'
+  properties: {
+    resource: {
+      id: 'model-experiences'
+      partitionKey: { paths: ['/tenantId'], kind: 'Hash' }
+      indexingPolicy: {
+        indexingMode: 'consistent'
+        includedPaths: [{ path: '/*' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+      }
+    }
+  }
+}
+
 output endpoint string = useExistingAccount ? existingCosmosAccount.properties.documentEndpoint : cosmosAccount.properties.documentEndpoint
 @secure()
 output primaryKey string = useExistingAccount ? existingCosmosAccount.listKeys().primaryMasterKey : cosmosAccount.listKeys().primaryMasterKey

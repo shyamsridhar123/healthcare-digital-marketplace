@@ -1,0 +1,6 @@
+claim_id,denial_code,denial_reason,corrected,resolution_days
+C-1002,CO-50,Non-covered service,true,14
+C-1004,CO-197,Authorization required,true,9
+C-2001,CO-29,Timely filing limit,false,30
+C-2002,CO-16,Missing information,true,5
+C-2003,CO-45,Charge exceeds fee schedule,true,11

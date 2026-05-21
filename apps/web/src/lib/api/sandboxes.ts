@@ -7,7 +7,7 @@ import type {
 } from "@/lib/types";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:7071/api",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:7071/api",
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
 });
@@ -44,6 +44,8 @@ export interface CreateSandboxInput {
   tenantId?: string;
   ownerId?: string;
   projectId?: string;
+  demoScenarioId?: string;
+  baseModelId?: string;
   workspaceTemplateId: string;
   sandboxType: "personal" | "team" | "restricted";
   dataPackages: string[];
@@ -69,7 +71,7 @@ export async function createSandbox(input: CreateSandboxInput): Promise<SandboxW
 }
 
 export async function approveSandbox(id: string, approverId?: string): Promise<SandboxWorkspace> {
-  const { data } = await api.post<SandboxWorkspace>(`/sandboxes/${id}/approve`, { approverId });
+  const { data } = await api.post<SandboxWorkspace>(`/sandboxes/${id}/approve`, { approverId, actorId: "presenter-admin" });
   return data;
 }
 
@@ -105,9 +107,30 @@ export async function listSandboxEvents(sandboxId: string): Promise<{ items: San
 
 export async function publishSandboxModel(
   sandboxId: string,
-  input: { amlModelName: string; amlModelVersion: string; trainingRunId?: string; evaluationArtifacts?: string[] }
-): Promise<{ submissionId: string; submission: unknown }> {
+  input: { amlModelName: string; amlModelVersion: string; trainingRunId?: string; evaluationArtifacts?: string[]; actorId?: string }
+): Promise<{
+  submissionId: string;
+  projectionId?: string;
+  modelRouteId?: string;
+  modelRoute?: string;
+  submission: unknown;
+  experience?: unknown;
+}> {
   const { data } = await api.post(`/sandboxes/${sandboxId}/publish-model`, input);
+  return data;
+}
+
+export async function resetImdeDemoScenario(
+  input: { tenantId?: string; demoScenarioId?: string; actorId?: string } = {}
+): Promise<{
+  tenantId: string;
+  demoScenarioId: string;
+  deleted: { sandboxes: number; lifecycleEvents: number; submissions: number; modelExperiences: number };
+}> {
+  const { data } = await api.post("/sandboxes/demo/reset", input);
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("imde-demo-model-experience");
+  }
   return data;
 }
 

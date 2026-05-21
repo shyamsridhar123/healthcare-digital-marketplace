@@ -1,0 +1,6 @@
+{
+  "properties": {
+    "publicNetworkAccess": "Enabled",
+    "ipAllowlist": ["99.20.90.231"]
+  }
+}

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { imdeDemoScenario } from "@/lib/imde-demo-data"
 import {
   BookOpen,
   Plus,
@@ -50,19 +51,19 @@ interface Notebook {
 const notebooks: Notebook[] = [
   {
     id: "nb-001",
-    name: "Denial_Prediction_EDA.ipynb",
-    description: "Exploratory analysis of 18-month denial dataset — feature engineering for transformer fine-tuning",
-    author: "Dr. Sarah Chen",
-    team: "RCM AI Core",
-    tags: ["denials", "EDA", "feature-eng", "transformer"],
-    lastModified: "2 hours ago",
-    version: "v2.4",
+    name: "denials_prediction_finetune.ipynb",
+    description: "Fine-tune the denial prediction base model using synthetic, de-identified claims and denial outcomes from the governed sandbox.",
+    author: imdeDemoScenario.actors.ownerName,
+    team: imdeDemoScenario.actors.teamName,
+    tags: ["denials", "fine-tuning", "synthetic-data", "governed"],
+    lastModified: "12 min ago",
+    version: "v3.0",
     status: "active",
     visibility: "team",
     stars: 8,
     forks: 3,
     commits: 47,
-    sandbox: "RCM-Denial-Prediction-v3",
+    sandbox: imdeDemoScenario.requestDefaults.name,
     runTime: "12m 34s",
   },
   {
@@ -230,6 +231,22 @@ export default function IMDENotebooksPage() {
           </div>
         </div>
 
+        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <Badge className="mb-2 bg-emerald-500/20 text-emerald-300">Sandbox scoped</Badge>
+              <p className="text-sm font-semibold text-foreground">{imdeDemoScenario.title}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {imdeDemoScenario.dataPackages.map((pkg) => `${pkg.displayName} v${pkg.version}`).join(" + ")} · {imdeDemoScenario.baseModelId}
+              </p>
+            </div>
+            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => window.open('/imde/notebooks/starter', '_blank')}>
+              <ExternalLink className="h-4 w-4" />
+              Open starter notebook
+            </Button>
+          </div>
+        </div>
+
         <Tabs defaultValue="my-notebooks">
           <div className="mb-4 flex items-center justify-between">
             <TabsList>
@@ -293,7 +310,7 @@ export default function IMDENotebooksPage() {
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => window.open(`/imde/notebooks/${nb.id}`, '_blank')}>
                           <ExternalLink className="h-3.5 w-3.5" />
                           Open
                         </Button>
@@ -336,7 +353,7 @@ export default function IMDENotebooksPage() {
                         <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground">
                           <Copy className="h-3.5 w-3.5" /> Fork
                         </Button>
-                        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                        <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => window.open(`/imde/notebooks/${nb.id}`, '_blank')}>
                           <ExternalLink className="h-3.5 w-3.5" /> Open
                         </Button>
                       </div>
@@ -369,7 +386,7 @@ export default function IMDENotebooksPage() {
                         </span>
                       ))}
                     </div>
-                    <Button variant="outline" size="sm" className="w-full gap-2 group-hover:border-violet-500/50">
+                    <Button variant="outline" size="sm" className="w-full gap-2 group-hover:border-violet-500/50" onClick={() => window.open(`/notebook/fork/${tpl.id}`, '_blank')}>
                       <Copy className="h-3.5 w-3.5" />
                       Use Template
                     </Button>

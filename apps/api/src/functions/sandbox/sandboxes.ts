@@ -8,6 +8,15 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { getContainer, CONTAINERS } from "../../lib/cosmos/client.js";
 import { provisionSandboxWorkspace } from "../../lib/aml/connector.js";
+import {
+  buildImdeDemoPublishArtifacts,
+  buildImdeDemoReadySandbox,
+  IMDE_DEMO_SCENARIO_ID,
+  isAllowedImdeDemoTenant,
+  isImdeDemoModeEnabled,
+  isCanonicalImdeDemoSandboxRequest,
+} from "../../lib/sandbox/demo-scenario.js";
+import { resetImdeDemoScenario } from "../../lib/sandbox/demo-reset.js";
 
 // ─── Validation schemas ───────────────────────────────────────────────────────
 
@@ -17,6 +26,8 @@ const CreateSandboxSchema = z.object({
   tenantId: z.string().optional(),
   ownerId: z.string().optional(),
   projectId: z.string().optional(),
+  demoScenarioId: z.string().optional(),
+  baseModelId: z.string().optional(),
   workspaceTemplateId: z.string(),
   sandboxType: z.enum(["personal", "team", "restricted"]),
   dataPackages: z.array(z.string()).min(1),
@@ -43,6 +54,37 @@ function addDays(days: number): string {
   return d.toISOString();
 }
 
+function isAuthorizedDemoAdmin(req: HttpRequest, body: Record<string, unknown>): boolean {
+  const configuredToken = process.env.UAP_IMDE_DEMO_ADMIN_TOKEN;
+  if (configuredToken) {
+    return req.headers.get("x-imde-demo-admin-token") === configuredToken;
+  }
+
+  const localMode = process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development" || process.env.NODE_ENV === "test";
+  return localMode && body.actorId === "presenter-admin";
+}
+
+function isAuthorizedDemoPublisher(req: HttpRequest, body: Record<string, unknown>, sandbox: Record<string, unknown>): boolean {
+  const configuredToken = process.env.UAP_IMDE_DEMO_ADMIN_TOKEN;
+  if (configuredToken && req.headers.get("x-imde-demo-admin-token") === configuredToken) {
+    return true;
+  }
+
+  const localMode = process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development" || process.env.NODE_ENV === "test";
+  return localMode && body.actorId === sandbox.ownerId;
+}
+
+async function readSandboxById(container: any, id: string): Promise<any | undefined> {
+  const { resources } = await container.items
+    .query({
+      query: "SELECT * FROM c WHERE c.id = @id",
+      parameters: [{ name: "@id", value: id }],
+    })
+    .fetchAll();
+
+  return resources[0];
+}
+
 async function emitLifecycleEvent(
   sandboxId: string,
   tenantId: string,
@@ -52,10 +94,12 @@ async function emitLifecycleEvent(
   details?: Record<string, unknown>
 ) {
   const container = await getContainer(CONTAINERS.SANDBOX_LIFECYCLE_EVENTS);
+  const demoScenarioId = typeof details?.demoScenarioId === "string" ? details.demoScenarioId : undefined;
   await container.items.create({
     id: uuidv4(),
     sandboxId,
     tenantId,
+    demoScenarioId,
     action,
     actorId,
     actorType: actorId === "system" ? "system" : "user",
@@ -107,6 +151,7 @@ async function triggerProvisioning(sandbox: any, ctx: InvocationContext) {
 
 /** Determine whether a sandbox request needs approval based on template + compute */
 async function needsApproval(
+  tenantId: string,
   workspaceTemplateId: string,
   computeProfile: string,
   sandboxType: string
@@ -115,10 +160,19 @@ async function needsApproval(
   if (sandboxType === "restricted") return true;
   try {
     const tplContainer = await getContainer(CONTAINERS.SANDBOX_TEMPLATES);
-    const { resource } = await tplContainer.item(workspaceTemplateId).read<any>();
+    const { resources } = await tplContainer.items
+      .query<any>({
+        query: "SELECT * FROM c WHERE c.tenantId = @tenantId AND c.id = @id",
+        parameters: [
+          { name: "@tenantId", value: tenantId },
+          { name: "@id", value: workspaceTemplateId },
+        ],
+      })
+      .fetchAll();
+    const resource = resources[0];
     return resource?.requiresApproval ?? false;
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -145,7 +199,9 @@ app.http("createSandbox", {
       const data = parsed.data;
       const tenantId = data.tenantId ?? "default";
       const ownerId = data.ownerId ?? "anonymous";
+      const canonicalDemoRequest = isCanonicalImdeDemoSandboxRequest({ ...data, tenantId });
       const requiresApproval = await needsApproval(
+        tenantId,
         data.workspaceTemplateId,
         data.computeProfile,
         data.sandboxType
@@ -161,6 +217,8 @@ app.http("createSandbox", {
         tenantId,
         ownerId,
         projectId: data.projectId,
+        demoScenarioId: canonicalDemoRequest ? data.demoScenarioId : undefined,
+        baseModelId: canonicalDemoRequest ? data.baseModelId : undefined,
         workspaceTemplateId: data.workspaceTemplateId,
         sandboxType: data.sandboxType,
         dataPackages: data.dataPackages,
@@ -183,7 +241,7 @@ app.http("createSandbox", {
         "sandbox.requested",
         ownerId,
         "success",
-        { requiresApproval, sandboxType: data.sandboxType }
+        { requiresApproval, sandboxType: data.sandboxType, demoScenarioId: canonicalDemoRequest ? data.demoScenarioId : undefined }
       );
 
       // Auto-start provisioning if no approval needed
@@ -265,7 +323,7 @@ app.http("getSandbox", {
     const id = req.params.id;
     try {
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read();
+      const resource = await readSandboxById(container, id);
       if (!resource) {
         return { status: 404, jsonBody: { error: "Sandbox not found" } };
       }
@@ -293,13 +351,39 @@ app.http("approveSandbox", {
       const approverId = (body.approverId as string) ?? "admin";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (resource.status !== "requested") {
         return { status: 409, jsonBody: { error: `Cannot approve sandbox in status '${resource.status}'` } };
       }
 
       const now = new Date().toISOString();
+      if (isCanonicalImdeDemoSandboxRequest(resource)) {
+        if (!isAuthorizedDemoAdmin(req, body)) {
+          return { status: 403, jsonBody: { error: "Presenter/admin authorization is required" } };
+        }
+
+        const ready = buildImdeDemoReadySandbox(resource, now);
+        await container.items.upsert(ready);
+
+        await emitLifecycleEvent(id, resource.tenantId, "sandbox.approved", ready.approvedBy, "success", {
+          reason: ready.approvalReason,
+          demoScenarioId: ready.demoScenarioId,
+        });
+        await emitLifecycleEvent(id, resource.tenantId, "sandbox.provisioning.started", "system", "success", {
+          demoScenarioId: ready.demoScenarioId,
+          deterministic: true,
+        });
+        await emitLifecycleEvent(id, resource.tenantId, "sandbox.workspace.provisioned", "system", "success", {
+          workspaceName: ready.amlWorkspaceName,
+          dataAssetsRegistered: ready.dataAssetsRegistered,
+          demoScenarioId: ready.demoScenarioId,
+          deterministic: true,
+        });
+
+        return { status: 200, jsonBody: ready };
+      }
+
       const updated = {
         ...resource,
         status: "provisioning",
@@ -343,7 +427,7 @@ app.http("rejectSandbox", {
       const rejectorId = (body as any).rejectorId ?? "admin";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (resource.status !== "requested") {
         return { status: 409, jsonBody: { error: `Cannot reject sandbox in status '${resource.status}'` } };
@@ -391,7 +475,7 @@ app.http("extendSandbox", {
       const actorId = (body as any).actorId ?? "user";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (!["ready", "suspended"].includes(resource.status)) {
         return { status: 409, jsonBody: { error: `Cannot extend sandbox in status '${resource.status}'` } };
@@ -434,7 +518,7 @@ app.http("suspendSandbox", {
       const actorId = (body.actorId as string) ?? "admin";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (resource.status !== "ready") {
         return { status: 409, jsonBody: { error: `Cannot suspend sandbox in status '${resource.status}'` } };
@@ -468,7 +552,7 @@ app.http("resumeSandbox", {
       const actorId = (body.actorId as string) ?? "admin";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (resource.status !== "suspended") {
         return { status: 409, jsonBody: { error: `Cannot resume sandbox in status '${resource.status}'` } };
@@ -501,7 +585,7 @@ app.http("retireSandbox", {
       const actorId = req.query.get("actorId") ?? "admin";
 
       const container = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource } = await container.item(id).read<any>();
+      const resource = await readSandboxById(container, id);
       if (!resource) return { status: 404, jsonBody: { error: "Sandbox not found" } };
 
       const updated = { ...resource, status: "retired", updatedAt: new Date().toISOString() };
@@ -548,6 +632,45 @@ app.http("listSandboxEvents", {
   },
 });
 
+// ─── POST /api/sandboxes/demo/reset ─────────────────────────────────────────
+
+app.http("resetImdeDemoScenario", {
+  methods: ["POST"],
+  authLevel: "anonymous",
+  route: "sandboxes/demo/reset",
+  handler: async (
+    req: HttpRequest,
+    ctx: InvocationContext
+  ): Promise<HttpResponseInit> => {
+    try {
+      if (!isImdeDemoModeEnabled()) {
+        return { status: 403, jsonBody: { error: "IMDE demo mode is not enabled" } };
+      }
+
+      const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+      if (!isAuthorizedDemoAdmin(req, body)) {
+        return { status: 403, jsonBody: { error: "Presenter/admin authorization is required" } };
+      }
+
+      const demoScenarioId = (body.demoScenarioId as string | undefined) ?? IMDE_DEMO_SCENARIO_ID;
+      if (demoScenarioId !== IMDE_DEMO_SCENARIO_ID) {
+        return { status: 400, jsonBody: { error: "Unsupported demo scenario" } };
+      }
+
+      const tenantId = (body.tenantId as string | undefined) ?? "default";
+      if (!isAllowedImdeDemoTenant(tenantId)) {
+        return { status: 403, jsonBody: { error: "Tenant is not allowed for IMDE demo reset" } };
+      }
+
+      const result = await resetImdeDemoScenario(tenantId);
+      return { status: 200, jsonBody: result };
+    } catch (err) {
+      ctx.error("resetImdeDemoScenario error:", err);
+      return { status: 500, jsonBody: { error: "Internal server error" } };
+    }
+  },
+});
+
 // ─── POST /api/sandboxes/{id}/publish-model ───────────────────────────────────
 
 app.http("publishSandboxModel", {
@@ -571,10 +694,50 @@ app.http("publishSandboxModel", {
       }
 
       const sandboxContainer = await getContainer(CONTAINERS.SANDBOXES);
-      const { resource: sandbox } = await sandboxContainer.item(sandboxId).read<any>();
+      const sandbox = await readSandboxById(sandboxContainer, sandboxId);
       if (!sandbox) return { status: 404, jsonBody: { error: "Sandbox not found" } };
       if (sandbox.status !== "ready") {
         return { status: 409, jsonBody: { error: "Sandbox must be in ready state to publish a model" } };
+      }
+
+      if (isCanonicalImdeDemoSandboxRequest(sandbox)) {
+        if (!isAuthorizedDemoPublisher(req, body, sandbox)) {
+          return { status: 403, jsonBody: { error: "Sandbox owner or presenter/admin authorization is required" } };
+        }
+
+        if (!trainingRunId) {
+          return { status: 400, jsonBody: { error: "trainingRunId is required for IMDE demo publish" } };
+        }
+
+        let artifacts;
+        try {
+          artifacts = buildImdeDemoPublishArtifacts(
+            sandbox,
+            {
+              amlModelName: String(amlModelName),
+              amlModelVersion: String(amlModelVersion),
+              trainingRunId: String(trainingRunId),
+            }
+          );
+        } catch (err: any) {
+          return { status: 400, jsonBody: { error: err?.message ?? "Invalid demo publish request" } };
+        }
+
+        const submissionsContainer = await getContainer(CONTAINERS.SUBMISSIONS);
+        await submissionsContainer.items.upsert(artifacts.submission);
+
+        const experiencesContainer = await getContainer(CONTAINERS.MODEL_EXPERIENCES);
+        await experiencesContainer.items.upsert(artifacts.experience);
+
+        await emitLifecycleEvent(sandboxId, sandbox.tenantId, "sandbox.model.published", sandbox.ownerId, "success", {
+          submissionId: artifacts.submissionId,
+          projectionId: artifacts.projectionId,
+          modelRouteId: artifacts.modelRouteId,
+          demoScenarioId: IMDE_DEMO_SCENARIO_ID,
+          deterministic: true,
+        });
+
+        return { status: 201, jsonBody: artifacts };
       }
 
       // Create a publisher submission record with sandbox lineage
@@ -607,6 +770,54 @@ app.http("publishSandboxModel", {
       return { status: 201, jsonBody: { submissionId: submission.id, submission } };
     } catch (err) {
       ctx.error("publishSandboxModel error:", err);
+      return { status: 500, jsonBody: { error: "Internal server error" } };
+    }
+  },
+});
+
+// ─── GET /api/model-experiences ─────────────────────────────────────────────
+
+app.http("listModelExperiences", {
+  methods: ["GET"],
+  authLevel: "anonymous",
+  route: "model-experiences",
+  handler: async (
+    req: HttpRequest,
+    ctx: InvocationContext
+  ): Promise<HttpResponseInit> => {
+    try {
+      const tenantId = req.query.get("tenantId") ?? "default";
+      const demoScenarioId = req.query.get("demoScenarioId");
+      const modelRouteId = req.query.get("modelRouteId");
+
+      if (demoScenarioId === IMDE_DEMO_SCENARIO_ID && !isAllowedImdeDemoTenant(tenantId)) {
+        return { status: 403, jsonBody: { error: "Tenant is not allowed for IMDE demo model experiences" } };
+      }
+
+      const filters = ["c.tenantId = @tenantId"];
+      const parameters: { name: string; value: string }[] = [{ name: "@tenantId", value: tenantId }];
+
+      if (demoScenarioId) {
+        filters.push("c.demoScenarioId = @demoScenarioId");
+        parameters.push({ name: "@demoScenarioId", value: demoScenarioId });
+      }
+
+      if (modelRouteId) {
+        filters.push("c.modelRouteId = @modelRouteId");
+        parameters.push({ name: "@modelRouteId", value: modelRouteId });
+      }
+
+      const container = await getContainer(CONTAINERS.MODEL_EXPERIENCES);
+      const { resources } = await container.items
+        .query({
+          query: `SELECT * FROM c WHERE ${filters.join(" AND ")}`,
+          parameters,
+        })
+        .fetchAll();
+
+      return { status: 200, jsonBody: { items: resources, total: resources.length } };
+    } catch (err) {
+      ctx.error("listModelExperiences error:", err);
       return { status: 500, jsonBody: { error: "Internal server error" } };
     }
   },

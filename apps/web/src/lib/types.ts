@@ -574,6 +574,8 @@ export interface SandboxWorkspace {
   ownerId: string;
   projectId?: string;
   workspaceTemplateId: string;
+  demoScenarioId?: string;
+  baseModelId?: string;
   sandboxType: SandboxType;
   dataPackages: string[];
   computeProfile: ComputeProfile;
@@ -581,11 +583,13 @@ export interface SandboxWorkspace {
   expiresAt: string;
   costCenter?: string;
   businessJustification?: string;
+  demoDataStatement?: string;
   launchUrls?: SandboxLaunchUrls;
   policyProfile: "standard" | "restricted";
   amlWorkspaceId?: string;
   approvedBy?: string;
   approvedAt?: string;
+  approvalReason?: string;
   rejectedBy?: string;
   rejectedAt?: string;
   rejectionReason?: string;
@@ -624,6 +628,8 @@ export interface DataPackage {
   amlDataAsset: AmlDataAsset;
   allowedSandboxTypes: SandboxType[];
   approvalPolicy: "standard-review" | "restricted-review" | "auto-approve";
+  demoDataStatement?: string;
+  demoDataClassifications?: ("synthetic" | "de-identified" | "approved-demo")[];
   starterNotebook?: string;
   tenantId: string;
   createdAt: string;

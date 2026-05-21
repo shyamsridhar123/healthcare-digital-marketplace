@@ -1,0 +1,13 @@
+artifact_path: model
+flavors:
+  python_function:
+    env: conda.yaml
+    loader_module: mlflow.transformers
+    python_version: "3.10"
+mlflow_version: 2.14.0
+model_uuid: rcm-denial-prediction-space-v1
+run_id: run-denial-pubmedbert-v3
+signature:
+  inputs: '[{"name": "claim_text", "type": "string"}]'
+  outputs: '[{"name": "denial_probability", "type": "double"}, {"name": "denial_code", "type": "string"}]'
+utc_time_created: "2026-05-20 00:00:00.000000"

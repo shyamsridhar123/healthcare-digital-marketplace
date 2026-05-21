@@ -1,0 +1,6 @@
+claim_id,payer,procedure_code,billed_amount,diagnosis_code,prior_auth,denied
+C-1001,UHC,99213,185.00,E11.9,true,false
+C-1002,Aetna,99214,250.00,I10,false,true
+C-1003,BCBS,93000,420.00,R07.9,true,false
+C-1004,Cigna,71046,310.00,J18.9,false,true
+C-1005,UHC,80053,95.00,Z00.00,false,false

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { listSandboxTemplates, listDataPackages, createSandbox } from "@/lib/api/sandboxes";
+import { imdeDemoScenario } from "@/lib/imde-demo-data";
 import type { SandboxTemplate, DataPackage } from "@/lib/types";
 
 const COMPUTE_OPTIONS = [
@@ -25,6 +26,7 @@ const COMPUTE_OPTIONS = [
 
 export default function RequestSandboxPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [templates, setTemplates] = useState<SandboxTemplate[]>([]);
   const [packages, setPackages] = useState<DataPackage[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -34,6 +36,8 @@ export default function RequestSandboxPage() {
     name: "",
     description: "",
     workspaceTemplateId: "",
+    demoScenarioId: undefined as string | undefined,
+    baseModelId: undefined as string | undefined,
     sandboxType: "personal" as "personal" | "team" | "restricted",
     dataPackages: [] as string[],
     computeProfile: "cpu-small" as "cpu-small" | "cpu-medium" | "gpu-small",
@@ -47,7 +51,9 @@ export default function RequestSandboxPage() {
       ([tplRes, pkgRes]) => {
         setTemplates(tplRes.items);
         setPackages(pkgRes.items);
-        if (tplRes.items.length > 0) {
+        if (searchParams.get("demo") === imdeDemoScenario.demoScenarioId) {
+          applyDemoPreset();
+        } else if (tplRes.items.length > 0) {
           const first = tplRes.items[0];
           setForm((f) => ({
             ...f,
@@ -59,7 +65,16 @@ export default function RequestSandboxPage() {
         }
       }
     );
-  }, []);
+  }, [searchParams]);
+
+  function applyDemoPreset() {
+    setForm((f) => ({
+      ...f,
+      ...imdeDemoScenario.requestDefaults,
+      demoScenarioId: imdeDemoScenario.demoScenarioId,
+      baseModelId: imdeDemoScenario.baseModelId,
+    }));
+  }
 
   const selectedTemplate = templates.find((t) => t.id === form.workspaceTemplateId);
   const allowedPackages = packages.filter((p) =>
@@ -94,6 +109,10 @@ export default function RequestSandboxPage() {
     if (!form.workspaceTemplateId) { setError("Please select a template."); return; }
     if (form.dataPackages.length === 0) { setError("Select at least one data package."); return; }
     if (!form.businessJustification.trim()) { setError("Business justification is required."); return; }
+    if (containsPhiLikeText([form.name, form.description, form.businessJustification])) {
+      setError("Use synthetic or de-identified demo language only. Remove patient identifiers, MRNs, SSNs, or raw clinical details.");
+      return;
+    }
 
     setError(null);
     setSubmitting(true);
@@ -112,6 +131,8 @@ export default function RequestSandboxPage() {
     form.computeProfile === "gpu-small" ||
     form.sandboxType === "restricted";
 
+  const isDemoRequest = form.demoScenarioId === imdeDemoScenario.demoScenarioId;
+
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       {/* Header */}
@@ -126,6 +147,20 @@ export default function RequestSandboxPage() {
           Select a template, approved datasets, and compute profile. Your request will be evaluated
           against policy before provisioning.
         </p>
+      </div>
+
+      <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-foreground">{imdeDemoScenario.title}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Preloads the approved team GPU sandbox, base model, and synthetic/de-identified data packages for the executive walkthrough.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={applyDemoPreset}>
+            Load demo preset
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -149,6 +184,11 @@ export default function RequestSandboxPage() {
             </Select>
             {selectedTemplate && (
               <p className="text-xs text-muted-foreground">{selectedTemplate.description}</p>
+            )}
+            {isDemoRequest && (
+              <p className="text-xs font-medium text-emerald-400">
+                Demo scenario: {form.demoScenarioId} · Base model: {form.baseModelId}
+              </p>
             )}
           </div>
 
@@ -259,6 +299,9 @@ export default function RequestSandboxPage() {
                       <div>
                         <p className="text-sm font-medium text-foreground">{pkg.displayName}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">{pkg.description}</p>
+                        {pkg.demoDataStatement && (
+                          <p className="mt-1 text-xs text-emerald-400">{pkg.demoDataStatement}</p>
+                        )}
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase ${
@@ -294,7 +337,7 @@ export default function RequestSandboxPage() {
         {/* Approval notice */}
         {requiresApproval && (
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-400">
-            This request requires approver review before provisioning begins.
+            This request requires platform admin approval before deterministic demo provisioning begins.
           </div>
         )}
 
@@ -317,4 +360,8 @@ export default function RequestSandboxPage() {
       </form>
     </div>
   );
+}
+
+function containsPhiLikeText(values: string[]): boolean {
+  return values.some((value) => /\b(mrn|ssn|patient name|dob|date of birth|raw clinical note)\b/i.test(value));
 }

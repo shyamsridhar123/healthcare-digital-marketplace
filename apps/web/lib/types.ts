@@ -175,4 +175,11 @@ export interface ModelCardData {
   source: "foundry" | "mock"     // indicates whether data came from live Foundry or fallback
 }
 
-export type { RegistrySkill } from "../src/lib/types";
+export type {
+  DataPackage,
+  SandboxLifecycleEvent,
+  SandboxStatus,
+  SandboxTemplate,
+  SandboxWorkspace,
+  RegistrySkill,
+} from "../src/lib/types";

@@ -271,4 +271,5 @@ export const CONTAINERS = {
   DATA_PACKAGES: "data-packages",
   SANDBOX_LIFECYCLE_EVENTS: "sandbox-lifecycle-events",
   SANDBOX_COST_USAGE: "sandbox-cost-usage",
+  MODEL_EXPERIENCES: "model-experiences",
 } as const;
