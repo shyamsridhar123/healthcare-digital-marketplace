@@ -44,6 +44,21 @@ const nextConfig: NextConfig = {
       ],
     };
   },
+  async headers() {
+    // Scope COOP/COEP strictly to /jupyterlite/* so the in-browser Pyodide
+    // kernel can use SharedArrayBuffer. Cross-origin isolation must NOT be
+    // applied to the rest of the app — it would break OAuth popups and
+    // third-party iframes (e.g. avatars, embedded analytics).
+    return [
+      {
+        source: "/jupyterlite/:path*",
+        headers: [
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useParams } from "next/navigation"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { Button } from "@/components/ui/button"
@@ -17,8 +18,16 @@ import {
   Download,
   Globe,
   FileCode,
+  X,
 } from "lucide-react"
 import Link from "next/link"
+
+// Only the starter notebook ships as a real JupyterLite-backed editor today.
+// Other notebooks render preview-only; their Open Editor button is disabled
+// with a "Coming soon" tooltip until they each get a corresponding .ipynb.
+const STARTER_NOTEBOOK_ID = "starter"
+const JUPYTERLITE_NOTEBOOK_URL =
+  "/jupyterlite/notebooks/index.html?path=starter.ipynb"
 
 // Mock notebook data - replace with API call when backend is ready
 const mockNotebooks = [
@@ -99,8 +108,10 @@ Build a classifier to predict claim denials based on historical patterns.
 export default function NotebookDetailPage() {
   const params = useParams()
   const notebookId = params.id as string
+  const [editorOpen, setEditorOpen] = useState(false)
 
   const notebook = mockNotebooks.find((n) => n.id === notebookId)
+  const hasEditor = notebook?.id === STARTER_NOTEBOOK_ID
 
   if (!notebook) {
     return (
@@ -153,9 +164,24 @@ export default function NotebookDetailPage() {
                   <Download className="h-4 w-4" />
                   Download
                 </Button>
-                <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
-                  <FileCode className="h-4 w-4" />
-                  Open Editor
+                <Button
+                  size="sm"
+                  disabled={!hasEditor}
+                  title={hasEditor ? undefined : "Coming soon"}
+                  onClick={hasEditor ? () => setEditorOpen((prev) => !prev) : undefined}
+                  className="gap-2 bg-violet-600 hover:bg-violet-700 text-white disabled:opacity-60"
+                >
+                  {editorOpen && hasEditor ? (
+                    <>
+                      <X className="h-4 w-4" />
+                      Close Editor
+                    </>
+                  ) : (
+                    <>
+                      <FileCode className="h-4 w-4" />
+                      Open Editor
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -199,23 +225,50 @@ export default function NotebookDetailPage() {
 
           <Separator className="mb-8" />
 
-          {/* Notebook Preview */}
+          {/* Notebook Preview / Editor */}
           <div className="grid grid-cols-4 gap-8">
             {/* Main Content */}
             <div className="col-span-3">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Notebook Preview</CardTitle>
-                  <CardDescription>
-                    Full notebook editor will open when you click "Open Editor"
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-6 font-mono text-sm whitespace-pre-wrap break-words">
-                    {notebook.content}
-                  </div>
-                </CardContent>
-              </Card>
+              {editorOpen && hasEditor ? (
+                <Card className="overflow-hidden">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                    <div>
+                      <CardTitle className="text-lg">JupyterLite Editor</CardTitle>
+                      <CardDescription>
+                        Outputs are pre-baked so the demo always renders · live kernel execution via Pyodide is optional
+                      </CardDescription>
+                    </div>
+                    <Badge variant="outline" className="bg-violet-500/10 text-violet-700 dark:text-violet-300">
+                      live
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    {/* Cross-origin isolation is provided by COOP/COEP headers
+                        scoped to /jupyterlite/:path* in next.config.ts. */}
+                    <iframe
+                      src={JUPYTERLITE_NOTEBOOK_URL}
+                      title="JupyterLite starter notebook"
+                      className="w-full h-[80vh] border-0"
+                    />
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Notebook Preview</CardTitle>
+                    <CardDescription>
+                      {hasEditor
+                        ? 'Full notebook editor will open when you click "Open Editor"'
+                        : "Editor coming soon for this notebook"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-6 font-mono text-sm whitespace-pre-wrap break-words">
+                      {notebook.content}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Sidebar */}
