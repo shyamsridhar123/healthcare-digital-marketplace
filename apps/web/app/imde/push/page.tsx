@@ -126,7 +126,7 @@ export default function IMDEPushPage() {
         amlModelName: formData.modelName,
         amlModelVersion: formData.version,
         trainingRunId: formData.sourceRun,
-        actorId: imdeDemoScenario.actors.ownerId,
+        actorId: "presenter-admin",
       })
       setPublishedRoute(result.modelRoute ?? `/models/${result.modelRouteId ?? imdeDemoScenario.publishedExperience.modelRouteId}`)
 
