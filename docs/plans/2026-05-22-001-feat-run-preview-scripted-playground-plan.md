@@ -1,7 +1,7 @@
 ---
 title: "feat: Run Preview scripted playground for published models"
 type: feat
-status: active
+status: completed
 date: 2026-05-22
 origin: docs/brainstorms/2026-05-22-run-preview-scripted-playground-requirements.md
 ---
@@ -139,7 +139,7 @@ flowchart TB
   U2 --> U3
 ```
 
-- [ ] **Unit 1: Add playground scenarios to demo scenario config and experience artifact**
+- [x] **Unit 1: Add playground scenarios to demo scenario config and experience artifact**
 
 **Goal:** Declare the canonical playground scenario list on the API-side demo config and carry it through `buildImdeDemoPublishArtifacts` onto the published experience document.
 
@@ -171,7 +171,7 @@ flowchart TB
 - `npm run build && node --test apps/api/test/sandbox-demo.test.js` (or the package's existing test command) passes with the new assertions.
 - Calling `buildImdeDemoPublishArtifacts` returns scenarios with the expected shape and count.
 
-- [ ] **Unit 2: Mirror playground scenarios in the web demo data and `ModelData` type**
+- [x] **Unit 2: Mirror playground scenarios in the web demo data and `ModelData` type**
 
 **Goal:** Update the `ModelData` `preview` field shape and `demoPublishedModelExperience` in the web demo data so the model detail page can render the playground from a single client-visible source.
 
@@ -196,7 +196,7 @@ flowchart TB
 - `cd apps/web && npm run type-check` passes.
 - Manual: navigate to `/models/rcm-denial-prediction-space` and confirm the existing static card still renders unchanged (until Unit 3 replaces it).
 
-- [ ] **Unit 3: Build the interactive playground panel**
+- [x] **Unit 3: Build the interactive playground panel**
 
 **Goal:** Replace the static preview card in the published model detail page with an interactive scenario selector + Run button + result area that drives the deterministic scorer, simulates latency, and emits a `preview` session for audit.
 
