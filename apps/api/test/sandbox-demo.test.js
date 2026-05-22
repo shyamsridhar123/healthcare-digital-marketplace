@@ -204,6 +204,56 @@ test('demo publish artifacts include approved submission and model experience ro
   assert.deepEqual(artifacts.experience.lineage.dataPackages, ['claims_training', 'denials_gold']);
 });
 
+test('demo publish artifacts carry the playground scenarios onto the experience document', () => {
+  const sandbox = buildImdeDemoReadySandbox({
+    id: 'sbx-playground',
+    sandboxId: 'sbx-playground',
+    tenantId: 'default',
+    ownerId: 'ds-priya-shah',
+    dataPackages: ['claims_training', 'denials_gold'],
+  });
+
+  const artifacts = buildImdeDemoPublishArtifacts(sandbox, {
+    amlModelName: 'rcm-denial-prediction-space',
+    amlModelVersion: '1.0.0',
+    trainingRunId: 'run-denial-pubmedbert-v3',
+  });
+
+  const scenarios = artifacts.experience.playgroundScenarios;
+  assert.ok(Array.isArray(scenarios), 'playgroundScenarios should be an array');
+  assert.equal(scenarios.length, 3, 'expected exactly 3 playground scenarios');
+
+  const expectedIds = ['outpatient-mri-no-auth', 'ed-visit-coding-mismatch', 'inpatient-stay-complete-docs'];
+  assert.deepEqual(scenarios.map((s) => s.id), expectedIds);
+
+  const ids = new Set(scenarios.map((s) => s.id));
+  assert.equal(ids.size, scenarios.length, 'playground scenario ids must be unique');
+
+  const allowedPredictions = new Set(['High', 'Medium', 'Low']);
+  for (const entry of scenarios) {
+    assert.equal(typeof entry.id, 'string');
+    assert.ok(entry.label.length > 0);
+    assert.ok(entry.inputText.toLowerCase().includes('synthetic'),
+      'inputText should advertise synthetic data to reviewers');
+    assert.ok(allowedPredictions.has(entry.output.prediction),
+      `unexpected prediction value: ${entry.output.prediction}`);
+    assert.equal(typeof entry.output.rationale, 'string');
+    assert.ok(entry.output.rationale.length > 0);
+    assert.equal(typeof entry.output.confidence, 'number');
+    assert.ok(entry.output.confidence >= 0 && entry.output.confidence <= 1,
+      `confidence out of range: ${entry.output.confidence}`);
+    if (entry.output.reasonCode !== undefined) {
+      assert.equal(typeof entry.output.reasonCode, 'string');
+      assert.ok(entry.output.reasonCode.length > 0);
+    }
+  }
+
+  const predictions = scenarios.map((s) => s.output.prediction);
+  assert.ok(predictions.includes('High'), 'expected at least one High-risk scenario');
+  assert.ok(predictions.includes('Medium'), 'expected at least one Medium-risk scenario');
+  assert.ok(predictions.includes('Low'), 'expected at least one Low-risk scenario');
+});
+
 test('demo publish artifacts reject non-winning runs', () => {
   const sandbox = buildImdeDemoReadySandbox({
     id: 'sbx-publish-invalid',

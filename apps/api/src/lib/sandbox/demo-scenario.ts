@@ -11,6 +11,20 @@ export interface ImdeDemoDataPackage {
   demoDataStatement: string;
 }
 
+export type ImdeDemoPlaygroundPrediction = "High" | "Medium" | "Low";
+
+export interface ImdeDemoPlaygroundScenario {
+  id: string;
+  label: string;
+  inputText: string;
+  output: {
+    prediction: ImdeDemoPlaygroundPrediction;
+    rationale: string;
+    reasonCode?: string;
+    confidence: number;
+  };
+}
+
 export interface ImdeDemoEvaluationRun {
   id: string;
   name: string;
@@ -63,6 +77,7 @@ export interface ImdeDemoScenario {
     task: string;
     trustStatus: "governance-passed";
     experienceStatus: "published";
+    playgroundScenarios: ImdeDemoPlaygroundScenario[];
   };
 }
 
@@ -149,6 +164,46 @@ const scenario: ImdeDemoScenario = {
     task: "Healthcare revenue cycle denial prediction",
     trustStatus: "governance-passed",
     experienceStatus: "published",
+    playgroundScenarios: [
+      {
+        id: "outpatient-mri-no-auth",
+        label: "Outpatient MRI, missing prior auth",
+        inputText:
+          "Synthetic claim: outpatient MRI of lumbar spine for chronic low back pain, payer A commercial plan, no prior authorization on file, billed CPT 72148.",
+        output: {
+          prediction: "High",
+          rationale:
+            "Synthetic example: payer A consistently denies advanced imaging without a prior auth record; documentation gap drives high denial risk.",
+          reasonCode: "CO-197",
+          confidence: 0.92,
+        },
+      },
+      {
+        id: "ed-visit-coding-mismatch",
+        label: "ED visit, coding mismatch",
+        inputText:
+          "Synthetic claim: emergency department level 4 visit (CPT 99284) with primary diagnosis of unspecified chest pain (R07.9), no supporting cardiac workup documented.",
+        output: {
+          prediction: "Medium",
+          rationale:
+            "Synthetic example: E/M level appears unsupported by documented workup; payer may downcode or request records.",
+          reasonCode: "CO-50",
+          confidence: 0.68,
+        },
+      },
+      {
+        id: "inpatient-stay-complete-docs",
+        label: "Inpatient stay, complete documentation",
+        inputText:
+          "Synthetic claim: 3-day inpatient admission for community-acquired pneumonia, attending notes and discharge summary on file, DRG 193, in-network facility.",
+        output: {
+          prediction: "Low",
+          rationale:
+            "Synthetic example: medical necessity well documented and DRG aligns with diagnosis; low likelihood of denial.",
+          confidence: 0.12,
+        },
+      },
+    ],
   },
 };
 
@@ -405,6 +460,12 @@ export function buildImdeDemoPublishArtifacts(
     trustStatus: scenario.publishedExperience.trustStatus,
     task: scenario.publishedExperience.task,
     previewType: "classification-playground",
+    playgroundScenarios: scenario.publishedExperience.playgroundScenarios.map((entry) => ({
+      id: entry.id,
+      label: entry.label,
+      inputText: entry.inputText,
+      output: { ...entry.output },
+    })),
     lineage,
     createdAt: now,
     updatedAt: now,
