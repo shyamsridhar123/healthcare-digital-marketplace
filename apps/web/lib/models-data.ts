@@ -29,6 +29,17 @@ export interface ModelData {
     description: string
     sampleInput: string
     sampleOutput: string
+    scenarios?: Array<{
+      id: string
+      label: string
+      inputText: string
+      output: {
+        prediction: "High" | "Medium" | "Low"
+        rationale: string
+        reasonCode?: string
+        confidence: number
+      }
+    }>
   }
   trustStatus?: "governance-passed" | "in-review"
   lineage?: {
@@ -77,6 +88,46 @@ export const demoPublishedModelExperience: ModelData = {
     description: "Try a synthetic claim summary and inspect denial-risk rationale before duplicating the experience.",
     sampleInput: "Synthetic claim: outpatient MRI, payer A, missing prior authorization indicator.",
     sampleOutput: "Denial risk: High · likely reason: authorization documentation gap · recommended next step: attach auth evidence.",
+    scenarios: [
+      {
+        id: "outpatient-mri-no-auth",
+        label: "Outpatient MRI, missing prior auth",
+        inputText:
+          "Synthetic claim: outpatient MRI of lumbar spine for chronic low back pain, payer A commercial plan, no prior authorization on file, billed CPT 72148.",
+        output: {
+          prediction: "High",
+          rationale:
+            "Synthetic example: payer A consistently denies advanced imaging without a prior auth record; documentation gap drives high denial risk.",
+          reasonCode: "CO-197",
+          confidence: 0.92,
+        },
+      },
+      {
+        id: "ed-visit-coding-mismatch",
+        label: "ED visit, coding mismatch",
+        inputText:
+          "Synthetic claim: emergency department level 4 visit (CPT 99284) with primary diagnosis of unspecified chest pain (R07.9), no supporting cardiac workup documented.",
+        output: {
+          prediction: "Medium",
+          rationale:
+            "Synthetic example: E/M level appears unsupported by documented workup; payer may downcode or request records.",
+          reasonCode: "CO-50",
+          confidence: 0.68,
+        },
+      },
+      {
+        id: "inpatient-stay-complete-docs",
+        label: "Inpatient stay, complete documentation",
+        inputText:
+          "Synthetic claim: 3-day inpatient admission for community-acquired pneumonia, attending notes and discharge summary on file, DRG 193, in-network facility.",
+        output: {
+          prediction: "Low",
+          rationale:
+            "Synthetic example: medical necessity well documented and DRG aligns with diagnosis; low likelihood of denial.",
+          confidence: 0.12,
+        },
+      },
+    ],
   },
   lineage: {
     sandboxId: "imde-rcm-denial-demo",
