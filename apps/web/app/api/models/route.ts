@@ -7,7 +7,59 @@ import {
   amlModelToMarketplace,
   type RegisterModelInput,
 } from "@/lib/azure-ml-client"
-import { models as staticModels } from "@/lib/models-data"
+import { demoPublishedModelExperience, models as staticModels } from "@/lib/models-data"
+
+const IMDE_DEMO_SCENARIO_ID = "imde-rcm-denial-demo"
+
+function isAllowedDemoTenant(tenantId: string) {
+  return (process.env.UAP_IMDE_DEMO_TENANTS ?? "default")
+    .split(",")
+    .map((tenant) => tenant.trim())
+    .filter(Boolean)
+    .includes(tenantId)
+}
+
+function resolveBackendApiBase(): string {
+  // Server-side code must use an absolute URL. Prefer API_BASE_URL (absolute,
+  // server-only) and fall back to NEXT_PUBLIC_API_BASE_URL only when it is
+  // already absolute. Otherwise default to the local Functions host.
+  const serverBase = process.env.API_BASE_URL
+  if (serverBase && /^https?:\/\//.test(serverBase)) return serverBase
+  const publicBase = process.env.NEXT_PUBLIC_API_BASE_URL
+  if (publicBase && /^https?:\/\//.test(publicBase)) return publicBase
+  return "http://localhost:7071/api"
+}
+
+async function listDemoPublishedModels(demoScenarioId: string | null, tenantId: string) {
+  if (demoScenarioId !== IMDE_DEMO_SCENARIO_ID) return []
+  if (!isAllowedDemoTenant(tenantId)) return []
+
+  const apiBase = resolveBackendApiBase()
+  const url = new URL(`${apiBase.replace(/\/$/, "")}/model-experiences`)
+  url.searchParams.set("tenantId", tenantId)
+  url.searchParams.set("demoScenarioId", demoScenarioId)
+  url.searchParams.set("modelRouteId", demoPublishedModelExperience.id)
+
+  try {
+    const response = await fetch(url, { cache: "no-store" })
+    if (!response.ok) return []
+
+    const payload = await response.json() as { items?: Array<Record<string, any>> }
+    return (payload.items ?? []).map((experience) => ({
+      ...demoPublishedModelExperience,
+      version: String(experience.version ?? demoPublishedModelExperience.version),
+      status: "demo-ready",
+      trustStatus: experience.trustStatus === "governance-passed" ? "governance-passed" : demoPublishedModelExperience.trustStatus,
+      lineage: {
+        ...demoPublishedModelExperience.lineage,
+        ...(typeof experience.lineage === "object" && experience.lineage ? experience.lineage : {}),
+      },
+    }))
+  } catch (err) {
+    console.warn("[api/models] demo model-experiences sync failed:", err)
+    return []
+  }
+}
 
 /**
  * GET /api/models
@@ -21,6 +73,8 @@ import { models as staticModels } from "@/lib/models-data"
  */
 export async function GET(req: NextRequest) {
   const source = req.nextUrl.searchParams.get("source") ?? "all"
+  const demoScenarioId = req.nextUrl.searchParams.get("demoScenarioId")
+  const tenantId = req.nextUrl.searchParams.get("tenantId") ?? "default"
 
   let amlModels: ReturnType<typeof amlModelToMarketplace>[] = []
 
@@ -44,12 +98,14 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  const demoModels = await listDemoPublishedModels(demoScenarioId, tenantId)
+
   const combined =
     source === "azureml"
       ? amlModels
       : source === "static"
       ? staticModels
-      : [...staticModels, ...amlModels]
+      : [...demoModels, ...staticModels, ...amlModels]
 
   return NextResponse.json(
     {
@@ -57,12 +113,13 @@ export async function GET(req: NextRequest) {
       meta: {
         total: combined.length,
         static: staticModels.length,
+        demo: demoModels.length,
         azureml: amlModels.length,
         amlConfigured: isAmlConfigured(),
       },
     },
     {
-      headers: { "Cache-Control": "public, s-maxage=120, stale-while-revalidate=30" },
+      headers: { "Cache-Control": demoModels.length > 0 ? "no-store" : "public, s-maxage=120, stale-while-revalidate=30" },
     }
   )
 }

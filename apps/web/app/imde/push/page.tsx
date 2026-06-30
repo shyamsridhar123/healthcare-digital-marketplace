@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ElementType } from "react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -29,12 +31,14 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { publishSandboxModel } from "@/lib/api/sandboxes"
+import { imdeDemoScenario } from "@/lib/imde-demo-data"
 
 interface PublishStep {
   id: number
   label: string
   description: string
-  icon: React.ElementType
+  icon: ElementType
   status: "completed" | "active" | "pending"
 }
 
@@ -83,19 +87,22 @@ const recentPushes: RecentPush[] = [
 ]
 
 export default function IMDEPushPage() {
+  const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
-    modelName: "",
-    version: "",
-    description: "",
-    sourceRun: "",
-    category: "",
-    tags: "",
-    owner: "",
-    environment: "",
+    modelName: imdeDemoScenario.publishedExperience.modelRouteId,
+    version: "1.0.0",
+    description: "Published Model Experience for RCM denial prediction, trained from a governed sandbox using synthetic, de-identified demo data.",
+    sourceRun: searchParams.get("runId") ?? imdeDemoScenario.selectedRunId,
+    category: "denial-management",
+    tags: "denials, pubmedbert, governed, synthetic-data",
+    owner: imdeDemoScenario.actors.teamName,
+    environment: "evaluation",
   })
   const [publishing, setPublishing] = useState(false)
   const [published, setPublished] = useState(false)
+  const [publishedRoute, setPublishedRoute] = useState(`/models/${imdeDemoScenario.publishedExperience.modelRouteId}`)
+  const [publishError, setPublishError] = useState<string | null>(null)
 
   const steps: PublishStep[] = [
     { id: 1, label: "Select Run", description: "Choose the experiment run to publish", icon: FlaskConical, status: step > 1 ? "completed" : step === 1 ? "active" : "pending" },
@@ -107,9 +114,31 @@ export default function IMDEPushPage() {
 
   const handlePublish = async () => {
     setPublishing(true)
-    await new Promise((r) => setTimeout(r, 2000))
-    setPublishing(false)
-    setPublished(true)
+    setPublishError(null)
+    try {
+      const sandboxId = searchParams.get("sandboxId")
+      if (!sandboxId || !formData.sourceRun) {
+        setPublishError("Open publish from a ready sandbox evaluation run before publishing.")
+        return
+      }
+
+      const result = await publishSandboxModel(sandboxId, {
+        amlModelName: formData.modelName,
+        amlModelVersion: formData.version,
+        trainingRunId: formData.sourceRun,
+        actorId: "presenter-admin",
+      })
+      setPublishedRoute(result.modelRoute ?? `/models/${result.modelRouteId ?? imdeDemoScenario.publishedExperience.modelRouteId}`)
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("imde-demo-model-experience", "published")
+      }
+      setPublished(true)
+    } catch (err: any) {
+      setPublishError(err?.response?.data?.error ?? "Failed to publish the selected run.")
+    } finally {
+      setPublishing(false)
+    }
   }
 
   return (
@@ -124,12 +153,12 @@ export default function IMDEPushPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Push to Marketplace</h1>
-              <p className="text-sm text-muted-foreground">Publish a model from IMDE to the Model Marketplace with one command</p>
+              <p className="text-sm text-muted-foreground">Publish the selected governed sandbox run into the Model Marketplace</p>
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary/30 px-3 py-2">
             <Terminal className="h-4 w-4 text-amber-400" />
-            <code className="text-xs font-mono text-amber-300">imde push --run run-001 --to marketplace</code>
+            <code className="text-xs font-mono text-amber-300">imde push --run {formData.sourceRun} --to marketplace</code>
             <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
               <Copy className="h-3.5 w-3.5 text-muted-foreground" />
             </Button>
@@ -187,7 +216,7 @@ export default function IMDEPushPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {[
-                    { id: "run-001", name: "denial-bert-lr1e4-bs32", model: "bert-base-uncased", f1: "91.8%", accuracy: "92.3%", latency: "48ms", highlighted: true },
+                    { id: imdeDemoScenario.selectedRunId, name: "pubmedbert-denial-v3-governed", model: "PubMedBERT denial classifier", f1: "87.0%", accuracy: "91.0%", latency: "142ms", highlighted: true },
                     { id: "run-005", name: "denial-llama31-lora-r16", model: "Llama 3.1 8B (LoRA)", f1: "93.1%", accuracy: "93.4%", latency: "210ms", highlighted: false },
                     { id: "run-003", name: "xgboost-depth6-est500", model: "XGBoost", f1: "87.6%", accuracy: "88.4%", latency: "3ms", highlighted: false },
                     { id: "run-004", name: "lgbm-leaves64", model: "LightGBM", f1: "88.3%", accuracy: "89.1%", latency: "2ms", highlighted: false },
@@ -423,11 +452,13 @@ export default function IMDEPushPage() {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1 gap-2">
-                          <ExternalLink className="h-4 w-4" />
-                          View in Marketplace
-                        </Button>
-                        <Button variant="outline" className="flex-1 gap-2" onClick={() => { setStep(1); setPublished(false); setFormData({ modelName: "", version: "", description: "", sourceRun: "", category: "", tags: "", owner: "", environment: "" }) }}>
+                        <Link href={publishedRoute} className="flex-1">
+                          <Button variant="outline" className="w-full gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            View in Marketplace
+                          </Button>
+                        </Link>
+                        <Button variant="outline" className="flex-1 gap-2" onClick={() => { setStep(1); setPublished(false); setPublishError(null) }}>
                           <Upload className="h-4 w-4" />
                           Publish Another
                         </Button>
@@ -443,6 +474,11 @@ export default function IMDEPushPage() {
                         <div className="text-emerald-400">✓ Registering in Model Marketplace (Azure ML backend)</div>
                         <div className="text-amber-400">⏳ Registering governance metadata...</div>
                       </div>
+                      {publishError && (
+                        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs text-destructive">
+                          {publishError}
+                        </div>
+                      )}
                       <div className="flex gap-2">
                         <Button variant="outline" className="flex-1" onClick={() => setStep(4)}>Back</Button>
                         <Button

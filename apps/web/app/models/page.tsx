@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { 
   Search, 
@@ -25,15 +25,16 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { models } from "@/lib/models-data"
+import { demoPublishedModelExperience, models, type ModelData } from "@/lib/models-data"
 
 const categories = ["All Categories", "NLP", "Vision", "Prediction", "Analytics"]
 const types = ["All Types", "Internal", "Partner"]
-const statuses = ["All Status", "Production", "Beta", "Review"]
+const statuses = ["All Status", "Production", "Beta", "Review", "Demo Ready"]
 
-function ModelCard({ model }: { model: typeof models[0] }) {
+function ModelCard({ model }: { model: ModelData }) {
   const statusColors: Record<string, string> = {
     production: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    "demo-ready": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
     beta: "bg-amber-500/20 text-amber-400 border-amber-500/30",
     review: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   }
@@ -46,6 +47,15 @@ function ModelCard({ model }: { model: typeof models[0] }) {
   return (
     <Link href={`/models/${model.id}`} className="group block">
       <div className="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:bg-card/80">
+        {model.experienceType === "published-model-experience" && model.preview && (
+          <div className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-emerald-300">Runnable preview</span>
+              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300">Ready</span>
+            </div>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{model.preview.sampleOutput}</p>
+          </div>
+        )}
         {/* Header */}
         <div className="mb-4 flex items-start justify-between">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--brand-primary)]/20">
@@ -103,6 +113,12 @@ function ModelCard({ model }: { model: typeof models[0] }) {
         
         {/* Compliance Badges */}
         <div className="mb-4 flex flex-wrap gap-1.5">
+          {model.trustStatus && (
+            <span className="flex items-center gap-1 rounded bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-300">
+              <CheckCircle2 className="h-3 w-3" />
+              Governance passed
+            </span>
+          )}
           {model.compliance.map((badge) => (
             <span
               key={badge}
@@ -132,8 +148,8 @@ function ModelCard({ model }: { model: typeof models[0] }) {
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
-              <Users className="h-3 w-3" />
-              {model.downloads.toLocaleString()}
+              {model.experienceType ? <Copy className="h-3 w-3" /> : <Users className="h-3 w-3" />}
+              {model.experienceType ? `${model.reuse?.duplicates ?? 0} duplicates` : model.downloads.toLocaleString()}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -147,13 +163,38 @@ function ModelCard({ model }: { model: typeof models[0] }) {
 }
 
 export default function ModelMarketplacePage() {
+  const [publishedDemoModels, setPublishedDemoModels] = useState<ModelData[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
   const [selectedType, setSelectedType] = useState("All Types")
   const [selectedStatus, setSelectedStatus] = useState("All Status")
 
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadPublishedDemoModels() {
+      try {
+        const response = await fetch("/api/models?demoScenarioId=imde-rcm-denial-demo&tenantId=default", { cache: "no-store" })
+        if (!response.ok) return
+        const payload = await response.json() as { models?: ModelData[] }
+        const demoModels = (payload.models ?? []).filter((model) => model.id === demoPublishedModelExperience.id)
+        if (!cancelled) setPublishedDemoModels(demoModels)
+      } catch {
+        if (!cancelled) setPublishedDemoModels([])
+      }
+    }
+
+    void loadPublishedDemoModels()
+    return () => { cancelled = true }
+  }, [])
+
+  const marketplaceModels = useMemo(
+    () => [...publishedDemoModels, ...models],
+    [publishedDemoModels]
+  )
+
   const filteredModels = useMemo(() => {
-    return models.filter((model) => {
+    return marketplaceModels.filter((model) => {
       const matchesSearch =
         searchQuery === "" ||
         model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -163,17 +204,17 @@ export default function ModelMarketplacePage() {
       const matchesType =
         selectedType === "All Types" || model.type.toLowerCase() === selectedType.toLowerCase()
       const matchesStatus =
-        selectedStatus === "All Status" || model.status.toLowerCase() === selectedStatus.toLowerCase()
+        selectedStatus === "All Status" || model.status.replace(/-/g, " ").toLowerCase() === selectedStatus.toLowerCase()
       return matchesSearch && matchesCategory && matchesType && matchesStatus
     })
-  }, [searchQuery, selectedCategory, selectedType, selectedStatus])
+  }, [marketplaceModels, searchQuery, selectedCategory, selectedType, selectedStatus])
 
   // Stats
   const stats = {
-    total: models.length,
-    production: models.filter(m => m.status === "production").length,
-    internal: models.filter(m => m.type === "internal").length,
-    partner: models.filter(m => m.type === "partner").length,
+    total: marketplaceModels.length,
+    production: marketplaceModels.filter(m => m.status === "production").length,
+    internal: marketplaceModels.filter(m => m.type === "internal").length,
+    partner: marketplaceModels.filter(m => m.type === "partner").length,
   }
 
   return (

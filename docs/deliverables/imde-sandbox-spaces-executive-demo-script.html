@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IMDE Sandbox Spaces — Executive Demo Script</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121935;
+      --panel-2: #182146;
+      --text: #e7ecff;
+      --muted: #9aa6c7;
+      --accent: #6aa7ff;
+      --accent-2: #8bd1a8;
+      --warn: #ffcb6b;
+      --danger: #ff8a8a;
+      --border: #2a335f;
+      --code-bg: #0a0f24;
+      --row-alt: #141b3b;
+      --chip: #1f2a55;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8ff;
+        --panel: #ffffff;
+        --panel-2: #f1f4ff;
+        --text: #11182b;
+        --muted: #4b577a;
+        --accent: #1e5fcf;
+        --accent-2: #1b8b53;
+        --warn: #a45a00;
+        --danger: #b40020;
+        --border: #d8def0;
+        --code-bg: #eef1fb;
+        --row-alt: #f7f9ff;
+        --chip: #e3eaff;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 28px 96px;
+    }
+    header.hero {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--panel-2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+    .lede {
+      color: var(--muted);
+      margin: 0;
+      font-size: 16px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .meta {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .meta .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .meta .v { font-weight: 600; margin-top: 2px; }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin: 18px 0;
+    }
+    section h2 {
+      margin: 0 0 12px 0;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    section h2 .num {
+      display: inline-flex;
+      width: 26px; height: 26px;
+      align-items: center; justify-content: center;
+      background: var(--accent); color: #fff;
+      border-radius: 999px;
+      font-size: 13px; font-weight: 700;
+    }
+    h3 { margin: 18px 0 8px; font-size: 15px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    ul, ol { margin: 6px 0 6px 22px; padding: 0; }
+    li { margin: 4px 0; }
+
+    code, kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    table.walkthrough {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    table.walkthrough th, table.walkthrough td {
+      padding: 10px 12px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    table.walkthrough thead th {
+      background: var(--panel-2);
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+    table.walkthrough tbody tr:nth-child(even) { background: var(--row-alt); }
+    .time { font-weight: 700; white-space: nowrap; color: var(--accent); }
+    .route a { color: var(--accent); text-decoration: none; word-break: break-all; }
+    .route a:hover { text-decoration: underline; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .chip {
+      background: var(--chip);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 12px;
+    }
+    .chip.warn { color: var(--warn); border-color: var(--warn); background: transparent; }
+    .chip.ok { color: var(--accent-2); border-color: var(--accent-2); background: transparent; }
+    .chip.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: var(--panel-2);
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin: 12px 0;
+    }
+    .callout.warn { border-color: var(--warn); }
+    .callout.danger { border-color: var(--danger); }
+    .callout strong { color: var(--text); }
+
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li {
+      padding: 8px 10px;
+      border-bottom: 1px dashed var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .checklist li:last-child { border-bottom: 0; }
+    .checklist input[type="checkbox"] {
+      margin-top: 4px;
+      width: 16px; height: 16px;
+      accent-color: var(--accent);
+    }
+
+    .toc {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 14px;
+    }
+    .toc a {
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media print {
+      :root { --bg: #fff; --panel: #fff; --panel-2: #f4f6fb; --text: #111; --muted: #555;
+              --border: #ccc; --code-bg: #f0f2f8; --row-alt: #f7f9ff; --chip: #eef1fb; }
+      body { font-size: 12px; }
+      .page { padding: 0; max-width: none; }
+      section, header.hero { box-shadow: none; page-break-inside: avoid; }
+      .toc, .print-hide { display: none !important; }
+      a { color: #111; text-decoration: underline; }
+    }
+
+    .controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="eyebrow">Executive Demo Script</div>
+      <h1>IMDE Sandbox &rarr; Spaces-Like Published Model Experience</h1>
+      <p class="lede">
+        A 15-minute hybrid walkthrough showing a governed RCM denial-prediction sandbox &mdash;
+        from request and approval, through notebooks and evaluation, to a published model
+        experience inside the existing AI Marketplace.
+      </p>
+
+      <div class="meta-grid">
+        <div class="meta"><div class="k">Scenario</div><div class="v"><code>imde-rcm-denial-demo</code></div></div>
+        <div class="meta"><div class="k">Audience</div><div class="v">Executive review</div></div>
+        <div class="meta"><div class="k">Target duration</div><div class="v">15 minutes</div></div>
+        <div class="meta"><div class="k">Branch</div><div class="v"><code>feat/imde-modernization</code></div></div>
+        <div class="meta"><div class="k">Data posture</div><div class="v">Synthetic / de-identified / approved demo data</div></div>
+        <div class="meta"><div class="k">Live-service posture</div><div class="v">Real records, deterministic provisioning & training</div></div>
+      </div>
+
+      <nav class="toc print-hide" aria-label="Section navigation">
+        <a href="#contract">Contract</a>
+        <a href="#flow">Flow diagram</a>
+        <a href="#start">Starting state</a>
+        <a href="#walkthrough">Walkthrough</a>
+        <a href="#presenter-notes">Presenter notes</a>
+        <a href="#api-smoke">API-only smoke</a>
+        <a href="#smoke">Smoke checklist</a>
+        <a href="#a11y">A11y &amp; display</a>
+        <a href="#signals">Healthy signals</a>
+        <a href="#caveats">Caveats</a>
+      </nav>
+
+      <div class="controls print-hide">
+        <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+        <button class="btn secondary" onclick="document.querySelectorAll('.checklist input').forEach(i=>i.checked=false)">Reset checklist</button>
+      </div>
+    </header>
+
+    <section id="contract">
+      <h2><span class="num">1</span> Demo contract</h2>
+      <ul>
+        <li><strong>Scenario:</strong> <code>imde-rcm-denial-demo</code></li>
+        <li><strong>Audience:</strong> Executive review</li>
+        <li><strong>Target duration:</strong> 15 minutes</li>
+        <li><strong>Data posture:</strong> All visible data is synthetic, de-identified, simulated, or approved demo data.</li>
+        <li>
+          <strong>Live-service posture:</strong> Request, approval, lifecycle, publish, and projection records
+          use app flows where practical. AML provisioning, notebook execution, and training/evaluation are
+          deterministic demo projections unless a live workspace has been prevalidated.
+        </li>
+      </ul>
+      <div class="chips">
+        <span class="chip ok">Real backend records</span>
+        <span class="chip ok">Deterministic projections</span>
+        <span class="chip warn">No live PHI</span>
+        <span class="chip warn">No live training</span>
+      </div>
+    </section>
+
+    <section id="flow">
+      <h2><span class="num">2</span> End-to-end flow</h2>
+      <p class="lede">
+        Five stages &mdash; <strong>Request &middot; Approve &middot; Build &middot; Publish &middot; Consume</strong> &mdash;
+        across four lanes (actors, marketplace UI, marketplace API, backing services). The UAP Hub is
+        an external dependency: the base model id is resolved when the sandbox is registered, then fine-tuning
+        runs inside the tenant's Azure ML workspace.
+      </p>
+      <figure style="margin:8px 0 4px;padding:0;background:#ffffff;border:1px solid var(--border);border-radius:10px;overflow:auto">
+        <svg role="img" aria-labelledby="flow-svg-title flow-svg-desc" viewBox="0 0 1080 720" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif">
+          <title id="flow-svg-title">Sandbox to published model experience flow</title>
+          <desc id="flow-svg-desc">A grid of five stages (Request, Approve, Build, Publish, Consume) across four lanes (actors, marketplace UI, marketplace API, backing services). Hugging Face Hub is shown as an external dependency feeding the Request stage's API. Arrows flow top to bottom within each stage and left to right across stages.</desc>
+
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#475569" />
+            </marker>
+            <marker id="arr-ext" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#ea580c" />
+            </marker>
+            <marker id="arr-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
+            </marker>
+            <style>
+              .stage-h { font-size: 11px; font-weight: 700; fill: #475569; letter-spacing: 2px; text-anchor: middle; text-transform: uppercase; }
+              .lane-h  { font-size: 11px; font-weight: 700; fill: #475569; letter-spacing: 2px; text-transform: uppercase; }
+              .ttl     { font-size: 12.5px; font-weight: 700; fill: #0f172a; }
+              .sub     { font-size: 10.5px; fill: #475569; }
+              .legend-t{ font-size: 11px; fill: #0f172a; }
+              .stage-num { font-size: 10px; fill: #64748b; }
+            </style>
+          </defs>
+
+          <!-- Time-flow arrow -->
+          <line x1="100" y1="48" x2="1010" y2="48" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arr-dim)" />
+
+          <!-- Stage column headers -->
+          <text x="180" y="40" class="stage-h">1 &#183; Request</text>
+          <text x="360" y="40" class="stage-h">2 &#183; Approve</text>
+          <text x="540" y="40" class="stage-h">3 &#183; Build</text>
+          <text x="720" y="40" class="stage-h">4 &#183; Publish</text>
+          <text x="900" y="40" class="stage-h">5 &#183; Consume</text>
+
+          <!-- Lane labels (left, rotated) -->
+          <text class="lane-h" transform="translate(28,150) rotate(-90)">Actors</text>
+          <text class="lane-h" transform="translate(28,275) rotate(-90)">Marketplace UI</text>
+          <text class="lane-h" transform="translate(28,420) rotate(-90)">Marketplace API</text>
+          <text class="lane-h" transform="translate(28,560) rotate(-90)">Backing services</text>
+
+          <!-- ===== Lane backgrounds (subtle) ===== -->
+          <rect x="90" y="90"  width="940" height="80"  fill="#fefce8" opacity="0.45" rx="6" />
+          <rect x="90" y="200" width="940" height="105" fill="#f0f9ff" opacity="0.55" rx="6" />
+          <rect x="90" y="335" width="940" height="95"  fill="#f0fdf4" opacity="0.55" rx="6" />
+          <rect x="90" y="460" width="940" height="115" fill="#faf5ff" opacity="0.55" rx="6" />
+
+          <!-- ===== STAGE 1: REQUEST ===== -->
+          <g>
+            <rect x="105" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="180" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="180" y="142" class="sub" text-anchor="middle">Priya Shah</text>
+
+            <rect x="105" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="180" y="232" class="ttl" text-anchor="middle">/sandbox/request</text>
+            <text x="180" y="252" class="sub" text-anchor="middle">base model + GPU template</text>
+            <text x="180" y="267" class="sub" text-anchor="middle">data packages</text>
+            <text x="180" y="282" class="sub" text-anchor="middle">+ justification</text>
+
+            <rect x="105" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="180" y="367" class="ttl" text-anchor="middle">POST /api/sandboxes</text>
+            <text x="180" y="387" class="sub" text-anchor="middle">validate HF base model id</text>
+            <text x="180" y="402" class="sub" text-anchor="middle">status: requested</text>
+
+            <rect x="105" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="180" y="492" class="ttl" text-anchor="middle">Cosmos: sandboxes</text>
+            <text x="180" y="512" class="sub" text-anchor="middle">+ lifecycle event</text>
+            <text x="180" y="527" class="sub" text-anchor="middle">tenantId partitioned</text>
+            <text x="180" y="552" class="sub" text-anchor="middle" font-style="italic">status: requested</text>
+          </g>
+
+          <!-- ===== STAGE 2: APPROVE ===== -->
+          <g>
+            <rect x="285" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="360" y="125" class="ttl" text-anchor="middle">Platform Admin</text>
+            <text x="360" y="142" class="sub" text-anchor="middle">Morgan Lee</text>
+
+            <rect x="285" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="360" y="232" class="ttl" text-anchor="middle">/sandbox/[id]</text>
+            <text x="360" y="252" class="sub" text-anchor="middle">review compute / data</text>
+            <text x="360" y="267" class="sub" text-anchor="middle">approve with reason</text>
+            <text x="360" y="282" class="sub" text-anchor="middle">+ data statement</text>
+
+            <rect x="285" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="360" y="367" class="ttl" text-anchor="middle">POST /&hellip;/approve</text>
+            <text x="360" y="387" class="sub" text-anchor="middle">provision call &#8594; AML</text>
+            <text x="360" y="402" class="sub" text-anchor="middle">status: ready</text>
+
+            <rect x="285" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="360" y="492" class="ttl" text-anchor="middle">Azure ML + Cosmos</text>
+            <text x="360" y="512" class="sub" text-anchor="middle">workspace provisioned</text>
+            <text x="360" y="527" class="sub" text-anchor="middle">GPU compute attached</text>
+            <text x="360" y="552" class="sub" text-anchor="middle">lifecycle: ready</text>
+          </g>
+
+          <!-- ===== STAGE 3: BUILD ===== -->
+          <g>
+            <rect x="465" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="540" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="540" y="142" class="sub" text-anchor="middle">team</text>
+
+            <rect x="465" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="540" y="232" class="ttl" text-anchor="middle">/imde/notebooks</text>
+            <text x="540" y="248" class="ttl" text-anchor="middle">/imde/experiments</text>
+            <text x="540" y="268" class="sub" text-anchor="middle">starter notebook, runs,</text>
+            <text x="540" y="283" class="sub" text-anchor="middle">select winner run</text>
+
+            <rect x="465" y="345" width="150" height="75" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="4 3" />
+            <text x="540" y="378" class="sub" text-anchor="middle" font-style="italic">no marketplace API</text>
+            <text x="540" y="394" class="sub" text-anchor="middle" font-style="italic">call in this stage</text>
+
+            <rect x="465" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="540" y="492" class="ttl" text-anchor="middle">Azure ML</text>
+            <text x="540" y="512" class="sub" text-anchor="middle">notebook execution</text>
+            <text x="540" y="527" class="sub" text-anchor="middle">experiment runs</text>
+            <text x="540" y="547" class="sub" text-anchor="middle">winner:</text>
+            <text x="540" y="560" class="sub" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5">run-denial-pubmedbert-v3</text>
+          </g>
+
+          <!-- ===== STAGE 4: PUBLISH ===== -->
+          <g>
+            <rect x="645" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="720" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="720" y="142" class="sub" text-anchor="middle">sandbox owner</text>
+
+            <rect x="645" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="720" y="232" class="ttl" text-anchor="middle">/imde/push</text>
+            <text x="720" y="252" class="sub" text-anchor="middle">guided publish</text>
+            <text x="720" y="267" class="sub" text-anchor="middle">lineage attached</text>
+            <text x="720" y="282" class="sub" text-anchor="middle">model card + metrics</text>
+
+            <rect x="645" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="720" y="367" class="ttl" text-anchor="middle">POST /&hellip;/publish-model</text>
+            <text x="720" y="387" class="sub" text-anchor="middle">model governance gate</text>
+            <text x="720" y="402" class="sub" text-anchor="middle">register in AML registry</text>
+
+            <rect x="645" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="720" y="492" class="ttl" text-anchor="middle">Cosmos + AML registry</text>
+            <text x="720" y="512" class="sub" text-anchor="middle">submission record</text>
+            <text x="720" y="527" class="sub" text-anchor="middle">model-experience projection</text>
+            <text x="720" y="547" class="sub" text-anchor="middle">trust: governance-passed</text>
+          </g>
+
+          <!-- ===== STAGE 5: CONSUME ===== -->
+          <g>
+            <rect x="825" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="900" y="125" class="ttl" text-anchor="middle">Marketplace</text>
+            <text x="900" y="142" class="sub" text-anchor="middle">consumer</text>
+
+            <rect x="825" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="900" y="232" class="ttl" text-anchor="middle">/models/[modelRouteId]</text>
+            <text x="900" y="252" class="sub" text-anchor="middle">runnable preview</text>
+            <text x="900" y="267" class="sub" text-anchor="middle">metrics + lineage</text>
+            <text x="900" y="282" class="sub" text-anchor="middle">governance evidence</text>
+
+            <rect x="825" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="900" y="365" class="ttl" text-anchor="middle">GET /api/model-</text>
+            <text x="900" y="380" class="ttl" text-anchor="middle">experiences</text>
+            <text x="900" y="400" class="sub" text-anchor="middle">by modelRouteId + tenantId</text>
+
+            <rect x="825" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="900" y="492" class="ttl" text-anchor="middle">Cosmos read</text>
+            <text x="900" y="512" class="sub" text-anchor="middle">model-experiences projection</text>
+            <text x="900" y="527" class="sub" text-anchor="middle">hydrates Spaces-like card</text>
+          </g>
+
+          <!-- ===== Vertical arrows: actor -> UI -> API -> service per stage ===== -->
+          <g stroke="#475569" stroke-width="1.4" fill="none">
+            <!-- stage 1 -->
+            <line x1="180" y1="160" x2="180" y2="208" marker-end="url(#arr)" />
+            <line x1="180" y1="295" x2="180" y2="343" marker-end="url(#arr)" />
+            <line x1="180" y1="420" x2="180" y2="468" marker-end="url(#arr)" />
+            <!-- stage 2 -->
+            <line x1="360" y1="160" x2="360" y2="208" marker-end="url(#arr)" />
+            <line x1="360" y1="295" x2="360" y2="343" marker-end="url(#arr)" />
+            <line x1="360" y1="420" x2="360" y2="468" marker-end="url(#arr)" />
+            <!-- stage 3 (skip API) -->
+            <line x1="540" y1="160" x2="540" y2="208" marker-end="url(#arr)" />
+            <line x1="540" y1="295" x2="540" y2="468" marker-end="url(#arr)" />
+            <!-- stage 4 -->
+            <line x1="720" y1="160" x2="720" y2="208" marker-end="url(#arr)" />
+            <line x1="720" y1="295" x2="720" y2="343" marker-end="url(#arr)" />
+            <line x1="720" y1="420" x2="720" y2="468" marker-end="url(#arr)" />
+            <!-- stage 5 -->
+            <line x1="900" y1="160" x2="900" y2="208" marker-end="url(#arr)" />
+            <line x1="900" y1="295" x2="900" y2="343" marker-end="url(#arr)" />
+            <line x1="900" y1="420" x2="900" y2="468" marker-end="url(#arr)" />
+          </g>
+
+          <!-- ===== Horizontal stage-to-stage arrows (UI lane) ===== -->
+          <g stroke="#94a3b8" stroke-width="1" fill="none" stroke-dasharray="3 3">
+            <line x1="255" y1="252" x2="285" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="435" y1="252" x2="465" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="615" y1="252" x2="645" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="795" y1="252" x2="825" y2="252" marker-end="url(#arr-dim)" />
+          </g>
+
+          <!-- ===== UAP Hub (external dependency) ===== -->
+          <g>
+            <rect x="105" y="610" width="370" height="70" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1.4" />
+            <text x="290" y="634" class="ttl" text-anchor="middle">UAP Hub &#8212; external base-model source</text>
+            <text x="290" y="654" class="sub" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5">microsoft/biomednlp-pubmedbert-base-uncased-abstract</text>
+            <text x="290" y="670" class="sub" text-anchor="middle">resolved at sandbox registration; fine-tuned inside tenant AML workspace</text>
+          </g>
+          <!-- UAP Hub -> Stage 1 API curved arrow -->
+          <path d="M 180 610 C 180 480, 180 460, 180 420" stroke="#ea580c" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#arr-ext)" />
+          <text x="200" y="445" class="sub" fill="#ea580c" font-style="italic">resolved at registration</text>
+
+          <!-- ===== Legend ===== -->
+          <g>
+            <rect x="510" y="600" width="500" height="92" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+            <text x="525" y="620" class="legend-t" font-weight="700">Legend</text>
+
+            <rect x="525" y="635" width="16" height="12" rx="2" fill="#fef3c7" stroke="#d97706" />
+            <text x="548" y="645" class="legend-t">Actor</text>
+
+            <rect x="595" y="635" width="16" height="12" rx="2" fill="#dbeafe" stroke="#2563eb" />
+            <text x="618" y="645" class="legend-t">Marketplace UI route</text>
+
+            <rect x="765" y="635" width="16" height="12" rx="2" fill="#d1fae5" stroke="#059669" />
+            <text x="788" y="645" class="legend-t">Marketplace API (Azure Function)</text>
+
+            <rect x="525" y="660" width="16" height="12" rx="2" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="548" y="670" class="legend-t">Backing service (Cosmos / AML)</text>
+
+            <rect x="765" y="660" width="16" height="12" rx="2" fill="#ffedd5" stroke="#ea580c" />
+            <text x="788" y="670" class="legend-t">External dependency (HF Hub)</text>
+
+            <line x1="525" y1="685" x2="555" y2="685" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arr-dim)" />
+            <text x="562" y="688" class="sub">stage-to-stage flow</text>
+
+            <line x1="720" y1="685" x2="750" y2="685" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)" />
+            <text x="757" y="688" class="sub">in-stage call sequence</text>
+          </g>
+        </svg>
+        <figcaption style="padding:8px 14px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--border);background:var(--panel-2);border-radius:0 0 8px 8px">
+          Source: <a href="imde-sandbox-spaces-flow.drawio">imde-sandbox-spaces-flow.drawio</a>
+          &middot; open in <a href="https://app.diagrams.net/?mode=device" target="_blank" rel="noopener">app.diagrams.net</a>
+          (File &rsaquo; Open from &rsaquo; Device) to edit.
+        </figcaption>
+      </figure>
+      <div class="callout">
+        <strong>Reading the diagram:</strong> top-to-bottom inside each stage shows the request path
+        (actor &rarr; UI &rarr; API &rarr; backing service); dashed left-to-right arrows show the handoff
+        between stages along the UI lane. The Build stage has no marketplace API call &mdash; notebook and
+        experiment work happens directly against the provisioned Azure ML workspace and surfaces back into
+        the marketplace only at the Publish step.
+      </div>
+    </section>
+
+    <section id="start">
+      <h2><span class="num">3</span> Starting state</h2>
+      <ol>
+        <li>Check out branch <code>feat/imde-modernization</code>.</li>
+        <li>For the deterministic backend path, set <code>UAP_ENABLE_IMDE_DEMO=true</code> and <code>AZURE_FUNCTIONS_ENVIRONMENT=Development</code> in the API env (the latter enables actorId-based auth for reset/approve/publish without an admin token).</li>
+        <li>
+          If you need a pre-publish baseline, clear the browser local publish marker:
+          <pre>localStorage.removeItem("imde-demo-model-experience")</pre>
+        </li>
+        <li>
+          Reset the canonical scenario (API running locally):
+          <pre>POST /api/sandboxes/demo/reset
+Content-Type: application/json
+
+{
+  "tenantId": "default",
+  "demoScenarioId": "imde-rcm-denial-demo",
+  "actorId": "presenter-admin"
+}
+
+→ 200 {
+  "tenantId": "default",
+  "demoScenarioId": "imde-rcm-denial-demo",
+  "deleted": {
+    "lifecycleEvents": N,
+    "submissions": N,
+    "modelExperiences": N,
+    "sandboxes": N
+  }
+}</pre>
+          When <code>UAP_IMDE_DEMO_ADMIN_TOKEN</code> is configured, include the
+          <code>x-imde-demo-admin-token</code> header.
+        </li>
+      </ol>
+      <div class="callout">
+        <strong>Goal of reset:</strong> demo sandboxes, lifecycle events, sandbox-sourced submissions, and
+        the Published Model Experience projection return to baseline. Unrelated tenant and non-demo records
+        are untouched.
+      </div>
+      <div class="callout">
+        <strong>Live Azure is not required.</strong> Request, approval, publish, and the model experience are
+        all deterministic projections. A missing AML compute instance, locked-down storage, or absent
+        <code>publicNetworkAccess</code> does not block any of the 8 routes.
+      </div>
+    </section>
+
+    <section id="walkthrough">
+      <h2><span class="num">4</span> Route-by-route walkthrough</h2>
+      <p class="lede">Local URLs assume <code>http://localhost:3000</code> for the web app.</p>
+      <table class="walkthrough" aria-label="Demo walkthrough">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Route</th>
+            <th>Primary click</th>
+            <th>Expected visible state</th>
+            <th>Fallback</th>
+            <th>Proof point</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time">0:00 &ndash; 1:30</td>
+            <td class="route"><a href="http://localhost:3000/sandbox" target="_blank" rel="noopener">/sandbox</a></td>
+            <td>Start demo sandbox</td>
+            <td>Executive demo path card for RCM denial prediction</td>
+            <td>Open <a href="http://localhost:3000/sandbox/request?demo=imde-rcm-denial-demo" target="_blank" rel="noopener">/sandbox/request?demo=imde-rcm-denial-demo</a> directly</td>
+            <td>Sandbox capability is discoverable from marketplace UI.</td>
+          </tr>
+          <tr>
+            <td class="time">1:30 &ndash; 3:30</td>
+            <td class="route"><a href="http://localhost:3000/sandbox/request?demo=imde-rcm-denial-demo" target="_blank" rel="noopener">/sandbox/request?demo=imde-rcm-denial-demo</a></td>
+            <td>Submit for Approval</td>
+            <td>Team GPU template, base model, synthetic/de-identified data packages, business justification</td>
+            <td>Use the <em>Load demo preset</em> action</td>
+            <td>Request shows governed compute / data / model bundle.</td>
+          </tr>
+          <tr>
+            <td class="time">3:30 &ndash; 5:00</td>
+            <td class="route">/sandbox/[id]</td>
+            <td>Approve as Platform Admin</td>
+            <td>Requested sandbox moves to ready with approval reason, data statement, and lifecycle events</td>
+            <td>If <code>UAP_ENABLE_IMDE_DEMO</code> isn&rsquo;t set, narrate that live AML would provision and use the seeded ready state</td>
+            <td>Visible approval and deterministic ready projection.</td>
+          </tr>
+          <tr>
+            <td class="time">5:00 &ndash; 6:30</td>
+            <td class="route">/imde/notebooks?sandboxId=[id]&amp;demo=imde-rcm-denial-demo</td>
+            <td>Open starter notebook</td>
+            <td>Denial prediction fine-tuning notebook is primary and sandbox-scoped</td>
+            <td>Use the notebook page directly</td>
+            <td>Marketplace-contained notebook preview, not a full IDE.</td>
+          </tr>
+          <tr>
+            <td class="time">6:30 &ndash; 8:30</td>
+            <td class="route">/imde/experiments?sandboxId=[id]&amp;demo=imde-rcm-denial-demo</td>
+            <td>Publish selected run</td>
+            <td>PubMedBERT denial run is the selected winner and governance-ready</td>
+            <td>Use the selected winner banner</td>
+            <td>Evaluation is precomputed but lineage-ready.</td>
+          </tr>
+          <tr>
+            <td class="time">8:30 &ndash; 11:00</td>
+            <td class="route">/imde/push?sandboxId=[id]&amp;runId=run-denial-pubmedbert-v3&amp;demo=imde-rcm-denial-demo</td>
+            <td>Publish to Marketplace</td>
+            <td>Published success state links to <a href="http://localhost:3000/models/rcm-denial-prediction-space" target="_blank" rel="noopener">/models/rcm-denial-prediction-space</a></td>
+            <td>If API unavailable, UI simulates publish and still sets the local route</td>
+            <td>Guided lineage publish, not a thin pending submission.</td>
+          </tr>
+          <tr>
+            <td class="time">11:00 &ndash; 13:30</td>
+            <td class="route"><a href="http://localhost:3000/models" target="_blank" rel="noopener">/models</a></td>
+            <td>Open RCM Denial Prediction Space</td>
+            <td>Spaces-like card near the top with runnable preview, governance, reuse signals</td>
+            <td>Open the detail route directly</td>
+            <td>Existing Models marketplace is the publish destination.</td>
+          </tr>
+          <tr>
+            <td class="time">13:30 &ndash; 15:00</td>
+            <td class="route"><a href="http://localhost:3000/models/rcm-denial-prediction-space" target="_blank" rel="noopener">/models/rcm-denial-prediction-space</a></td>
+            <td>Run preview</td>
+            <td>Runnable preview, metrics, sandbox lineage, governance evidence</td>
+            <td>Show static detail fallback</td>
+            <td>Executive payoff: trained model becomes a reusable governed experience.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="presenter-notes">
+      <h2><span class="num">5</span> Presenter notes</h2>
+      <ul>
+        <li>
+          Do not describe the demo as live training. Use this language:
+          <em>&ldquo;The training and evaluation results are deterministic demo projections so we can
+          focus on the governed workflow.&rdquo;</em>
+        </li>
+        <li>
+          Call out the two approval moments separately:
+          <ul>
+            <li><strong>Platform admin</strong> approves the sandbox &mdash; compute, data, and team.</li>
+            <li><strong>Model governance</strong> passes during publish, before the marketplace experience appears.</li>
+          </ul>
+        </li>
+        <li>
+          When showing <code>/models</code>, emphasize that this is <strong>not</strong> a separate
+          public Spaces product. It is a Spaces-like experience <em>inside</em> the existing enterprise
+          Models marketplace.
+        </li>
+        <li>Keep PHI language out of typed fields. Use synthetic claim examples only.</li>
+      </ul>
+    </section>
+
+    <section id="api-smoke">
+      <h2><span class="num">6</span> API-only smoke (headless rehearsal / pre-flight)</h2>
+      <p class="lede">When validating end-to-end without driving the UI. Two actor roles matter:</p>
+      <ul>
+        <li><strong>Approver</strong> (reset, approve): <code>actorId: "presenter-admin"</code> in local dev, or the <code>x-imde-demo-admin-token</code> header in token mode.</li>
+        <li><strong>Publisher</strong> (publish-model): <code>actorId: "ds-priya-shah"</code> (= sandbox owner). The admin token also works.</li>
+      </ul>
+      <pre>POST /api/sandboxes
+{ "name": "RCM denial prediction fine-tuning",
+  "tenantId": "default", "ownerId": "ds-priya-shah",
+  "demoScenarioId": "imde-rcm-denial-demo",
+  "baseModelId": "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+  "workspaceTemplateId": "aml-team-standard-v1", "sandboxType": "team",
+  "dataPackages": ["claims_training","denials_gold"],
+  "computeProfile": "gpu-small", "durationDays": 30,
+  "costCenter": "RCM-AI-2026",
+  "businessJustification": "…" }
+→ 201 { "id": "sbx-…", "status": "requested", "demoScenarioId": "imde-rcm-denial-demo" }
+
+POST /api/sandboxes/{id}/approve
+{ "actorId": "presenter-admin", "approverId": "platform-admin-morgan-lee" }
+→ 200 { "status": "ready", "amlWorkspaceName": "…", … }
+
+POST /api/sandboxes/{id}/publish-model
+{ "actorId": "ds-priya-shah",
+  "amlModelName": "rcm-denial-prediction-space",
+  "amlModelVersion": "1",
+  "trainingRunId": "run-denial-pubmedbert-v3" }
+→ 201 { "submissionId": "…", "projectionId": "pme-rcm-denial-prediction-space",
+        "modelRouteId": "rcm-denial-prediction-space",
+        "modelRoute": "/models/rcm-denial-prediction-space" }</pre>
+      <div class="callout">
+        <strong>Payload gotchas:</strong>
+        <ul>
+          <li><code>amlModelVersion</code> must be a positive integer string (<code>"1"</code>, not <code>"1.0.0"</code>).</li>
+          <li>The publish body field is <code>trainingRunId</code>, even though the UI URL exposes it as <code>?runId=…</code>.</li>
+          <li>Only <code>run-denial-pubmedbert-v3</code> is accepted as the selected winner; any other id returns 400.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="smoke">
+      <h2><span class="num">7</span> Smoke checklist</h2>
+      <p class="lede">Use this as a pre-rehearsal pass &mdash; checkboxes are interactive in the browser.</p>
+      <ul class="checklist">
+        <li><input type="checkbox" /> Reset canonical scenario and clear the local publish marker.</li>
+        <li><input type="checkbox" /> Open <code>/sandbox</code>; the executive demo card appears.</li>
+        <li><input type="checkbox" /> Submit the demo request and land on sandbox detail.</li>
+        <li><input type="checkbox" /> Approve the sandbox; verify ready state, approval reason, lifecycle events, data statement, and next actions.</li>
+        <li><input type="checkbox" /> Open notebook and experiments from the sandbox detail page.</li>
+        <li><input type="checkbox" /> Verify the selected run is <code>run-denial-pubmedbert-v3</code> and the publish action is available.</li>
+        <li><input type="checkbox" /> Publish from <code>/imde/push</code>; success state includes a marketplace link.</li>
+        <li><input type="checkbox" /> Open <code>/models/rcm-denial-prediction-space</code>; runnable preview, metrics, lineage, and governance evidence render.</li>
+        <li><input type="checkbox" /> Return to <code>/models</code>; the Published Model Experience card shows preview and governance badge.</li>
+        <li><input type="checkbox" /> Reset again; backend demo records are removed and the browser-local publish marker is cleared for the next rehearsal.</li>
+      </ul>
+      <div class="callout">
+        <strong>Backend proof when page HTML doesn&rsquo;t make hydrated content visible:</strong>
+        <code>/models</code> and <code>/models/rcm-denial-prediction-space</code> render the frame
+        server-side but hydrate the experience card and metrics client-side, so a curl or
+        <code>Invoke-WebRequest</code> against those URLs won&rsquo;t contain
+        <code>rcm-denial-prediction-space</code> or <code>f1=0.87</code> as visible text. Hit the
+        backing API instead:
+        <pre>GET /api/model-experiences?modelRouteId=rcm-denial-prediction-space&tenantId=default
+→ 200 { "items": [ { "modelRouteId": "rcm-denial-prediction-space",
+                     "status": "published", "trustStatus": "governance-passed",
+                     "lineage": { "sandboxId": "sbx-…",
+                                  "selectedRunId": "run-denial-pubmedbert-v3",
+                                  "metrics": { "f1": 0.87, "accuracy": 0.91, "latencyMs": 142 } } } ],
+       "total": 1 }</pre>
+      </div>
+        <div class="callout">
+          <strong>Quick open URLs (latest validated run):</strong>
+          <ul>
+            <li><a href="http://localhost:3000/sandbox">http://localhost:3000/sandbox</a></li>
+            <li><a href="http://localhost:3000/sandbox/sbx-ed15c227">http://localhost:3000/sandbox/sbx-ed15c227</a></li>
+            <li><a href="http://localhost:3000/imde/notebooks?sandboxId=sbx-ed15c227&amp;demo=imde-rcm-denial-demo">http://localhost:3000/imde/notebooks?sandboxId=sbx-ed15c227&amp;demo=imde-rcm-denial-demo</a></li>
+            <li><a href="http://localhost:3000/imde/experiments?sandboxId=sbx-ed15c227&amp;demo=imde-rcm-denial-demo">http://localhost:3000/imde/experiments?sandboxId=sbx-ed15c227&amp;demo=imde-rcm-denial-demo</a></li>
+            <li><a href="http://localhost:3000/imde/push?sandboxId=sbx-ed15c227&amp;runId=run-denial-pubmedbert-v3&amp;demo=imde-rcm-denial-demo">http://localhost:3000/imde/push?sandboxId=sbx-ed15c227&amp;runId=run-denial-pubmedbert-v3&amp;demo=imde-rcm-denial-demo</a></li>
+            <li><a href="http://localhost:3000/models/rcm-denial-prediction-space">http://localhost:3000/models/rcm-denial-prediction-space</a></li>
+          </ul>
+          Replace <code>sbx-ed15c227</code> with your current sandbox id on each new reset/rehearsal.
+        </div>
+    </section>
+
+    <section id="a11y">
+      <h2><span class="num">8</span> Accessibility &amp; display checks</h2>
+      <ul>
+        <li><strong>Desktop / projector:</strong> no card text overlaps at 1366px width.</li>
+        <li><strong>Narrow window:</strong> primary actions remain visible without horizontal scrolling.</li>
+        <li><strong>Keyboard:</strong> request submit, approval, notebook / experiments / publish links, and the model preview actions are focusable.</li>
+        <li><strong>Screen reader:</strong> status badges, the approval button, the publish button, and the model preview button have readable visible labels.</li>
+      </ul>
+    </section>
+
+    <section id="signals">
+      <h2><span class="num">9</span> Healthy signals</h2>
+      <ul>
+        <li><code>sandbox-demo.test.js</code> passes.</li>
+        <li>API build passes.</li>
+        <li>Publish response includes <code>submissionId</code>, <code>projectionId</code>, <code>modelRouteId</code>, and <code>modelRoute</code>.</li>
+        <li>Model detail route resolves to <code>/models/rcm-denial-prediction-space</code>.</li>
+      </ul>
+    </section>
+
+    <section id="caveats">
+      <h2><span class="num">10</span> Known local validation caveat</h2>
+      <div class="callout warn">
+        <strong>Heads-up:</strong> <code>npm run type-check</code> currently fails on pre-existing issues
+        outside this slice &mdash; missing MSAL module type resolution, chart / resizable component type
+        drift, and legacy mock-data pricing / type mismatches. The IMDE, sandbox, and model changes
+        introduced in this demo no longer appear in the type-check error list.
+      </div>
+    </section>
+
+    <footer>
+      Mirror of <code>docs/deliverables/imde-sandbox-spaces-executive-demo-script.md</code> &middot;
+      Scenario <code>imde-rcm-denial-demo</code>
+    </footer>
+  </div>
+</body>
+</html>

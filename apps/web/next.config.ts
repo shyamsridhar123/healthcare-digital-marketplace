@@ -31,7 +31,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_AZURE_TENANT_ID: process.env.AZURE_TENANT_ID ?? "",
   },
   async rewrites() {
-    const apiBackend = process.env.API_BASE_URL ?? "http://localhost:7071/api";
+    // Use 127.0.0.1 (not "localhost") so Node's undici proxy doesn't try IPv6 (::1)
+    // first and fail with AggregateError — Azure Functions Core Tools only binds IPv4.
+    const apiBackend = process.env.API_BASE_URL ?? "http://127.0.0.1:7071/api";
     return {
       // "fallback" rewrites only fire when no Next.js page or API route matches
       fallback: [
@@ -41,6 +43,21 @@ const nextConfig: NextConfig = {
         },
       ],
     };
+  },
+  async headers() {
+    // Scope COOP/COEP strictly to /jupyterlite/* so the in-browser Pyodide
+    // kernel can use SharedArrayBuffer. Cross-origin isolation must NOT be
+    // applied to the rest of the app — it would break OAuth popups and
+    // third-party iframes (e.g. avatars, embedded analytics).
+    return [
+      {
+        source: "/jupyterlite/:path*",
+        headers: [
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
+        ],
+      },
+    ];
   },
 };
 

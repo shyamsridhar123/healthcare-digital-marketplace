@@ -1,10 +1,10 @@
 "use client"
 
-import { use, useState } from "react"
+import { use, useEffect, useState, type ElementType } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
-import { models } from "@/lib/models-data"
+import { demoPublishedModelExperience, models } from "@/lib/models-data"
 import { cn } from "@/lib/utils"
 import {
   ArrowLeft,
@@ -26,11 +26,14 @@ import {
   Cpu,
   Globe,
   AlertCircle,
+  FlaskConical,
+  Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const statusColors: Record<string, string> = {
   production: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "demo-ready": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
   beta: "bg-amber-500/20 text-amber-400 border-amber-500/30",
   review: "bg-blue-500/20 text-blue-400 border-blue-500/30",
 }
@@ -44,9 +47,56 @@ type Tab = "overview" | "model-card" | "api" | "changelog"
 
 export default function ModelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const model = models.find((m) => m.id === id)
+  const [publishedDemoModel, setPublishedDemoModel] = useState<typeof demoPublishedModelExperience | null>(null)
+  const [checkedDemoState, setCheckedDemoState] = useState(id !== demoPublishedModelExperience.id)
+  const model = models.find((m) => m.id === id) ?? (id === demoPublishedModelExperience.id ? (publishedDemoModel ?? demoPublishedModelExperience) : undefined)
   const [activeTab, setActiveTab] = useState<Tab>("overview")
   const [copied, setCopied] = useState(false)
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null)
+  const [running, setRunning] = useState(false)
+  const [result, setResult] = useState<
+    | {
+        scenarioId: string
+        output: {
+          prediction: "High" | "Medium" | "Low"
+          rationale: string
+          reasonCode?: string
+          confidence: number
+        }
+        latencyMs: number
+      }
+    | null
+  >(null)
+
+  useEffect(() => {
+    if (id === demoPublishedModelExperience.id) {
+      let cancelled = false
+
+      async function loadPublishedDemoModel() {
+        try {
+          const response = await fetch("/api/models?demoScenarioId=imde-rcm-denial-demo&tenantId=default", { cache: "no-store" })
+          if (!response.ok) return
+          const payload = await response.json() as { models?: Array<typeof demoPublishedModelExperience> }
+          const found = (payload.models ?? []).find((item) => item.id === demoPublishedModelExperience.id) ?? null
+          if (!cancelled) setPublishedDemoModel(found)
+        } finally {
+          if (!cancelled) setCheckedDemoState(true)
+        }
+      }
+
+      void loadPublishedDemoModel()
+      return () => { cancelled = true }
+    }
+  }, [id])
+
+  if (!model && !checkedDemoState) {
+    return (
+      <div className="min-h-screen bg-background">
+        <AppSidebar />
+        <main className="app-shell-offset p-6 text-sm text-muted-foreground">Loading model experience...</main>
+      </div>
+    )
+  }
 
   if (!model) {
     notFound()
@@ -56,13 +106,48 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
     .filter((m) => m.category === model.category && m.id !== model.id)
     .slice(0, 3)
 
+  const previewScenarios =
+    model.experienceType === "published-model-experience" && model.preview?.scenarios?.length
+      ? model.preview.scenarios
+      : null
+  const selectedScenario =
+    previewScenarios?.find((s) => s.id === selectedScenarioId) ?? previewScenarios?.[0] ?? null
+
+  const handleRunPreview = () => {
+    if (!selectedScenario || running) return
+    const scenario = selectedScenario
+    const latencyMs = Math.floor(400 + Math.random() * 501)
+    setRunning(true)
+    setResult(null)
+    void fetch("/api/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        assetId: model.id,
+        sessionType: "preview",
+        input: { scenarioId: scenario.id, inputText: scenario.inputText },
+        config: { previewType: "classification-playground" },
+      }),
+    }).catch(() => {
+      // Fire-and-forget audit emit; UI must not depend on this succeeding.
+    })
+    setTimeout(() => {
+      setResult({
+        scenarioId: scenario.id,
+        output: scenario.output,
+        latencyMs,
+      })
+      setRunning(false)
+    }, latencyMs)
+  }
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
+  const tabs: { id: Tab; label: string; icon: ElementType }[] = [
     { id: "overview", label: "Overview", icon: FileText },
     { id: "model-card", label: "Model Card", icon: BarChart3 },
     { id: "api", label: "API / SDK", icon: Code2 },
@@ -154,6 +239,155 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
 
+            {model.experienceType === "published-model-experience" && model.preview && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-6">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-foreground">{model.preview.title}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">{model.preview.description}</p>
+                  </div>
+                  <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                    <FlaskConical className="h-3.5 w-3.5" />
+                    Synthetic data only
+                  </span>
+                </div>
+
+                {previewScenarios ? (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Pick a synthetic claim
+                      </p>
+                      <div className="grid gap-2">
+                        {previewScenarios.map((s) => {
+                          const isSelected = (selectedScenario?.id ?? null) === s.id
+                          return (
+                            <button
+                              type="button"
+                              key={s.id}
+                              aria-pressed={isSelected}
+                              onClick={() => {
+                                if (s.id === selectedScenario?.id) return
+                                setSelectedScenarioId(s.id)
+                                setResult(null)
+                              }}
+                              disabled={running}
+                              className={cn(
+                                "flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                                isSelected
+                                  ? "border-emerald-500/50 bg-emerald-500/10 text-foreground"
+                                  : "border-border bg-background/60 text-muted-foreground hover:border-emerald-500/30 hover:text-foreground",
+                                running && "cursor-not-allowed opacity-60"
+                              )}
+                            >
+                              <span>{s.label}</span>
+                              <span
+                                aria-hidden
+                                className={cn(
+                                  "h-3 w-3 rounded-full border",
+                                  isSelected
+                                    ? "border-emerald-400 bg-emerald-400"
+                                    : "border-muted-foreground/40"
+                                )}
+                              />
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {selectedScenario && (
+                      <div className="rounded-lg border border-border bg-background/60 p-3">
+                        <p className="mb-2 text-xs font-semibold text-muted-foreground">Synthetic input</p>
+                        <p className="text-sm text-foreground">{selectedScenario.inputText}</p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        Outputs are pre-canned for this demo; no real claims are ever scored.
+                      </p>
+                      <Button
+                        type="button"
+                        onClick={handleRunPreview}
+                        disabled={running || !selectedScenario}
+                        className="gap-2 self-start bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60 sm:self-auto"
+                      >
+                        {running ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Running...
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="h-4 w-4" />
+                            Run preview
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+                          Preview output
+                        </p>
+                        {result && (
+                          <span className="text-xs text-muted-foreground">{result.latencyMs} ms</span>
+                        )}
+                      </div>
+                      {result ? (
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                            <span className="text-sm text-muted-foreground">Denial risk:</span>
+                            <span
+                              className={cn(
+                                "text-base font-semibold",
+                                result.output.prediction === "High" && "text-red-300",
+                                result.output.prediction === "Medium" && "text-amber-300",
+                                result.output.prediction === "Low" && "text-emerald-300"
+                              )}
+                            >
+                              {result.output.prediction}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              confidence {Math.round(result.output.confidence * 100)}%
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground">{result.output.rationale}</p>
+                          {result.output.reasonCode && (
+                            <p className="text-xs">
+                              <span className="text-muted-foreground">Reason code: </span>
+                              <span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-foreground">
+                                {result.output.reasonCode}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          {running
+                            ? "Scoring synthetic claim..."
+                            : "Pick a synthetic claim above and click Run preview."}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="rounded-lg border border-border bg-background/60 p-3">
+                      <p className="mb-2 text-xs font-semibold text-muted-foreground">Synthetic input</p>
+                      <p className="text-sm text-foreground">{model.preview.sampleInput}</p>
+                    </div>
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
+                      <p className="mb-2 text-xs font-semibold text-emerald-300">Preview output</p>
+                      <p className="text-sm text-foreground">{model.preview.sampleOutput}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Tabs */}
             <div className="rounded-xl border border-border bg-card">
               <div className="flex border-b border-border">
@@ -212,6 +446,19 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                         </div>
                       </div>
                     )}
+
+                    {model.lineage && (
+                      <div>
+                        <h3 className="mb-3 text-base font-medium text-foreground">Sandbox Lineage</h3>
+                        <div className="grid gap-3 rounded-lg border border-border bg-secondary/30 p-4 text-sm md:grid-cols-2">
+                          <div><span className="text-muted-foreground">Run:</span> {model.lineage.selectedRunId}</div>
+                          <div><span className="text-muted-foreground">Base model:</span> {model.lineage.baseModelId}</div>
+                          <div><span className="text-muted-foreground">Notebook:</span> {model.lineage.notebookPath}</div>
+                          <div><span className="text-muted-foreground">Team:</span> {model.lineage.team}</div>
+                          <div className="md:col-span-2"><span className="text-muted-foreground">Data:</span> {model.lineage.dataPackages.join(" + ")}</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -221,7 +468,9 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                     <div className="rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-4">
                       <h3 className="mb-1 text-sm font-semibold text-foreground">Model Report Card</h3>
                       <p className="text-xs text-muted-foreground">
-                        Governance-approved documentation for production use. HIPAA & SOC2 reviewed.
+                        {model.experienceType === "published-model-experience"
+                          ? "Demo governance evidence from a synthetic-data IMDE sandbox run."
+                          : "Governance-approved documentation for production use. HIPAA & SOC2 reviewed."}
                       </p>
                     </div>
 
@@ -262,7 +511,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                             </div>
                             <span className="flex items-center gap-1 text-xs text-emerald-400">
                               <CheckCircle2 className="h-3.5 w-3.5" />
-                              Certified
+                              {model.experienceType === "published-model-experience" ? "Recorded" : "Certified"}
                             </span>
                           </div>
                         ))}
@@ -378,7 +627,7 @@ console.log(response.result);`}</pre>
                         </li>
                         <li className="flex items-start gap-2">
                           <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
-                          Updated compliance certifications
+                          {model.experienceType === "published-model-experience" ? "Published synthetic-data lineage evidence" : "Updated compliance certifications"}
                         </li>
                         <li className="flex items-start gap-2">
                           <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />

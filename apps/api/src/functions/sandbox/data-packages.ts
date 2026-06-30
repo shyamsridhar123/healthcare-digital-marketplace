@@ -15,8 +15,10 @@ const SEED_PACKAGES = [
     version: "12",
     displayName: "Claims Training Dataset",
     description:
-      "De-identified claims records for RCM model training. Includes diagnosis codes, procedure codes, and payer info.",
+      "Synthetic, de-identified claims records for RCM model training. Includes diagnosis codes, procedure codes, and payer info for approved demo use.",
     classification: "internal",
+    demoDataStatement: "synthetic, de-identified approved demo claims data for RCM model training.",
+    demoDataClassifications: ["synthetic", "de-identified", "approved-demo"],
     amlDataAsset: { name: "claims_training", version: "12" },
     allowedSandboxTypes: ["personal", "team"],
     approvalPolicy: "auto-approve",
@@ -31,8 +33,10 @@ const SEED_PACKAGES = [
     version: "4",
     displayName: "Denials Gold Dataset",
     description:
-      "Curated denial reason codes and appeal outcomes for denial prediction models.",
+      "Synthetic, de-identified denial reason codes and appeal outcomes for denial prediction model evaluation.",
     classification: "internal",
+    demoDataStatement: "synthetic, de-identified approved demo denial outcomes for evaluation.",
+    demoDataClassifications: ["synthetic", "de-identified", "approved-demo"],
     amlDataAsset: { name: "denials_gold", version: "4" },
     allowedSandboxTypes: ["personal", "team"],
     approvalPolicy: "standard-review",
@@ -49,6 +53,8 @@ const SEED_PACKAGES = [
     description:
       "Raw clinical notes for NLP and NER model development. PHI content — restricted access only.",
     classification: "phi",
+    demoDataStatement: "Restricted PHI example for approval-gated proof only; excluded from the primary executive demo path.",
+    demoDataClassifications: [],
     amlDataAsset: { name: "clinical_notes_phi", version: "3" },
     allowedSandboxTypes: ["restricted"],
     approvalPolicy: "restricted-review",

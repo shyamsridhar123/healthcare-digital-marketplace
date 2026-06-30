@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +27,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { imdeDemoScenario } from "@/lib/imde-demo-data"
 
 interface Run {
   id: string
@@ -50,16 +53,16 @@ interface Run {
 
 const runs: Run[] = [
   {
-    id: "run-001",
-    name: "denial-bert-lr1e4-bs32",
-    model: "bert-base-uncased (fine-tuned)",
+    id: imdeDemoScenario.selectedRunId,
+    name: "pubmedbert-denial-v3-governed",
+    model: "PubMedBERT denial classifier",
     status: "completed",
     duration: "1h 42m",
-    startedBy: "Sarah Chen",
-    startedAt: "Mar 2, 2026 09:14",
+    startedBy: imdeDemoScenario.actors.ownerName,
+    startedAt: "May 20, 2026 09:14",
     params: { learning_rate: "1e-4", batch_size: "32", epochs: "10", warmup_steps: "500" },
-    metrics: { accuracy: 0.923, f1: 0.918, precision: 0.931, recall: 0.906, auc: 0.964, loss: 0.143, latencyMs: 48 },
-    tags: ["bert", "denials", "v3"],
+    metrics: { accuracy: 0.91, f1: 0.87, precision: 0.89, recall: 0.86, auc: 0.964, loss: 0.143, latencyMs: 142 },
+    tags: ["pubmedbert", "denials", "governance-ready"],
     starred: true,
   },
   {
@@ -164,8 +167,10 @@ function StatusIcon({ status }: { status: Run["status"] }) {
 }
 
 export default function IMDEExperimentsPage() {
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const searchParams = useSearchParams()
+  const [selected, setSelected] = useState<Set<string>>(new Set([imdeDemoScenario.selectedRunId]))
   const [expandedParams, setExpandedParams] = useState<string | null>(null)
+  const winningRun = runs.find((run) => run.id === imdeDemoScenario.selectedRunId)
 
   const completed = runs.filter((r) => r.status === "completed")
   const bestAccuracy = Math.max(...completed.filter((r) => r.metrics.accuracy !== undefined).map((r) => r.metrics.accuracy!))
@@ -211,6 +216,24 @@ export default function IMDEExperimentsPage() {
               <Play className="h-4 w-4" />
               New Run
             </Button>
+          </div>
+        </div>
+
+        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <Badge className="mb-2 bg-emerald-500/20 text-emerald-300">Selected winner</Badge>
+              <p className="text-sm font-semibold text-foreground">{winningRun?.name}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Governance-ready run from {imdeDemoScenario.requestDefaults.name}; lineage includes notebook, base model, and synthetic/de-identified data package versions.
+              </p>
+            </div>
+            <Link href={`/imde/push?runId=${imdeDemoScenario.selectedRunId}&demo=${imdeDemoScenario.demoScenarioId}&sandboxId=${searchParams.get("sandboxId") ?? ""}`}>
+              <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+                <CheckCircle2 className="h-4 w-4" />
+                Publish selected run
+              </Button>
+            </Link>
           </div>
         </div>
 

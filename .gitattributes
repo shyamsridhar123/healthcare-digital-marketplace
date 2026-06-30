@@ -1,0 +1,15 @@
+# Treat the JupyterLite build artifact as vendored / generated content.
+# This keeps GitHub repo-stats accurate and avoids merge conflicts.
+apps/web/public/jupyterlite/** linguist-vendored
+apps/web/public/jupyterlite/** linguist-generated
+
+# Force binary diff/storage for the kernel and pyodide payloads.
+apps/web/public/jupyterlite/**/*.whl   binary
+apps/web/public/jupyterlite/**/*.wasm  binary
+apps/web/public/jupyterlite/**/*.data  binary
+apps/web/public/jupyterlite/**/*.zip   binary
+apps/web/public/jupyterlite/**/*.tar   binary
+apps/web/public/jupyterlite/**/*.gz    binary
+
+# Generated notebook in the JupyterLite content tree is also vendored output.
+docs/jupyterlite-content/starter.ipynb linguist-generated

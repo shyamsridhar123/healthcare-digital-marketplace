@@ -14,6 +14,7 @@ import {
   resumeSandbox,
   extendSandbox,
 } from "@/lib/api/sandboxes";
+import { imdeDemoScenario } from "@/lib/imde-demo-data";
 import type { SandboxWorkspace, SandboxLifecycleEvent, SandboxStatus } from "@/lib/types";
 
 const STATUS_COLORS: Record<SandboxStatus, string> = {
@@ -103,6 +104,7 @@ export default function SandboxDetailPage() {
     0,
     Math.ceil((new Date(sandbox.expiresAt).getTime() - Date.now()) / 86400000)
   );
+  const isDemoSandbox = sandbox.demoScenarioId === imdeDemoScenario.demoScenarioId;
 
   return (
     <div className="space-y-6">
@@ -124,6 +126,11 @@ export default function SandboxDetailPage() {
             {sandbox.description && (
               <p className="mt-1 text-sm text-muted-foreground">{sandbox.description}</p>
             )}
+            {isDemoSandbox && (
+              <p className="mt-2 text-xs font-medium text-emerald-400">
+                Executive demo sandbox · synthetic/de-identified data · base model {sandbox.baseModelId}
+              </p>
+            )}
           </div>
 
           {/* Launch buttons */}
@@ -134,11 +141,9 @@ export default function SandboxDetailPage() {
                   <Button size="sm" variant="outline">Open AML Studio</Button>
                 </a>
               )}
-              {sandbox.launchUrls.notebook && (
-                <a href={sandbox.launchUrls.notebook} target="_blank" rel="noreferrer">
-                  <Button size="sm">Launch Notebook</Button>
-                </a>
-              )}
+              <Link href={`/imde/notebooks?sandboxId=${sandbox.id}&demo=${sandbox.demoScenarioId ?? ""}`}>
+                <Button size="sm">Preview Notebook</Button>
+              </Link>
             </div>
           )}
         </div>
@@ -155,6 +160,8 @@ export default function SandboxDetailPage() {
               <InfoRow label="Type" value={<span className="capitalize">{sandbox.sandboxType}</span>} />
               <InfoRow label="Compute" value={COMPUTE_LABELS[sandbox.computeProfile] ?? sandbox.computeProfile} />
               <InfoRow label="Template" value={sandbox.workspaceTemplateId} />
+              {sandbox.demoScenarioId && <InfoRow label="Demo Scenario" value={sandbox.demoScenarioId} />}
+              {sandbox.baseModelId && <InfoRow label="Base Model" value={sandbox.baseModelId} />}
               <InfoRow label="Policy Profile" value={<span className="capitalize">{sandbox.policyProfile}</span>} />
               <InfoRow
                 label="Expires"
@@ -171,6 +178,7 @@ export default function SandboxDetailPage() {
                   value={`${sandbox.approvedBy} on ${new Date(sandbox.approvedAt!).toLocaleDateString()}`}
                 />
               )}
+              {sandbox.approvalReason && <InfoRow label="Approval Reason" value={sandbox.approvalReason} />}
               {sandbox.rejectionReason && (
                 <InfoRow label="Rejection reason" value={sandbox.rejectionReason} />
               )}
@@ -183,7 +191,11 @@ export default function SandboxDetailPage() {
             {sandbox.dataPackages.length === 0 ? (
               <p className="text-xs text-muted-foreground">No data packages attached.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-3">
+                {sandbox.demoDataStatement && (
+                  <p className="text-xs text-emerald-400">{sandbox.demoDataStatement}</p>
+                )}
+                <div className="flex flex-wrap gap-2">
                 {sandbox.dataPackages.map((pkg) => (
                   <span
                     key={pkg}
@@ -192,9 +204,27 @@ export default function SandboxDetailPage() {
                     {pkg}
                   </span>
                 ))}
+                </div>
               </div>
             )}
           </div>
+
+          {sandbox.status === "ready" && (
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Marketplace-contained next actions</h2>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Link href={`/imde/notebooks?sandboxId=${sandbox.id}&demo=${sandbox.demoScenarioId ?? ""}`}>
+                  <Button variant="outline" className="w-full">Notebook</Button>
+                </Link>
+                <Link href={`/imde/experiments?sandboxId=${sandbox.id}&demo=${sandbox.demoScenarioId ?? ""}`}>
+                  <Button variant="outline" className="w-full">Experiments</Button>
+                </Link>
+                <Link href={`/imde/push?sandboxId=${sandbox.id}&demo=${sandbox.demoScenarioId ?? ""}`}>
+                  <Button className="w-full">Publish</Button>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Lifecycle Events */}
           <div className="rounded-xl border border-border bg-card p-5">
@@ -233,9 +263,9 @@ export default function SandboxDetailPage() {
                   className="w-full"
                   size="sm"
                   disabled={actionLoading}
-                  onClick={() => runAction(() => approveSandbox(sandbox.id))}
+                  onClick={() => runAction(() => approveSandbox(sandbox.id, imdeDemoScenario.actors.approverId))}
                 >
-                  Approve Request
+                  Approve as Platform Admin
                 </Button>
                 {!showRejectForm ? (
                   <Button
@@ -393,7 +423,9 @@ export default function SandboxDetailPage() {
           {/* Quick info */}
           <div className="rounded-xl border border-border bg-card p-5 space-y-2">
             <h2 className="text-sm font-semibold text-foreground">Owner</h2>
-            <p className="text-xs text-muted-foreground">{sandbox.ownerId}</p>
+            <p className="text-xs text-muted-foreground">
+              {isDemoSandbox ? `${imdeDemoScenario.actors.ownerName} · ${imdeDemoScenario.actors.teamName}` : sandbox.ownerId}
+            </p>
             <h2 className="mt-3 text-sm font-semibold text-foreground">Created</h2>
             <p className="text-xs text-muted-foreground">
               {new Date(sandbox.createdAt).toLocaleString()}

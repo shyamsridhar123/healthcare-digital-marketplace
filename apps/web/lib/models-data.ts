@@ -23,6 +23,126 @@ export interface ModelData {
   tags?: string[]
   useCases?: string[]
   endpoint?: string
+  experienceType?: "published-model-experience"
+  preview?: {
+    title: string
+    description: string
+    sampleInput: string
+    sampleOutput: string
+    scenarios?: Array<{
+      id: string
+      label: string
+      inputText: string
+      output: {
+        prediction: "High" | "Medium" | "Low"
+        rationale: string
+        reasonCode?: string
+        confidence: number
+      }
+    }>
+  }
+  trustStatus?: "governance-passed" | "in-review"
+  lineage?: {
+    sandboxId: string
+    selectedRunId: string
+    baseModelId: string
+    notebookPath: string
+    dataPackages: string[]
+    owner: string
+    team: string
+  }
+  reuse?: {
+    saves: number
+    duplicates: number
+    notes: string
+  }
+}
+
+export const demoPublishedModelExperience: ModelData = {
+  id: "rcm-denial-prediction-space",
+  name: "RCM Denial Prediction Space",
+  version: "1.0.0",
+  publisher: "Revenue Cycle AI Lab",
+  publisherVerified: true,
+  description: "Runnable denial prediction experience published from the governed IMDE sandbox with lineage, evaluation summary, and marketplace-safe reuse actions.",
+  category: "Prediction",
+  type: "internal",
+  status: "demo-ready",
+  rating: 4.9,
+  downloads: 128,
+  lastUpdated: "2026-05-20",
+  compliance: ["Synthetic data", "Demo governance evidence"],
+  metrics: { accuracy: 91.0, latency: 142, throughput: 420 },
+  teams: 3,
+  tags: ["space", "denials", "pubmedbert", "rcm", "synthetic-data"],
+  useCases: [
+    "Score denial risk for synthetic claim examples",
+    "Compare model behavior before reuse in a new governed sandbox",
+    "Review lineage from sandbox request through selected evaluation run",
+  ],
+  endpoint: "https://demo.ai-marketplace.local/models/rcm-denial-prediction-space/invoke",
+  experienceType: "published-model-experience",
+  trustStatus: "governance-passed",
+  preview: {
+    title: "Runnable denial risk preview",
+    description: "Try a synthetic claim summary and inspect denial-risk rationale before duplicating the experience.",
+    sampleInput: "Synthetic claim: outpatient MRI, payer A, missing prior authorization indicator.",
+    sampleOutput: "Denial risk: High · likely reason: authorization documentation gap · recommended next step: attach auth evidence.",
+    scenarios: [
+      {
+        id: "outpatient-mri-no-auth",
+        label: "Outpatient MRI, missing prior auth",
+        inputText:
+          "Synthetic claim: outpatient MRI of lumbar spine for chronic low back pain, payer A commercial plan, no prior authorization on file, billed CPT 72148.",
+        output: {
+          prediction: "High",
+          rationale:
+            "Synthetic example: payer A consistently denies advanced imaging without a prior auth record; documentation gap drives high denial risk.",
+          reasonCode: "CO-197",
+          confidence: 0.92,
+        },
+      },
+      {
+        id: "ed-visit-coding-mismatch",
+        label: "ED visit, coding mismatch",
+        inputText:
+          "Synthetic claim: emergency department level 4 visit (CPT 99284) with primary diagnosis of unspecified chest pain (R07.9), no supporting cardiac workup documented.",
+        output: {
+          prediction: "Medium",
+          rationale:
+            "Synthetic example: E/M level appears unsupported by documented workup; payer may downcode or request records.",
+          reasonCode: "CO-50",
+          confidence: 0.68,
+        },
+      },
+      {
+        id: "inpatient-stay-complete-docs",
+        label: "Inpatient stay, complete documentation",
+        inputText:
+          "Synthetic claim: 3-day inpatient admission for community-acquired pneumonia, attending notes and discharge summary on file, DRG 193, in-network facility.",
+        output: {
+          prediction: "Low",
+          rationale:
+            "Synthetic example: medical necessity well documented and DRG aligns with diagnosis; low likelihood of denial.",
+          confidence: 0.12,
+        },
+      },
+    ],
+  },
+  lineage: {
+    sandboxId: "imde-rcm-denial-demo",
+    selectedRunId: "run-denial-pubmedbert-v3",
+    baseModelId: "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+    notebookPath: "notebooks/denials_prediction_finetune.ipynb",
+    dataPackages: ["claims_training:12", "denials_gold:4"],
+    owner: "Priya Shah",
+    team: "Revenue Cycle AI Lab",
+  },
+  reuse: {
+    saves: 18,
+    duplicates: 4,
+    notes: "Ready for future denial-management experiments with synthetic/de-identified data only.",
+  },
 }
 
 export const models: ModelData[] = [

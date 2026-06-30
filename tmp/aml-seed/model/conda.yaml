@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - mlflow==2.14.0
+      - transformers==4.41.0
+      - torch==2.3.0
+name: rcm-denial-prediction-space-env

@@ -10,6 +10,10 @@ import { MsalProvider } from "@azure/msal-react"
 import { buildMsalConfig } from "@/lib/auth/msal-config"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // Demo/E2E bypass — set NEXT_PUBLIC_AUTH_DISABLED=true to skip Entra entirely.
+  // Must match the bypass in <AuthGuard /> so we never instantiate MSAL.
+  const authDisabled = process.env.NEXT_PUBLIC_AUTH_DISABLED === "true"
+
   const [instance, setInstance] = useState<PublicClientApplication | null>(null)
   const [configError, setConfigError] = useState<string | null>(null)
 
@@ -18,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    if (authDisabled) return
     // Fetch client ID + tenant ID from the server API route at runtime.
     // This avoids baking them in as NEXT_PUBLIC_ build-time vars, so the
     // same Docker image works across environments.

@@ -1,0 +1,81 @@
+export const IMDE_DEMO_SCENARIO_ID = "imde-rcm-denial-demo";
+
+export const imdeDemoScenario = {
+  demoScenarioId: IMDE_DEMO_SCENARIO_ID,
+  title: "RCM Denial Prediction Sandbox",
+  baseModelId: "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+  requestDefaults: {
+    name: "RCM denial prediction fine-tuning",
+    description: "Governed team sandbox for denial prediction model tuning with approved demo claims data.",
+    workspaceTemplateId: "aml-team-standard-v1",
+    sandboxType: "team" as const,
+    dataPackages: ["claims_training", "denials_gold"],
+    computeProfile: "gpu-small" as const,
+    durationDays: 30,
+    costCenter: "RCM-AI-2026",
+    businessJustification: "Tune and evaluate a denial prediction model using synthetic, de-identified claims demo data before marketplace publication.",
+  },
+  actors: {
+    ownerId: "ds-priya-shah",
+    ownerName: "Priya Shah",
+    approverId: "platform-admin-morgan-lee",
+    approverName: "Morgan Lee",
+    teamName: "Revenue Cycle AI Lab",
+  },
+  dataPackages: [
+    {
+      id: "claims_training",
+      displayName: "Claims Training Dataset",
+      version: "12",
+      demoDataStatement: "synthetic, de-identified approved demo claims data for RCM model training.",
+    },
+    {
+      id: "denials_gold",
+      displayName: "Denials Gold Dataset",
+      version: "4",
+      demoDataStatement: "synthetic, de-identified approved demo denial outcomes for evaluation.",
+    },
+  ],
+  selectedRunId: "run-denial-pubmedbert-v3",
+  evaluationRuns: [
+    {
+      id: "run-denial-pubmedbert-v3",
+      name: "PubMedBERT denial classifier v3",
+      status: "completed" as const,
+      selectedWinner: true,
+      governanceStatus: "ready-for-publish" as const,
+      baseModelId: "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+      dataPackages: ["claims_training", "denials_gold"],
+      metrics: { f1: 0.87, accuracy: 0.91, latencyMs: 142 },
+      lineage: {
+        notebookPath: "notebooks/denials_prediction_finetune.ipynb",
+        templateId: "denials-prediction-finetune-v1",
+        trainingDataVersion: "claims_training:12",
+        evaluationDataVersion: "denials_gold:4",
+      },
+    },
+    {
+      id: "run-denial-baseline-v1",
+      name: "Baseline gradient boosted claims classifier",
+      status: "completed" as const,
+      selectedWinner: false,
+      governanceStatus: "in-review" as const,
+      baseModelId: "baseline-claims-gbdt",
+      dataPackages: ["claims_training", "denials_gold"],
+      metrics: { f1: 0.74, accuracy: 0.82, latencyMs: 96 },
+      lineage: {
+        notebookPath: "notebooks/claims_baseline_train.ipynb",
+        templateId: "claims-baseline-v1",
+        trainingDataVersion: "claims_training:12",
+        evaluationDataVersion: "denials_gold:4",
+      },
+    },
+  ],
+  publishedExperience: {
+    modelRouteId: "rcm-denial-prediction-space",
+    displayName: "RCM Denial Prediction Space",
+    task: "Healthcare revenue cycle denial prediction",
+    trustStatus: "governance-passed" as const,
+    experienceStatus: "published" as const,
+  },
+};

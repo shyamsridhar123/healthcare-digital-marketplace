@@ -1,0 +1,43 @@
+{
+  "content": [
+    {
+      "content": null,
+      "created": "2026-05-21T19:34:03.427291Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-05-21T19:31:20.896588Z",
+      "mimetype": "text/markdown",
+      "name": "README.md",
+      "path": "README.md",
+      "size": 3186,
+      "type": "file",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2026-05-21T19:34:03.430733Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-05-21T19:29:47.448941Z",
+      "mimetype": null,
+      "name": "starter.ipynb",
+      "path": "starter.ipynb",
+      "size": 81909,
+      "type": "notebook",
+      "writable": true
+    }
+  ],
+  "created": "2026-05-21T19:34:03.426293Z",
+  "format": "json",
+  "hash": null,
+  "hash_algorithm": null,
+  "last_modified": "2026-05-21T19:34:03.430733Z",
+  "mimetype": null,
+  "name": "",
+  "path": "",
+  "size": null,
+  "type": "directory",
+  "writable": true
+}

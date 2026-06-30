@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { listSandboxes, type SandboxListResponse } from "@/lib/api/sandboxes";
+import { imdeDemoScenario } from "@/lib/imde-demo-data";
 import type { SandboxWorkspace, SandboxStatus } from "@/lib/types";
 
 const STATUS_COLORS: Record<SandboxStatus, string> = {
@@ -38,9 +39,13 @@ function SandboxCard({ sandbox }: { sandbox: SandboxWorkspace }) {
     Math.ceil((new Date(sandbox.expiresAt).getTime() - Date.now()) / 86400000)
   );
 
+  // The whole card is clickable via the <Link>, but the optional "Open in Azure
+  // ML Studio" external <a> must NOT be a descendant of that <Link> (HTML
+  // forbids nested <a> and React 19 / Next 16 throws a hydration error). We
+  // render the external link as a sibling inside the same card frame.
   return (
-    <Link href={`/sandbox/${sandbox.id}`} className="block">
-      <div className="rounded-xl border border-border bg-card p-5 transition-all hover:border-[var(--accent)]/40 hover:shadow-md hover:shadow-[var(--accent)]/5">
+    <div className="group rounded-xl border border-border bg-card transition-all hover:border-[var(--accent)]/40 hover:shadow-md hover:shadow-[var(--accent)]/5">
+      <Link href={`/sandbox/${sandbox.id}`} className="block p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-sm font-semibold text-foreground">{sandbox.name}</h3>
@@ -69,22 +74,21 @@ function SandboxCard({ sandbox }: { sandbox: SandboxWorkspace }) {
           <span>Expires in {daysLeft}d</span>
           <span>{new Date(sandbox.createdAt).toLocaleDateString()}</span>
         </div>
+      </Link>
 
-        {sandbox.status === "ready" && sandbox.launchUrls?.studio && (
-          <div className="mt-3 border-t border-border pt-3">
-            <a
-              href={sandbox.launchUrls.studio}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="text-xs font-medium text-[var(--accent)] hover:underline"
-            >
-              Open in Azure ML Studio →
-            </a>
-          </div>
-        )}
-      </div>
-    </Link>
+      {sandbox.status === "ready" && sandbox.launchUrls?.studio && (
+        <div className="border-t border-border px-5 py-3">
+          <a
+            href={sandbox.launchUrls.studio}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-medium text-[var(--accent)] hover:underline"
+          >
+            Open in Azure ML Studio →
+          </a>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -140,6 +144,23 @@ export default function SandboxPage() {
             <span>+</span> Request Sandbox
           </Button>
         </Link>
+      </div>
+
+      <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <Badge className="mb-2 border-emerald-500/30 bg-emerald-500/15 text-emerald-300">
+              Executive demo path
+            </Badge>
+            <h2 className="text-lg font-semibold text-foreground">{imdeDemoScenario.title}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Request a governed GPU sandbox with synthetic, de-identified RCM data, route it through approval, and publish the winning model into Models.
+            </p>
+          </div>
+          <Link href={`/sandbox/request?demo=${imdeDemoScenario.demoScenarioId}`}>
+            <Button className="w-full md:w-auto">Start demo sandbox</Button>
+          </Link>
+        </div>
       </div>
 
       {/* Alert for pending approvals (admin view) */}

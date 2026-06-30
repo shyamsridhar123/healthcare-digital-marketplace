@@ -54,6 +54,17 @@
 			"options": {
 				"cwd": "${workspaceFolder}/apps\\api"
 			}
+		},
+		{
+			"type": "shell",
+			"label": "IMDE: Reset demo scenario (local API)",
+			"command": "pwsh -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/demos/reset-demo.ps1\"",
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"clear": true
+			}
 		}
 	]
 }
