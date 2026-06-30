@@ -73,6 +73,11 @@ const typeBadgeConfig: Record<AssetType, { label: string; className: string; ico
     className: "bg-amber-500/20 text-amber-400 border-amber-500/30",
     icon: Workflow,
   },
+  "space": {
+    label: "Space",
+    className: "bg-violet-500/20 text-violet-400 border-violet-500/30",
+    icon: MessageSquare,
+  },
 }
 
 interface AssetCardProps {

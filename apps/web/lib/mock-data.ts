@@ -1,6 +1,28 @@
-import { Asset, Workflow } from "./types"
+import { Asset, SpaceDemo, Workflow } from "./types"
 
 export const assets: Asset[] = [
+  {
+    id: "space-denial-risk-copilot",
+    name: "Denial Risk Copilot Space",
+    description: "Chat-only IMDE Space published from Sarah Chen's denial-prediction sandbox. Teammates can test de-identified claim scenarios, see denial risk drivers, and seed their own sandbox from the immutable agent snapshot.",
+    summary: "Runnable internal Space for denial-risk model evaluation",
+    type: "space",
+    category: "Spaces",
+    publisher: "RCM Insights",
+    publisherVerified: true,
+    version: "1.2.0",
+    downloads: 84,
+    rating: 4.9,
+    tags: ["spaces", "denials", "rcm", "chat-only"],
+    pricing: "Enterprise",
+    icon: "MessageSquare",
+    lastUpdated: "2026-05-17",
+    publishedDate: "2026-05-17",
+    orchestrationUsage: 27,
+    capabilities: ["Chat-only runtime", "Snapshot reuse", "PHI warning", "Team visibility"],
+    uiHref: "/marketplace/spaces/denial-risk-copilot",
+    docsHref: "/docs/imde/spaces"
+  },
   {
     id: "uap-onboarding-vscode-skill",
     name: "UAP Onboarding VS Code Skill",
@@ -688,6 +710,40 @@ export const assets: Asset[] = [
     publishedDate: "2025-10-05",
     orchestrationUsage: 456,
     capabilities: ["Risk Scoring", "Auto-Correction", "Prevention Metrics", "Trend Analysis"]
+  }
+]
+
+export const spaces: SpaceDemo[] = [
+  {
+    id: "denial-risk-copilot",
+    assetId: "space-denial-risk-copilot",
+    name: "Denial Risk Copilot Space",
+    description: "A governed chat-only demo of the denial-prediction agent trained in IMDE with Claims Training and Denials Gold datasets.",
+    publisher: "Dr. Sarah Chen",
+    sourceSandbox: "Denial-Prediction-Sprint-2",
+    snapshotVersion: "snapshot-v1.2.0",
+    snapshotHash: "sha256:9c1f...7a42",
+    visibility: "Team",
+    runtimeState: "live",
+    runCount: 84,
+    likeCount: 19,
+    dailyTokenBudget: 250000,
+    usedTokens: 186000,
+    model: "denial-risk-transformer-v4",
+    dataRefs: ["claims_training@12", "denials_gold@4"],
+    guardrails: [
+      "No visitor file uploads",
+      "De-identified examples only",
+      "Snapshot excludes source data and credentials",
+      "Team visibility rechecked before chat and reuse"
+    ],
+    examplePrompts: [
+      "Predict denial risk for a de-identified outpatient claim with payer mismatch and prior-auth missing.",
+      "Explain the top denial drivers for CARC 197 on a commercial payer claim.",
+      "What evidence should the appeals team gather for a high-risk medical-necessity denial?"
+    ],
+    seededSandboxName: "Denial Risk Copilot - Reuse Draft",
+    updatedAt: "2026-05-17T18:45:00Z"
   }
 ]
 

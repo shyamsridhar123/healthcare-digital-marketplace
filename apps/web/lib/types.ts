@@ -1,4 +1,4 @@
-export type AssetType = "agent" | "mcp-server" | "mcp-tool" | "model" | "workflow-template"
+export type AssetType = "agent" | "mcp-server" | "mcp-tool" | "model" | "workflow-template" | "space"
 
 export type AssetCategory = 
   | "All Categories"
@@ -27,7 +27,7 @@ export interface Asset {
   downloads: number
   rating: number
   tags: string[]
-  pricing: "Free" | "Pro" | "Enterprise"
+  pricing: "Free" | "Starter" | "Pro" | "Enterprise"
   icon: string
   lastUpdated: string
   publishedDate: string // Initial publish date
@@ -37,6 +37,37 @@ export interface Asset {
   invocation?: string
   uiHref?: string
   docsHref?: string
+}
+
+export type SpaceRuntimeState =
+  | "sleeping"
+  | "waking"
+  | "live"
+  | "capacity-unavailable"
+  | "budget-exhausted"
+  | "access-revoked"
+
+export interface SpaceDemo {
+  id: string
+  assetId: string
+  name: string
+  description: string
+  publisher: string
+  sourceSandbox: string
+  snapshotVersion: string
+  snapshotHash: string
+  visibility: "Team" | "Org"
+  runtimeState: SpaceRuntimeState
+  runCount: number
+  likeCount: number
+  dailyTokenBudget: number
+  usedTokens: number
+  model: string
+  dataRefs: string[]
+  guardrails: string[]
+  examplePrompts: string[]
+  seededSandboxName: string
+  updatedAt: string
 }
 
 export type WorkflowNodeType =

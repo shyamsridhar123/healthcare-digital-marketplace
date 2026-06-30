@@ -51,6 +51,9 @@ import {
   CloudCog,
   Loader2,
   Info,
+  NotebookPen,
+  ArrowUpCircle,
+  CalendarPlus,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -98,7 +101,7 @@ interface ComputeApiResponse {
 interface Sandbox {
   id: string
   name: string
-  status: "running" | "idle" | "stopped" | "building" | "starting" | "stopping"
+  status: "running" | "idle" | "stopped" | "building" | "starting" | "stopping" | "requested" | "provisioning"
   owner: string
   team: string[]
   computeType: string
@@ -114,6 +117,8 @@ interface Sandbox {
   lastActive: string
   description: string
   studioUrl?: string
+  notebookUrl?: string
+  dataPackages?: string[]
   amlName?: string
 }
 
@@ -171,6 +176,9 @@ const STATIC_SANDBOXES: Sandbox[] = [
     createdAt: "Feb 12, 2026",
     lastActive: "2 min ago",
     description: "Fine-tuning transformer model on denial reasons using 18 months of payer data",
+    studioUrl: "https://ml.azure.com/demo/studio",
+    notebookUrl: "https://ml.azure.com/demo/notebook",
+    dataPackages: ["claims_training", "denials_gold"],
   },
   {
     id: "sb-002",
@@ -190,6 +198,9 @@ const STATIC_SANDBOXES: Sandbox[] = [
     createdAt: "Jan 28, 2026",
     lastActive: "15 min ago",
     description: "LLM-based ICD-10 auto-coding from clinical notes — multimodal extension in progress",
+    studioUrl: "https://ml.azure.com/demo/studio",
+    notebookUrl: "https://ml.azure.com/demo/notebook",
+    dataPackages: ["clinical_notes_phi"],
   },
   {
     id: "sb-003",
@@ -208,6 +219,7 @@ const STATIC_SANDBOXES: Sandbox[] = [
     createdAt: "Feb 20, 2026",
     lastActive: "3 hours ago",
     description: "XGBoost ensemble for prior authorization approval likelihood scoring",
+    dataPackages: ["claims_training"],
   },
   {
     id: "sb-004",
@@ -293,6 +305,8 @@ function StatusPill({ status }: { status: Sandbox["status"] }) {
     building: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     starting: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     stopping: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+    requested: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    provisioning: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   }
   const labels: Record<string, string> = {
     running: "● Running",
@@ -301,6 +315,8 @@ function StatusPill({ status }: { status: Sandbox["status"] }) {
     building: "⟳ Provisioning",
     starting: "⟳ Starting",
     stopping: "⟳ Stopping",
+    requested: "⏳ Approval Pending",
+    provisioning: "⟳ Provisioning",
   }
   return (
     <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-medium", map[status] ?? map.idle)}>
@@ -329,6 +345,27 @@ export default function IMDEWorkspacePage() {
   const [provisionLoading, setProvisionLoading] = useState(false)
   const [provisionError, setProvisionError] = useState<string | null>(null)
   const [provisionSuccess, setProvisionSuccess] = useState(false)
+  const [publishOpen, setPublishOpen] = useState(false)
+  const [publishSandbox, setPublishSandbox] = useState<Sandbox | null>(null)
+  const [publishStage, setPublishStage] = useState<"review" | "publishing" | "published">("review")
+
+  // ── Governed sandbox request form state ───────────────────────────────────────
+  const [provisionTemplate, setProvisionTemplate] = useState("standard-research")
+  const [provisionDataPkgs, setProvisionDataPkgs] = useState<string[]>([])
+  const [provisionComputeProfile, setProvisionComputeProfile] = useState("cpu-medium")
+  const [provisionDays, setProvisionDays] = useState("14")
+  const [provisionCostCenter, setProvisionCostCenter] = useState("")
+  const [provisionJustification, setProvisionJustification] = useState("")
+
+  // ── Upgrade Compute dialog state ─────────────────────────────────────────────
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
+  const [upgradeSandbox, setUpgradeSandbox] = useState<Sandbox | null>(null)
+  const [upgradeProfile, setUpgradeProfile] = useState("gpu-small")
+
+  // ── Extend Sandbox dialog state ──────────────────────────────────────────────
+  const [extendOpen, setExtendOpen] = useState(false)
+  const [extendSandbox, setExtendSandbox] = useState<Sandbox | null>(null)
+  const [extendDays, setExtendDays] = useState("14")
 
   // ── Fetch compute from API ──────────────────────────────────────────────────
 
@@ -404,30 +441,54 @@ export default function IMDEWorkspacePage() {
     setProvisionLoading(true)
     setProvisionError(null)
     try {
-      const res = await fetch("/api/aml/compute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: provisionName, vmSize: provisionVmSize, description: provisionDesc }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setProvisionError(data.error ?? "Provisioning failed"); return }
-      setProvisionSuccess(true)
+      // Demo: add a governed sandbox request and simulate the lifecycle
+      const sandboxId = `sbx-${Date.now()}`
+      const computeProfileLabel = provisionComputeProfile === "gpu-small"
+        ? "GPU-Accelerated" : provisionComputeProfile === "cpu-medium"
+        ? "CPU-Optimized (16 vCPU)" : "CPU-Standard (4 vCPU)"
       const newSb: Sandbox = {
-        id: `aml-${provisionName}`,
+        id: sandboxId,
         name: provisionName,
-        status: "building",
+        status: "requested",
         owner: "You",
         team: ["You"],
-        computeType: vmSizes.find((v) => v.id === provisionVmSize)?.isGpu ? "GPU-Accelerated" : "Standard",
-        cpu: 4, memoryGb: 16, storageGb: 256, cpuUsage: 0, memUsage: 0,
-        dataSources: [], preloadedTools: ["Jupyter Lab"],
+        computeType: computeProfileLabel,
+        cpu: provisionComputeProfile === "gpu-small" ? 6 : provisionComputeProfile === "cpu-medium" ? 16 : 4,
+        gpu: provisionComputeProfile === "gpu-small" ? "NVIDIA V100 × 1" : undefined,
+        memoryGb: provisionComputeProfile === "cpu-medium" ? 64 : 16,
+        storageGb: 512,
+        cpuUsage: 0,
+        memUsage: 0,
+        dataSources: provisionDataPkgs.map((p) =>
+          p === "claims_training" ? "Claims Training Dataset" :
+          p === "denials_gold" ? "Denials Gold Dataset" :
+          "Clinical Notes (PHI)"
+        ),
+        preloadedTools: ["JupyterLab", "PyTorch", "MLflow"],
         createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         lastActive: "just now",
-        description: provisionDesc || `${provisionVmSize} compute instance (provisioning…)`,
-        amlName: provisionName,
+        description: provisionJustification || `Sandbox using ${provisionDataPkgs.join(", ")} — awaiting approval`,
+        dataPackages: provisionDataPkgs,
       }
       setSandboxes((prev) => [newSb, ...prev])
-      setTimeout(() => { fetchCompute(); setProvisionSuccess(false) }, 30000)
+      setProvisionSuccess(true)
+
+      // Simulate: requested → provisioning (2s)
+      setTimeout(() => {
+        setSandboxes((prev) => prev.map((s) => s.id === sandboxId ? { ...s, status: "provisioning" } : s))
+        // → ready/running (6s)
+        setTimeout(() => {
+          setSandboxes((prev) => prev.map((s) => s.id === sandboxId ? {
+            ...s,
+            status: "running",
+            cpuUsage: 12,
+            memUsage: 22,
+            studioUrl: "https://ml.azure.com/demo/studio",
+            notebookUrl: "https://ml.azure.com/demo/notebook",
+            description: s.description.replace("awaiting approval", "ready"),
+          } : s))
+        }, 6000)
+      }, 2000)
     } catch (err) {
       setProvisionError(err instanceof Error ? err.message : "Request failed")
     } finally {
@@ -439,6 +500,20 @@ export default function IMDEWorkspacePage() {
     setProvisionOpen(false); setProvisionName(""); setProvisionDesc("")
     setProvisionVmSize("Standard_DS3_v2"); setProvisionError(null)
     setProvisionSuccess(false); setProvisionLoading(false)
+    setProvisionTemplate("standard-research"); setProvisionDataPkgs([])
+    setProvisionComputeProfile("cpu-medium"); setProvisionDays("14")
+    setProvisionCostCenter(""); setProvisionJustification("")
+  }
+
+  const openPublishFlow = (sandbox: Sandbox) => {
+    setPublishSandbox(sandbox)
+    setPublishStage("review")
+    setPublishOpen(true)
+  }
+
+  const publishAsSpace = () => {
+    setPublishStage("publishing")
+    setTimeout(() => setPublishStage("published"), 1200)
   }
 
   const running = sandboxes.filter((s) => s.status === "running" || s.status === "starting").length
@@ -594,10 +669,37 @@ export default function IMDEWorkspacePage() {
                             <Play className="h-4 w-4" />
                           </Button>
                         ) : null}
+                        {(sb.status === "running" || sb.status === "idle") && (
+                          <>
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-amber-400"
+                              title="Upgrade compute profile"
+                              onClick={() => { setUpgradeSandbox(sb); setUpgradeOpen(true) }}
+                            >
+                              <ArrowUpCircle className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost" size="icon"
+                              className="h-7 w-7 text-muted-foreground hover:text-blue-400"
+                              title="Extend sandbox expiry"
+                              onClick={() => { setExtendSandbox(sb); setExtendOpen(true) }}
+                            >
+                              <CalendarPlus className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                         {sb.studioUrl && (
                           <a href={sb.studioUrl} target="_blank" rel="noreferrer">
                             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" title="Open in Azure ML Studio">
                               <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </a>
+                        )}
+                        {sb.notebookUrl && (
+                          <a href={sb.notebookUrl} target="_blank" rel="noreferrer">
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-blue-300" title="Open Notebook">
+                              <NotebookPen className="h-4 w-4" />
                             </Button>
                           </a>
                         )}
@@ -635,6 +737,29 @@ export default function IMDEWorkspacePage() {
                           <Database className="h-2.5 w-2.5" />{ds}
                         </span>
                       ))}
+                    </div>
+                    <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2 text-xs font-semibold text-violet-200">
+                            <Brain className="h-3.5 w-3.5" />
+                            Publish trained agent as Space
+                          </div>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Create a chat-only snapshot teammates can try without opening this sandbox.
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 shrink-0 gap-1.5 text-xs"
+                          onClick={() => openPublishFlow(sb)}
+                          disabled={sb.status === "stopped" || sb.status === "building"}
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Publish as Space
+                        </Button>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border">
                       <div className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /><span>{sb.team.join(", ")}</span></div>
@@ -726,6 +851,94 @@ export default function IMDEWorkspacePage() {
           </div>
         </div>
       </div>
+
+      {/* ── Publish as Space Dialog ────────────────────────────────────── */}
+      <Dialog open={publishOpen} onOpenChange={setPublishOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-violet-400" />
+              Publish IMDE sandbox as Space
+            </DialogTitle>
+            <DialogDescription>
+              Demo flow: review a chat-only agent snapshot, run eligibility checks, and publish a tenant-visible Space.
+            </DialogDescription>
+          </DialogHeader>
+
+          {publishSandbox && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-card p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">Denial Risk Copilot Space</div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Source sandbox: {publishSandbox.name} · Snapshot: snapshot-v1.2.0
+                    </div>
+                  </div>
+                  <Badge className="bg-violet-500/20 text-violet-200 border-violet-500/30">Team visibility</Badge>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  ["Chat-only definition", "No files or notebooks exposed to visitors"],
+                  ["PHI/secret scan", "Instructions and metadata pass demo checks"],
+                  ["Snapshot boundary", "Data, credentials, and runtime threads excluded"],
+                  ["Budget guardrail", "250k daily token cap with 80% publisher alert"],
+                ].map(([label, description]) => (
+                  <div key={label} className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      {label}
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+                  </div>
+                ))}
+              </div>
+
+              {publishStage === "publishing" && (
+                <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-sm text-violet-200">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Validating, snapshotting, provisioning runtime, and indexing Space...
+                  </div>
+                  <Progress value={72} className="h-2" />
+                </div>
+              )}
+
+              {publishStage === "published" && (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-400" />
+                    <div>
+                      <div className="text-sm font-semibold text-emerald-200">Space published</div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Teammates can now run the chat-only Space from the marketplace and seed their own sandbox from the sanitized snapshot.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            {publishStage === "published" ? (
+              <a href="/marketplace/spaces/denial-risk-copilot">
+                <Button className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+                  <ExternalLink className="h-4 w-4" />
+                  Open Space
+                </Button>
+              </a>
+            ) : (
+              <Button onClick={publishAsSpace} disabled={publishStage === "publishing"} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+                {publishStage === "publishing" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
+                {publishStage === "publishing" ? "Publishing..." : "Publish Space"}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Manage Compute Dialog ─────────────────────────────────────── */}
       <Dialog open={manageOpen} onOpenChange={setManageOpen}>
@@ -829,23 +1042,22 @@ export default function IMDEWorkspacePage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plus className="h-5 w-5 text-violet-400" />
-              New Compute Sandbox
+              Request New Sandbox
             </DialogTitle>
             <DialogDescription>
-              Provision a new Azure ML Compute Instance in{" "}
-              <code className="text-xs font-mono bg-secondary px-1 py-0.5 rounded">
-                {amlWorkspace ?? "ai-project-q2w5uxlkh4c6o"}
-              </code>.
-              Ready in 2–4 minutes.
+              Submit a governed sandbox request. Auto-approved for standard templates; GPU and restricted sandboxes require manager approval.
             </DialogDescription>
           </DialogHeader>
 
           {provisionSuccess ? (
             <div className="py-8 text-center space-y-3">
               <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
-              <p className="text-sm font-medium">Provisioning started!</p>
+              <p className="text-sm font-medium">Sandbox requested!</p>
               <p className="text-xs text-muted-foreground">
-                <code className="font-mono bg-secondary px-1 rounded">{provisionName}</code> is being created. Ready in 2–4 min.
+                <code className="font-mono bg-secondary px-1 rounded">{provisionName}</code> is queued.{" "}
+                {provisionComputeProfile === "gpu-small"
+                  ? "GPU requests require manager approval — watch for status update."
+                  : "Auto-approved — provisioning will start in a few seconds."}
               </p>
               <Button size="sm" onClick={closeProvision}>Done</Button>
             </div>
@@ -853,7 +1065,7 @@ export default function IMDEWorkspacePage() {
             <div className="space-y-4 py-2">
               <div className="space-y-1.5">
                 <Label htmlFor="compute-name" className="text-xs font-medium">
-                  Compute Name <span className="text-red-400">*</span>
+                  Sandbox Name <span className="text-red-400">*</span>
                 </Label>
                 <Input
                   id="compute-name"
@@ -862,57 +1074,149 @@ export default function IMDEWorkspacePage() {
                   onChange={(e) => setProvisionName(e.target.value)}
                   className="font-mono text-sm h-8"
                 />
-                <p className="text-[10px] text-muted-foreground">Letters, numbers, hyphens. Start with letter. 2–32 chars.</p>
+                <p className="text-[10px] text-muted-foreground">Letters, numbers, hyphens. 3–40 chars.</p>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="vm-size" className="text-xs font-medium">
-                  VM Size <span className="text-red-400">*</span>
+                <Label htmlFor="workspace-template" className="text-xs font-medium">
+                  Workspace Template <span className="text-red-400">*</span>
                 </Label>
-                <Select value={provisionVmSize} onValueChange={setProvisionVmSize}>
-                  <SelectTrigger id="vm-size" className="h-8 text-sm">
+                <Select value={provisionTemplate} onValueChange={setProvisionTemplate}>
+                  <SelectTrigger id="workspace-template" className="h-8 text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {(vmSizes.length > 0 ? vmSizes : [
-                      { id: "Standard_DS3_v2", label: "DS3 v2 — 4 vCPU / 14 GB", tier: "CPU", isGpu: false },
-                      { id: "Standard_D16s_v3", label: "D16s v3 — 16 vCPU / 64 GB", tier: "CPU", isGpu: false },
-                      { id: "Standard_E8s_v3", label: "E8s v3 — 8 vCPU / 64 GB (Memory)", tier: "Memory", isGpu: false },
-                      { id: "Standard_NC6s_v3", label: "NC6s v3 — 6 vCPU / V100 × 1", tier: "GPU", isGpu: true },
-                      { id: "Standard_NC24s_v3", label: "NC24s v3 — 24 vCPU / V100 × 4", tier: "GPU", isGpu: true },
-                      { id: "Standard_NC24ads_A100_v4", label: "NC24ads A100 v4 — 24 vCPU / A100 × 1", tier: "GPU", isGpu: true },
-                    ]).map((v) => (
-                      <SelectItem key={v.id} value={v.id}>
-                        <div className="flex items-center gap-2">
-                          {v.isGpu && <Zap className="h-3 w-3 text-amber-400 shrink-0" />}
-                          <span className="font-mono text-xs">{v.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="standard-research">
+                      <div className="flex flex-col text-left">
+                        <span className="font-medium">Standard Research</span>
+                        <span className="text-xs text-muted-foreground">PyTorch · scikit-learn · JupyterLab · auto-approve</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="restricted-clinical">
+                      <div className="flex flex-col text-left">
+                        <span className="font-medium">Restricted Clinical</span>
+                        <span className="text-xs text-muted-foreground">PHI-capable · VNet-isolated · requires manager approval</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="team-collaboration">
+                      <div className="flex flex-col text-left">
+                        <span className="font-medium">Team Collaboration</span>
+                        <span className="text-xs text-muted-foreground">Shared workspace · multi-user RBAC · auto-approve</span>
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="compute-desc" className="text-xs font-medium">Description</Label>
+                <Label className="text-xs font-medium">
+                  Data Packages <span className="text-red-400">*</span>
+                </Label>
+                <div className="rounded-lg border border-border p-3 space-y-2">
+                  {[
+                    { id: "claims_training", name: "Claims Training Dataset", classification: "internal", policy: "auto-approve" },
+                    { id: "denials_gold", name: "Denials Gold Dataset", classification: "internal", policy: "standard-review" },
+                    { id: "clinical_notes_phi", name: "Clinical Notes (PHI)", classification: "phi", policy: "restricted-review" },
+                  ].map((pkg) => (
+                    <label key={pkg.id} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        className="rounded"
+                        checked={provisionDataPkgs.includes(pkg.id)}
+                        onChange={(e) => {
+                          setProvisionDataPkgs((prev) =>
+                            e.target.checked ? [...prev, pkg.id] : prev.filter((p) => p !== pkg.id)
+                          )
+                        }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-foreground">{pkg.name}</div>
+                        <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+                          <span className={cn(
+                            "rounded-full px-1.5 py-0.5",
+                            pkg.classification === "phi" ? "bg-red-500/10 text-red-400" : "bg-blue-500/10 text-blue-400"
+                          )}>{pkg.classification}</span>
+                          <span>·</span>
+                          <span>{pkg.policy}</span>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="compute-profile" className="text-xs font-medium">
+                    Compute Profile <span className="text-red-400">*</span>
+                  </Label>
+                  <Select value={provisionComputeProfile} onValueChange={setProvisionComputeProfile}>
+                    <SelectTrigger id="compute-profile" className="h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cpu-small">CPU Small — 4 vCPU / 16 GB</SelectItem>
+                      <SelectItem value="cpu-medium">CPU Medium — 16 vCPU / 64 GB</SelectItem>
+                      <SelectItem value="gpu-small">
+                        <span className="flex items-center gap-1.5">
+                          <Zap className="h-3 w-3 text-amber-400" />GPU Small — V100 × 1 (approval required)
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="duration-days" className="text-xs font-medium">Duration (days)</Label>
+                  <Select value={provisionDays} onValueChange={setProvisionDays}>
+                    <SelectTrigger id="duration-days" className="h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["7", "14", "30", "60", "90"].map((d) => (
+                        <SelectItem key={d} value={d}>{d} days</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="cost-center" className="text-xs font-medium">Cost Center</Label>
                 <Input
-                  id="compute-desc"
-                  placeholder="What will this sandbox be used for?"
-                  value={provisionDesc}
-                  onChange={(e) => setProvisionDesc(e.target.value)}
+                  id="cost-center"
+                  placeholder="e.g. CC-RCM-RESEARCH"
+                  value={provisionCostCenter}
+                  onChange={(e) => setProvisionCostCenter(e.target.value)}
+                  className="font-mono text-sm h-8"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="justification" className="text-xs font-medium">Business Justification</Label>
+                <Input
+                  id="justification"
+                  placeholder="e.g. Train denial prediction model for Q3 release"
+                  value={provisionJustification}
+                  onChange={(e) => setProvisionJustification(e.target.value)}
                   className="text-sm h-8"
                 />
               </div>
 
+              {provisionComputeProfile === "gpu-small" && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+                  <Info className="h-3.5 w-3.5 shrink-0" />
+                  GPU profile requires manager approval before provisioning starts.
+                </div>
+              )}
+              {provisionDataPkgs.includes("clinical_notes_phi") && (
+                <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  PHI data requires restricted template and privacy officer review.
+                </div>
+              )}
               {provisionError && (
                 <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
                   <AlertCircle className="h-3.5 w-3.5 shrink-0" />{provisionError}
-                </div>
-              )}
-              {!amlConfigured && (
-                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
-                  <Info className="h-3.5 w-3.5 shrink-0" />
-                  Azure ML not configured — provision will fail without env vars.
                 </div>
               )}
             </div>
@@ -925,13 +1229,112 @@ export default function IMDEWorkspacePage() {
                 size="sm"
                 className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
                 onClick={handleProvision}
-                disabled={provisionLoading || !provisionName.trim() || !provisionVmSize}
+                disabled={provisionLoading || !provisionName.trim() || provisionDataPkgs.length === 0}
               >
                 {provisionLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-                {provisionLoading ? "Provisioning…" : "Create Sandbox"}
+                {provisionLoading ? "Submitting…" : "Submit Request"}
               </Button>
             </DialogFooter>
           )}
+        </DialogContent>
+      </Dialog>
+      {/* ── Upgrade Compute Dialog ────────────────────────────────────── */}
+      <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ArrowUpCircle className="h-5 w-5 text-amber-400" />
+              Upgrade Compute — {upgradeSandbox?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Select a higher compute profile. Upgrade is applied in-place; running jobs are paused then resumed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <Select value={upgradeProfile} onValueChange={setUpgradeProfile}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cpu-medium">CPU Medium — 16 vCPU / 64 GB</SelectItem>
+                <SelectItem value="gpu-small">
+                  <span className="flex items-center gap-1.5">
+                    <Zap className="h-3 w-3 text-amber-400" />GPU Small — V100 × 1
+                  </span>
+                </SelectItem>
+                <SelectItem value="gpu-large">
+                  <span className="flex items-center gap-1.5">
+                    <Zap className="h-3 w-3 text-amber-400" />GPU Large — A100 × 2
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+              <Info className="h-3.5 w-3.5 shrink-0" />
+              GPU upgrades require manager approval. Estimated downtime: ~3 min.
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setUpgradeOpen(false)}>Cancel</Button>
+            <Button size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => {
+                setUpgradeOpen(false)
+                setSandboxes((prev) => prev.map((s) =>
+                  s.id === upgradeSandbox?.id
+                    ? { ...s, status: "requested" as const, description: `${s.description} (upgrade requested)` }
+                    : s
+                ))
+              }}>
+              <ArrowUpCircle className="h-3.5 w-3.5" />
+              Request Upgrade
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Extend Sandbox Dialog ─────────────────────────────────────── */}
+      <Dialog open={extendOpen} onOpenChange={setExtendOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CalendarPlus className="h-5 w-5 text-blue-400" />
+              Extend Sandbox — {extendSandbox?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Extend the expiry of this sandbox. Extensions up to 30 days are auto-approved; longer periods require manager sign-off.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium">Additional Days</Label>
+              <Select value={extendDays} onValueChange={setExtendDays}>
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["7", "14", "30", "60"].map((d) => (
+                    <SelectItem key={d} value={d}>{d} days{Number(d) > 30 ? " (approval required)" : ""}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {Number(extendDays) > 30 && (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+                <Info className="h-3.5 w-3.5 shrink-0" />
+                Extensions beyond 30 days require manager approval.
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setExtendOpen(false)}>Cancel</Button>
+            <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => {
+                setExtendOpen(false)
+              }}>
+              <CalendarPlus className="h-3.5 w-3.5" />
+              Extend {extendDays} Days
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
