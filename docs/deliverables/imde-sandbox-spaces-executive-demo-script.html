@@ -268,6 +268,7 @@
 
       <nav class="toc print-hide" aria-label="Section navigation">
         <a href="#contract">Contract</a>
+        <a href="#flow">Flow diagram</a>
         <a href="#start">Starting state</a>
         <a href="#walkthrough">Walkthrough</a>
         <a href="#presenter-notes">Presenter notes</a>
@@ -305,8 +306,266 @@
       </div>
     </section>
 
+    <section id="flow">
+      <h2><span class="num">2</span> End-to-end flow</h2>
+      <p class="lede">
+        Five stages &mdash; <strong>Request &middot; Approve &middot; Build &middot; Publish &middot; Consume</strong> &mdash;
+        across four lanes (actors, marketplace UI, marketplace API, backing services). The UAP Hub is
+        an external dependency: the base model id is resolved when the sandbox is registered, then fine-tuning
+        runs inside the tenant's Azure ML workspace.
+      </p>
+      <figure style="margin:8px 0 4px;padding:0;background:#ffffff;border:1px solid var(--border);border-radius:10px;overflow:auto">
+        <svg role="img" aria-labelledby="flow-svg-title flow-svg-desc" viewBox="0 0 1080 720" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif">
+          <title id="flow-svg-title">Sandbox to published model experience flow</title>
+          <desc id="flow-svg-desc">A grid of five stages (Request, Approve, Build, Publish, Consume) across four lanes (actors, marketplace UI, marketplace API, backing services). Hugging Face Hub is shown as an external dependency feeding the Request stage's API. Arrows flow top to bottom within each stage and left to right across stages.</desc>
+
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#475569" />
+            </marker>
+            <marker id="arr-ext" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#ea580c" />
+            </marker>
+            <marker id="arr-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
+            </marker>
+            <style>
+              .stage-h { font-size: 11px; font-weight: 700; fill: #475569; letter-spacing: 2px; text-anchor: middle; text-transform: uppercase; }
+              .lane-h  { font-size: 11px; font-weight: 700; fill: #475569; letter-spacing: 2px; text-transform: uppercase; }
+              .ttl     { font-size: 12.5px; font-weight: 700; fill: #0f172a; }
+              .sub     { font-size: 10.5px; fill: #475569; }
+              .legend-t{ font-size: 11px; fill: #0f172a; }
+              .stage-num { font-size: 10px; fill: #64748b; }
+            </style>
+          </defs>
+
+          <!-- Time-flow arrow -->
+          <line x1="100" y1="48" x2="1010" y2="48" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arr-dim)" />
+
+          <!-- Stage column headers -->
+          <text x="180" y="40" class="stage-h">1 &#183; Request</text>
+          <text x="360" y="40" class="stage-h">2 &#183; Approve</text>
+          <text x="540" y="40" class="stage-h">3 &#183; Build</text>
+          <text x="720" y="40" class="stage-h">4 &#183; Publish</text>
+          <text x="900" y="40" class="stage-h">5 &#183; Consume</text>
+
+          <!-- Lane labels (left, rotated) -->
+          <text class="lane-h" transform="translate(28,150) rotate(-90)">Actors</text>
+          <text class="lane-h" transform="translate(28,275) rotate(-90)">Marketplace UI</text>
+          <text class="lane-h" transform="translate(28,420) rotate(-90)">Marketplace API</text>
+          <text class="lane-h" transform="translate(28,560) rotate(-90)">Backing services</text>
+
+          <!-- ===== Lane backgrounds (subtle) ===== -->
+          <rect x="90" y="90"  width="940" height="80"  fill="#fefce8" opacity="0.45" rx="6" />
+          <rect x="90" y="200" width="940" height="105" fill="#f0f9ff" opacity="0.55" rx="6" />
+          <rect x="90" y="335" width="940" height="95"  fill="#f0fdf4" opacity="0.55" rx="6" />
+          <rect x="90" y="460" width="940" height="115" fill="#faf5ff" opacity="0.55" rx="6" />
+
+          <!-- ===== STAGE 1: REQUEST ===== -->
+          <g>
+            <rect x="105" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="180" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="180" y="142" class="sub" text-anchor="middle">Priya Shah</text>
+
+            <rect x="105" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="180" y="232" class="ttl" text-anchor="middle">/sandbox/request</text>
+            <text x="180" y="252" class="sub" text-anchor="middle">base model + GPU template</text>
+            <text x="180" y="267" class="sub" text-anchor="middle">data packages</text>
+            <text x="180" y="282" class="sub" text-anchor="middle">+ justification</text>
+
+            <rect x="105" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="180" y="367" class="ttl" text-anchor="middle">POST /api/sandboxes</text>
+            <text x="180" y="387" class="sub" text-anchor="middle">validate HF base model id</text>
+            <text x="180" y="402" class="sub" text-anchor="middle">status: requested</text>
+
+            <rect x="105" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="180" y="492" class="ttl" text-anchor="middle">Cosmos: sandboxes</text>
+            <text x="180" y="512" class="sub" text-anchor="middle">+ lifecycle event</text>
+            <text x="180" y="527" class="sub" text-anchor="middle">tenantId partitioned</text>
+            <text x="180" y="552" class="sub" text-anchor="middle" font-style="italic">status: requested</text>
+          </g>
+
+          <!-- ===== STAGE 2: APPROVE ===== -->
+          <g>
+            <rect x="285" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="360" y="125" class="ttl" text-anchor="middle">Platform Admin</text>
+            <text x="360" y="142" class="sub" text-anchor="middle">Morgan Lee</text>
+
+            <rect x="285" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="360" y="232" class="ttl" text-anchor="middle">/sandbox/[id]</text>
+            <text x="360" y="252" class="sub" text-anchor="middle">review compute / data</text>
+            <text x="360" y="267" class="sub" text-anchor="middle">approve with reason</text>
+            <text x="360" y="282" class="sub" text-anchor="middle">+ data statement</text>
+
+            <rect x="285" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="360" y="367" class="ttl" text-anchor="middle">POST /&hellip;/approve</text>
+            <text x="360" y="387" class="sub" text-anchor="middle">provision call &#8594; AML</text>
+            <text x="360" y="402" class="sub" text-anchor="middle">status: ready</text>
+
+            <rect x="285" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="360" y="492" class="ttl" text-anchor="middle">Azure ML + Cosmos</text>
+            <text x="360" y="512" class="sub" text-anchor="middle">workspace provisioned</text>
+            <text x="360" y="527" class="sub" text-anchor="middle">GPU compute attached</text>
+            <text x="360" y="552" class="sub" text-anchor="middle">lifecycle: ready</text>
+          </g>
+
+          <!-- ===== STAGE 3: BUILD ===== -->
+          <g>
+            <rect x="465" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="540" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="540" y="142" class="sub" text-anchor="middle">team</text>
+
+            <rect x="465" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="540" y="232" class="ttl" text-anchor="middle">/imde/notebooks</text>
+            <text x="540" y="248" class="ttl" text-anchor="middle">/imde/experiments</text>
+            <text x="540" y="268" class="sub" text-anchor="middle">starter notebook, runs,</text>
+            <text x="540" y="283" class="sub" text-anchor="middle">select winner run</text>
+
+            <rect x="465" y="345" width="150" height="75" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="4 3" />
+            <text x="540" y="378" class="sub" text-anchor="middle" font-style="italic">no marketplace API</text>
+            <text x="540" y="394" class="sub" text-anchor="middle" font-style="italic">call in this stage</text>
+
+            <rect x="465" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="540" y="492" class="ttl" text-anchor="middle">Azure ML</text>
+            <text x="540" y="512" class="sub" text-anchor="middle">notebook execution</text>
+            <text x="540" y="527" class="sub" text-anchor="middle">experiment runs</text>
+            <text x="540" y="547" class="sub" text-anchor="middle">winner:</text>
+            <text x="540" y="560" class="sub" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9.5">run-denial-pubmedbert-v3</text>
+          </g>
+
+          <!-- ===== STAGE 4: PUBLISH ===== -->
+          <g>
+            <rect x="645" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="720" y="125" class="ttl" text-anchor="middle">Data Scientist</text>
+            <text x="720" y="142" class="sub" text-anchor="middle">sandbox owner</text>
+
+            <rect x="645" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="720" y="232" class="ttl" text-anchor="middle">/imde/push</text>
+            <text x="720" y="252" class="sub" text-anchor="middle">guided publish</text>
+            <text x="720" y="267" class="sub" text-anchor="middle">lineage attached</text>
+            <text x="720" y="282" class="sub" text-anchor="middle">model card + metrics</text>
+
+            <rect x="645" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="720" y="367" class="ttl" text-anchor="middle">POST /&hellip;/publish-model</text>
+            <text x="720" y="387" class="sub" text-anchor="middle">model governance gate</text>
+            <text x="720" y="402" class="sub" text-anchor="middle">register in AML registry</text>
+
+            <rect x="645" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="720" y="492" class="ttl" text-anchor="middle">Cosmos + AML registry</text>
+            <text x="720" y="512" class="sub" text-anchor="middle">submission record</text>
+            <text x="720" y="527" class="sub" text-anchor="middle">model-experience projection</text>
+            <text x="720" y="547" class="sub" text-anchor="middle">trust: governance-passed</text>
+          </g>
+
+          <!-- ===== STAGE 5: CONSUME ===== -->
+          <g>
+            <rect x="825" y="100" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" />
+            <text x="900" y="125" class="ttl" text-anchor="middle">Marketplace</text>
+            <text x="900" y="142" class="sub" text-anchor="middle">consumer</text>
+
+            <rect x="825" y="210" width="150" height="85" rx="8" fill="#dbeafe" stroke="#2563eb" />
+            <text x="900" y="232" class="ttl" text-anchor="middle">/models/[modelRouteId]</text>
+            <text x="900" y="252" class="sub" text-anchor="middle">runnable preview</text>
+            <text x="900" y="267" class="sub" text-anchor="middle">metrics + lineage</text>
+            <text x="900" y="282" class="sub" text-anchor="middle">governance evidence</text>
+
+            <rect x="825" y="345" width="150" height="75" rx="8" fill="#d1fae5" stroke="#059669" />
+            <text x="900" y="365" class="ttl" text-anchor="middle">GET /api/model-</text>
+            <text x="900" y="380" class="ttl" text-anchor="middle">experiences</text>
+            <text x="900" y="400" class="sub" text-anchor="middle">by modelRouteId + tenantId</text>
+
+            <rect x="825" y="470" width="150" height="95" rx="8" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="900" y="492" class="ttl" text-anchor="middle">Cosmos read</text>
+            <text x="900" y="512" class="sub" text-anchor="middle">model-experiences projection</text>
+            <text x="900" y="527" class="sub" text-anchor="middle">hydrates Spaces-like card</text>
+          </g>
+
+          <!-- ===== Vertical arrows: actor -> UI -> API -> service per stage ===== -->
+          <g stroke="#475569" stroke-width="1.4" fill="none">
+            <!-- stage 1 -->
+            <line x1="180" y1="160" x2="180" y2="208" marker-end="url(#arr)" />
+            <line x1="180" y1="295" x2="180" y2="343" marker-end="url(#arr)" />
+            <line x1="180" y1="420" x2="180" y2="468" marker-end="url(#arr)" />
+            <!-- stage 2 -->
+            <line x1="360" y1="160" x2="360" y2="208" marker-end="url(#arr)" />
+            <line x1="360" y1="295" x2="360" y2="343" marker-end="url(#arr)" />
+            <line x1="360" y1="420" x2="360" y2="468" marker-end="url(#arr)" />
+            <!-- stage 3 (skip API) -->
+            <line x1="540" y1="160" x2="540" y2="208" marker-end="url(#arr)" />
+            <line x1="540" y1="295" x2="540" y2="468" marker-end="url(#arr)" />
+            <!-- stage 4 -->
+            <line x1="720" y1="160" x2="720" y2="208" marker-end="url(#arr)" />
+            <line x1="720" y1="295" x2="720" y2="343" marker-end="url(#arr)" />
+            <line x1="720" y1="420" x2="720" y2="468" marker-end="url(#arr)" />
+            <!-- stage 5 -->
+            <line x1="900" y1="160" x2="900" y2="208" marker-end="url(#arr)" />
+            <line x1="900" y1="295" x2="900" y2="343" marker-end="url(#arr)" />
+            <line x1="900" y1="420" x2="900" y2="468" marker-end="url(#arr)" />
+          </g>
+
+          <!-- ===== Horizontal stage-to-stage arrows (UI lane) ===== -->
+          <g stroke="#94a3b8" stroke-width="1" fill="none" stroke-dasharray="3 3">
+            <line x1="255" y1="252" x2="285" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="435" y1="252" x2="465" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="615" y1="252" x2="645" y2="252" marker-end="url(#arr-dim)" />
+            <line x1="795" y1="252" x2="825" y2="252" marker-end="url(#arr-dim)" />
+          </g>
+
+          <!-- ===== UAP Hub (external dependency) ===== -->
+          <g>
+            <rect x="105" y="610" width="370" height="70" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1.4" />
+            <text x="290" y="634" class="ttl" text-anchor="middle">UAP Hub &#8212; external base-model source</text>
+            <text x="290" y="654" class="sub" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10.5">microsoft/biomednlp-pubmedbert-base-uncased-abstract</text>
+            <text x="290" y="670" class="sub" text-anchor="middle">resolved at sandbox registration; fine-tuned inside tenant AML workspace</text>
+          </g>
+          <!-- UAP Hub -> Stage 1 API curved arrow -->
+          <path d="M 180 610 C 180 480, 180 460, 180 420" stroke="#ea580c" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#arr-ext)" />
+          <text x="200" y="445" class="sub" fill="#ea580c" font-style="italic">resolved at registration</text>
+
+          <!-- ===== Legend ===== -->
+          <g>
+            <rect x="510" y="600" width="500" height="92" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+            <text x="525" y="620" class="legend-t" font-weight="700">Legend</text>
+
+            <rect x="525" y="635" width="16" height="12" rx="2" fill="#fef3c7" stroke="#d97706" />
+            <text x="548" y="645" class="legend-t">Actor</text>
+
+            <rect x="595" y="635" width="16" height="12" rx="2" fill="#dbeafe" stroke="#2563eb" />
+            <text x="618" y="645" class="legend-t">Marketplace UI route</text>
+
+            <rect x="765" y="635" width="16" height="12" rx="2" fill="#d1fae5" stroke="#059669" />
+            <text x="788" y="645" class="legend-t">Marketplace API (Azure Function)</text>
+
+            <rect x="525" y="660" width="16" height="12" rx="2" fill="#ede9fe" stroke="#7c3aed" />
+            <text x="548" y="670" class="legend-t">Backing service (Cosmos / AML)</text>
+
+            <rect x="765" y="660" width="16" height="12" rx="2" fill="#ffedd5" stroke="#ea580c" />
+            <text x="788" y="670" class="legend-t">External dependency (HF Hub)</text>
+
+            <line x1="525" y1="685" x2="555" y2="685" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arr-dim)" />
+            <text x="562" y="688" class="sub">stage-to-stage flow</text>
+
+            <line x1="720" y1="685" x2="750" y2="685" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)" />
+            <text x="757" y="688" class="sub">in-stage call sequence</text>
+          </g>
+        </svg>
+        <figcaption style="padding:8px 14px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--border);background:var(--panel-2);border-radius:0 0 8px 8px">
+          Source: <a href="imde-sandbox-spaces-flow.drawio">imde-sandbox-spaces-flow.drawio</a>
+          &middot; open in <a href="https://app.diagrams.net/?mode=device" target="_blank" rel="noopener">app.diagrams.net</a>
+          (File &rsaquo; Open from &rsaquo; Device) to edit.
+        </figcaption>
+      </figure>
+      <div class="callout">
+        <strong>Reading the diagram:</strong> top-to-bottom inside each stage shows the request path
+        (actor &rarr; UI &rarr; API &rarr; backing service); dashed left-to-right arrows show the handoff
+        between stages along the UI lane. The Build stage has no marketplace API call &mdash; notebook and
+        experiment work happens directly against the provisioned Azure ML workspace and surfaces back into
+        the marketplace only at the Publish step.
+      </div>
+    </section>
+
     <section id="start">
-      <h2><span class="num">2</span> Starting state</h2>
+      <h2><span class="num">3</span> Starting state</h2>
       <ol>
         <li>Check out branch <code>feat/imde-modernization</code>.</li>
         <li>For the deterministic backend path, set <code>UAP_ENABLE_IMDE_DEMO=true</code> and <code>AZURE_FUNCTIONS_ENVIRONMENT=Development</code> in the API env (the latter enables actorId-based auth for reset/approve/publish without an admin token).</li>
@@ -352,7 +611,7 @@ Content-Type: application/json
     </section>
 
     <section id="walkthrough">
-      <h2><span class="num">3</span> Route-by-route walkthrough</h2>
+      <h2><span class="num">4</span> Route-by-route walkthrough</h2>
       <p class="lede">Local URLs assume <code>http://localhost:3000</code> for the web app.</p>
       <table class="walkthrough" aria-label="Demo walkthrough">
         <thead>
@@ -435,7 +694,7 @@ Content-Type: application/json
     </section>
 
     <section id="presenter-notes">
-      <h2><span class="num">4</span> Presenter notes</h2>
+      <h2><span class="num">5</span> Presenter notes</h2>
       <ul>
         <li>
           Do not describe the demo as live training. Use this language:
@@ -459,7 +718,7 @@ Content-Type: application/json
     </section>
 
     <section id="api-smoke">
-      <h2><span class="num">5</span> API-only smoke (headless rehearsal / pre-flight)</h2>
+      <h2><span class="num">6</span> API-only smoke (headless rehearsal / pre-flight)</h2>
       <p class="lede">When validating end-to-end without driving the UI. Two actor roles matter:</p>
       <ul>
         <li><strong>Approver</strong> (reset, approve): <code>actorId: "presenter-admin"</code> in local dev, or the <code>x-imde-demo-admin-token</code> header in token mode.</li>
@@ -500,7 +759,7 @@ POST /api/sandboxes/{id}/publish-model
     </section>
 
     <section id="smoke">
-      <h2><span class="num">6</span> Smoke checklist</h2>
+      <h2><span class="num">7</span> Smoke checklist</h2>
       <p class="lede">Use this as a pre-rehearsal pass &mdash; checkboxes are interactive in the browser.</p>
       <ul class="checklist">
         <li><input type="checkbox" /> Reset canonical scenario and clear the local publish marker.</li>
@@ -544,7 +803,7 @@ POST /api/sandboxes/{id}/publish-model
     </section>
 
     <section id="a11y">
-      <h2><span class="num">7</span> Accessibility &amp; display checks</h2>
+      <h2><span class="num">8</span> Accessibility &amp; display checks</h2>
       <ul>
         <li><strong>Desktop / projector:</strong> no card text overlaps at 1366px width.</li>
         <li><strong>Narrow window:</strong> primary actions remain visible without horizontal scrolling.</li>
@@ -554,7 +813,7 @@ POST /api/sandboxes/{id}/publish-model
     </section>
 
     <section id="signals">
-      <h2><span class="num">8</span> Healthy signals</h2>
+      <h2><span class="num">9</span> Healthy signals</h2>
       <ul>
         <li><code>sandbox-demo.test.js</code> passes.</li>
         <li>API build passes.</li>
@@ -564,7 +823,7 @@ POST /api/sandboxes/{id}/publish-model
     </section>
 
     <section id="caveats">
-      <h2><span class="num">9</span> Known local validation caveat</h2>
+      <h2><span class="num">10</span> Known local validation caveat</h2>
       <div class="callout warn">
         <strong>Heads-up:</strong> <code>npm run type-check</code> currently fails on pre-existing issues
         outside this slice &mdash; missing MSAL module type resolution, chart / resizable component type
