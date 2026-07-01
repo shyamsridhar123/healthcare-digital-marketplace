@@ -252,12 +252,12 @@ function ChartCard({
   className?: string
 }) {
   return (
-    <div className={cn("rounded-xl border border-border bg-card p-5", className)}>
+    <div className={cn("flex h-full flex-col rounded-xl border border-border bg-card p-5", className)}>
       <div className="mb-4">
         <p className="text-sm font-semibold text-foreground">{title}</p>
         {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
       </div>
-      {children}
+      <div className="flex-1">{children}</div>
     </div>
   )
 }

@@ -9,13 +9,25 @@ import './globals.css'
 
 const openSans = Open_Sans({ subsets: ["latin"], variable: "--font-open-sans", display: "swap", weight: ["400", "600", "700", "800"] });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ai-marketplace-web-dev.victoriousmeadow-936c3d3b.eastus2.azurecontainerapps.io'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Nebula-X — Deloitte AI Management Platform',
   description: 'Nebula-X — Deloitte\'s AI Management Platform. The governed platform for the firm\'s AI: agents, MCP tools, models, and skills across every org and workspace, on a multi-provider gateway with agent identity, content safety, and FinOps showback. Self-service AI, fully governed.',
+  applicationName: 'Nebula-X',
   generator: 'Nebula-X',
-  icons: {
-    icon: { url: '/icon.svg', type: 'image/svg+xml' },
-    apple: '/icon.svg',
+  openGraph: {
+    type: 'website',
+    siteName: 'Nebula-X',
+    title: 'Nebula-X — Deloitte AI Management Platform',
+    description: 'The governed platform for the firm\'s AI. Self-service AI, fully governed.',
+    url: siteUrl,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nebula-X — Deloitte AI Management Platform',
+    description: 'The governed platform for the firm\'s AI. Self-service AI, fully governed.',
   },
 }
 

@@ -73,6 +73,7 @@ export default function MarketplacePage() {
       <AppSidebar />
       
       <main className="app-shell-offset p-6">
+        <div className="mx-auto max-w-[1680px]">
         {/* Hero Banner */}
         <div className="mb-6">
           <HeroBanner />
@@ -150,7 +151,7 @@ export default function MarketplacePage() {
         )}
 
         {/* Cards Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
           {/* Contribute Card */}
           <ContributeCard />
           
@@ -171,6 +172,7 @@ export default function MarketplacePage() {
             </p>
           </div>
         )}
+        </div>
       </main>
     </div>
   )
