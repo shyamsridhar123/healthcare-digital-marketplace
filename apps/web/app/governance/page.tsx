@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
+import { AiGatewayLive } from "@/components/gateway/ai-gateway-live"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,11 @@ import {
   ThumbsDown,
   MoreHorizontal,
   Filter,
+  Fingerprint,
+  ShieldCheck,
+  Gauge,
+  Bot,
+  ScrollText,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -29,6 +35,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  NEBULA_TENANT,
+  governedAgents,
+  foundryEvaluations,
+  safetyEvents,
+  trustPillars,
+  govKpis,
+} from "@/lib/agent-governance"
 
 interface ApprovalRequest {
   id: string
@@ -62,9 +76,9 @@ interface Policy {
 const approvalRequests: ApprovalRequest[] = [
   {
     id: "apr-1",
-    title: "Deploy Customer Support Pipeline v2.1",
+    title: "Promote LedgerSentinel v3.2 to autonomous execution",
     type: "deployment",
-    requester: "Sarah Chen",
+    requester: "Maya Desai",
     requestedAt: "2 hours ago",
     status: "pending",
     environment: "production",
@@ -72,9 +86,9 @@ const approvalRequests: ApprovalRequest[] = [
   },
   {
     id: "apr-2",
-    title: "Add GPT-5 Model to Approved Assets",
+    title: "Register Entra Agent ID for CarbonAccountant",
     type: "asset",
-    requester: "Mike Johnson",
+    requester: "Jordan Lee",
     requestedAt: "5 hours ago",
     status: "pending",
     environment: "all",
@@ -82,7 +96,7 @@ const approvalRequests: ApprovalRequest[] = [
   },
   {
     id: "apr-3",
-    title: "Update Rate Limiting Policy",
+    title: "Approve GPT-5.5 for Deloitte Tax engagements",
     type: "policy-change",
     requester: "Alex Rivera",
     requestedAt: "1 day ago",
@@ -92,9 +106,9 @@ const approvalRequests: ApprovalRequest[] = [
   },
   {
     id: "apr-4",
-    title: "Deploy Security Scanner v3.0",
-    type: "deployment",
-    requester: "Jordan Lee",
+    title: "Override ControlTester eval gate (groundedness 4.4)",
+    type: "policy-change",
+    requester: "Priya Nair",
     requestedAt: "2 days ago",
     status: "rejected",
     environment: "staging",
@@ -105,86 +119,86 @@ const approvalRequests: ApprovalRequest[] = [
 const auditLogs: AuditLog[] = [
   {
     id: "log-1",
-    action: "Deployment Created",
-    actor: "Sarah Chen",
-    target: "Customer Support Pipeline",
-    timestamp: "2026-02-27 14:32:15",
-    details: "Deployed to production environment",
+    action: "Entra Agent ID Provisioned",
+    actor: "Agent 365",
+    target: "DDVault Analyst (ag-9a34ff51)",
+    timestamp: "2026-06-30 14:32:15",
+    details: "Blueprint bp-deals-ddvault-01 activated with agentic auth",
   },
   {
     id: "log-2",
-    action: "Asset Approved",
-    actor: "Admin",
-    target: "GPT-4 Turbo Model",
-    timestamp: "2026-02-27 13:15:42",
-    details: "Added to approved assets list",
+    action: "Foundry Eval Passed",
+    actor: "AI Foundry",
+    target: "LedgerSentinel · evalrun-af22e1",
+    timestamp: "2026-06-30 03:12 UTC",
+    details: "Groundedness 4.9, safety defect rate 0.2% — gate passed",
   },
   {
     id: "log-3",
-    action: "Policy Updated",
-    actor: "Security Team",
-    target: "Data Encryption Policy",
-    timestamp: "2026-02-27 11:08:33",
-    details: "Enabled AES-256 encryption requirement",
+    action: "Content Safety Block",
+    actor: "Prompt Shield",
+    target: "DDVault Analyst",
+    timestamp: "2026-06-30 13:41:08",
+    details: "Indirect prompt injection (XPIA) in data-room doc blocked",
   },
   {
     id: "log-4",
-    action: "Access Revoked",
-    actor: "Admin",
-    target: "External API Key #847",
-    timestamp: "2026-02-26 16:45:00",
-    details: "Key expired and access revoked",
+    action: "Human Review Completed",
+    actor: "Sarah Chen",
+    target: "AuditScribe workpaper draft",
+    timestamp: "2026-06-30 12:05:00",
+    details: "Human-in-the-loop checkpoint approved before workpaper write",
   },
   {
     id: "log-5",
-    action: "Workflow Modified",
+    action: "Blueprint Updated",
     actor: "Mike Johnson",
-    target: "Code Review Bot",
-    timestamp: "2026-02-26 14:22:18",
-    details: "Added new condition node",
+    target: "TaxArchitect (bp-tax-architect-01)",
+    timestamp: "2026-06-29 16:22:18",
+    details: "Model rebased to GPT-5.5 + Deloitte Tax GloBE",
   },
 ]
 
 const policies: Policy[] = [
   {
     id: "pol-1",
-    name: "Production Deployment Approval",
-    description: "Require manager approval for all production deployments",
+    name: "Trustworthy AI Evaluation Gate",
+    description: "Block promotion unless Foundry groundedness ≥ 4.0 and no medium+ safety defects",
     status: "active",
-    scope: "Production Environment",
-    lastModified: "2026-02-20",
+    scope: "All Agents",
+    lastModified: "2026-06-20",
   },
   {
     id: "pol-2",
-    name: "Data Retention Policy",
-    description: "Retain audit logs for 90 days, delete after",
+    name: "Human-in-the-Loop Required",
+    description: "Autonomous agents must route high-impact actions through a human reviewer",
     status: "active",
-    scope: "All Environments",
-    lastModified: "2026-02-15",
+    scope: "Production Environment",
+    lastModified: "2026-06-15",
   },
   {
     id: "pol-3",
-    name: "API Rate Limiting",
-    description: "Limit to 1000 requests per minute per user",
+    name: "Entra Agent ID Required",
+    description: "Every deployed agent must hold a provisioned Entra Agent Identity",
     status: "active",
-    scope: "Production Environment",
-    lastModified: "2026-02-10",
+    scope: "All Environments",
+    lastModified: "2026-06-10",
   },
   {
     id: "pol-4",
-    name: "Model Allowlist",
-    description: "Only allow pre-approved AI models in workflows",
+    name: "Content Safety & Prompt Shields",
+    description: "Enforce jailbreak/XPIA shields and PII redaction on all agent I/O",
     status: "active",
-    scope: "All Environments",
-    lastModified: "2026-02-05",
+    scope: "All Agents",
+    lastModified: "2026-06-05",
   },
   {
     id: "pol-5",
-    name: "Geo-Restriction Policy",
-    description: "Restrict access to US and EU regions only",
+    name: "Engagement Data Residency",
+    description: "Restrict engagement-confidential processing to approved regions",
     status: "draft",
     scope: "Production Environment",
-    lastModified: "2026-02-01",
+    lastModified: "2026-06-01",
   },
 ]
 
@@ -213,69 +227,73 @@ export default function GovernancePage() {
     <div className="min-h-screen bg-background">
       <AppSidebar />
 
-      <main className="app-shell-offset mx-auto max-w-6xl px-6 py-8">
+      <main className="app-shell-offset px-6 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Governance</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold text-foreground">Governance</h1>
+            <Badge variant="outline" className="border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]">
+              Agent 365 · AI Foundry
+            </Badge>
+          </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage approvals, policies, and audit logs
+            {NEBULA_TENANT.trustworthyAiVersion} — Entra Agent identities, Foundry evaluation gates, content safety, and audit trail
           </p>
         </div>
+
+        {/* LIVE AI Gateway telemetry (real — not mock) */}
+        <AiGatewayLive />
 
         {/* Overview Cards */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Pending Approvals
+                Governed Agents
               </CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Bot className="h-4 w-4 text-[var(--primary)]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{pendingCount}</div>
-              <p className="text-xs text-muted-foreground">
-                {pendingCount > 0 ? "Requires attention" : "All caught up"}
-              </p>
+              <div className="text-2xl font-bold text-foreground">{govKpis.governedAgents}</div>
+              <p className="text-xs text-muted-foreground">{govKpis.entraAgentIds} active Entra Agent IDs</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Active Policies
+                Avg Foundry Score
               </CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
+              <Gauge className="h-4 w-4 text-[var(--primary)]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">
-                {policies.filter((p) => p.status === "active").length}
-              </div>
-              <p className="text-xs text-muted-foreground">Across all environments</p>
+              <div className="text-2xl font-bold text-foreground">{govKpis.avgFoundryScore.toFixed(1)}<span className="text-sm text-muted-foreground">/5</span></div>
+              <p className="text-xs text-muted-foreground">{govKpis.continuousEvals} agents on continuous eval</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Audit Events (24h)
+                Guardrail Blocks (30d)
               </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <ShieldCheck className="h-4 w-4 text-[var(--primary)]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">127</div>
-              <p className="text-xs text-muted-foreground">+12% from yesterday</p>
+              <div className="text-2xl font-bold text-foreground">{govKpis.guardrailBlocks30d.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">{govKpis.safetyDefectRate}% safety defect rate</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Compliance Score
+                Trustworthy AI Score
               </CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 text-[var(--primary)]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-500">98%</div>
-              <p className="text-xs text-muted-foreground">All requirements met</p>
+              <div className="text-2xl font-bold text-[var(--primary)]">{govKpis.trustworthyScore}%</div>
+              <p className="text-xs text-muted-foreground">{govKpis.humanReviewRate}% human-review coverage</p>
             </CardContent>
           </Card>
         </div>
@@ -300,6 +318,18 @@ export default function GovernancePage() {
               <TabsTrigger value="audit" className="gap-2">
                 <FileText className="h-4 w-4" />
                 Audit Log
+              </TabsTrigger>
+              <TabsTrigger value="identity" className="gap-2">
+                <Fingerprint className="h-4 w-4" />
+                Agent Identity
+              </TabsTrigger>
+              <TabsTrigger value="evals" className="gap-2">
+                <Gauge className="h-4 w-4" />
+                Foundry Evals
+              </TabsTrigger>
+              <TabsTrigger value="safety" className="gap-2">
+                <ShieldCheck className="h-4 w-4" />
+                Content Safety
               </TabsTrigger>
             </TabsList>
 
@@ -460,6 +490,182 @@ export default function GovernancePage() {
               <Button variant="outline" size="sm">
                 Load More
               </Button>
+            </div>
+          </TabsContent>
+
+          {/* Agent Identity — Entra Agent ID registry */}
+          <TabsContent value="identity" className="mt-0">
+            <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+              <Fingerprint className="h-4 w-4 text-[var(--primary)]" />
+              Every agent runs under a provisioned <span className="font-medium text-foreground">Microsoft Entra Agent Identity</span> with agentic auth and conditional access.
+            </div>
+            <div className="overflow-hidden rounded-lg border border-border">
+              <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/30 px-4 py-3 text-xs font-medium text-muted-foreground">
+                <div className="col-span-3">Agent</div>
+                <div className="col-span-3">Agent ID / Blueprint</div>
+                <div className="col-span-2">Model</div>
+                <div className="col-span-2">Autonomy</div>
+                <div className="col-span-2">Identity</div>
+              </div>
+              {governedAgents.map((a) => (
+                <div key={a.id} className="grid grid-cols-12 items-center gap-4 border-b border-border px-4 py-3 text-sm last:border-b-0">
+                  <div className="col-span-3">
+                    <p className="font-medium text-foreground">{a.name}</p>
+                    <p className="text-xs text-muted-foreground">{a.serviceLine}</p>
+                  </div>
+                  <div className="col-span-3 font-mono text-xs text-muted-foreground">
+                    <p className="text-foreground">{a.agentId}</p>
+                    <p>{a.blueprintId}</p>
+                  </div>
+                  <div className="col-span-2 text-xs text-muted-foreground">{a.model}</div>
+                  <div className="col-span-2">
+                    <Badge variant="outline" className="capitalize">
+                      {a.autonomy}
+                    </Badge>
+                    {a.humanInLoop && (
+                      <span className="ml-1 inline-flex items-center gap-1 text-[10px] text-[var(--primary)]">
+                        <Users className="h-3 w-3" /> HITL
+                      </span>
+                    )}
+                  </div>
+                  <div className="col-span-2">
+                    <Badge
+                      variant="outline"
+                      className={
+                        a.identityStatus === "active"
+                          ? "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]"
+                          : "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
+                      }
+                    >
+                      {a.identityStatus}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Foundry Evals — evaluation gates */}
+          <TabsContent value="evals" className="mt-0">
+            <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+              <Gauge className="h-4 w-4 text-[var(--primary)]" />
+              <span className="font-medium text-foreground">Azure AI Foundry</span> continuous evaluation — quality and safety gates run on every promotion.
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              {foundryEvaluations.map((ev) => (
+                <Card key={ev.agentId}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">{ev.agentName}</CardTitle>
+                      <Badge
+                        variant="outline"
+                        className={
+                          ev.gate === "passed"
+                            ? "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]"
+                            : ev.gate === "review"
+                            ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
+                            : "border-red-500/20 bg-red-500/10 text-red-500"
+                        }
+                      >
+                        {ev.gate === "passed" ? "Gate passed" : ev.gate === "review" ? "In review" : "Gate failed"}
+                      </Badge>
+                    </div>
+                    <CardDescription className="font-mono text-xs">
+                      {ev.runId} · {ev.dataset} · {ev.lastRun}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      {ev.quality.map((q) => (
+                        <div key={q.name} className="flex items-center gap-3">
+                          <span className="w-28 shrink-0 text-xs text-muted-foreground">{q.name}</span>
+                          <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
+                            <div
+                              className="h-full rounded-full bg-[var(--primary)]"
+                              style={{ width: `${(q.score / 5) * 100}%` }}
+                            />
+                          </div>
+                          <span className="w-8 shrink-0 text-right text-xs font-medium text-foreground">{q.score.toFixed(1)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
+                      {ev.safety.map((s) => (
+                        <Badge
+                          key={s.category}
+                          variant="outline"
+                          className={
+                            s.severity === "none"
+                              ? "border-[var(--primary)]/25 text-muted-foreground"
+                              : s.severity === "low"
+                              ? "border-yellow-500/25 text-yellow-500"
+                              : "border-red-500/25 text-red-500"
+                          }
+                        >
+                          {s.category}: {(s.defectRate * 100).toFixed(1)}%
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Activity className="h-3 w-3 text-[var(--primary)]" />
+                      {ev.continuous ? "Continuous monitoring enabled" : "Scheduled evaluation"}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Content Safety + Trustworthy AI pillars */}
+          <TabsContent value="safety" className="mt-0">
+            <div className="mb-6">
+              <h3 className="mb-3 text-sm font-semibold text-foreground">Trustworthy AI™ framework</h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {trustPillars.map((p) => (
+                  <Card key={p.name}>
+                    <CardContent className="pt-5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-foreground">{p.name}</p>
+                        <span className="text-lg font-bold text-[var(--primary)]">{p.score}%</span>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-secondary">
+                        <div className="h-full rounded-full bg-[var(--primary)]" style={{ width: `${p.score}%` }} />
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">{p.passing}/{p.controls} controls passing</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Content safety & prompt shield events</h3>
+            <div className="overflow-hidden rounded-lg border border-border">
+              {safetyEvents.map((e, i) => (
+                <div
+                  key={e.id}
+                  className={`flex items-start gap-4 p-4 ${i !== safetyEvents.length - 1 ? "border-b border-border" : ""}`}
+                >
+                  <div
+                    className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                      e.severity === "high" ? "bg-red-500/10" : e.severity === "medium" ? "bg-yellow-500/10" : "bg-[var(--primary)]/10"
+                    }`}
+                  >
+                    <ShieldCheck
+                      className={`h-5 w-5 ${
+                        e.severity === "high" ? "text-red-500" : e.severity === "medium" ? "text-yellow-500" : "text-[var(--primary)]"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">{e.type}</p>
+                      <Badge variant="outline" className="capitalize text-xs">{e.action}</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{e.detail}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{e.agentName} · {e.at}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>

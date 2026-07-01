@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, type ElementType } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { cn } from "@/lib/utils"
 import {
@@ -21,8 +21,13 @@ import {
   Timer,
   TrendingUp,
   TrendingDown,
+  Fingerprint,
+  Radio,
+  Network,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { agentTraces, governedAgents, govKpis, NEBULA_TENANT, type AgentTrace, type TraceSpan } from "@/lib/agent-governance"
+import { AiGatewayLive } from "@/components/gateway/ai-gateway-live"
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -303,7 +308,7 @@ const toolRuns: Run[] = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const STATUS_META: Record<RunStatus, { label: string; color: string; dot: string; Icon: React.ElementType }> = {
+const STATUS_META: Record<RunStatus, { label: string; color: string; dot: string; Icon: ElementType }> = {
   running: {
     label: "Running",
     color: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
@@ -361,7 +366,127 @@ function Metric({ label, value, sub, trend }: { label: string; value: string | n
   )
 }
 
-function RunRow({ run }: { run: Run }) {
+function formatNumber(value: number) {
+  return new Intl.NumberFormat("en-US").format(value)
+}
+
+function formatLatency(ms: number) {
+  return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`
+}
+
+function traceShortId(traceId: string) {
+  return `${traceId.slice(0, 8)}…${traceId.slice(-4)}`
+}
+
+function statusClasses(status: "ok" | "error") {
+  return status === "ok"
+    ? "border-[var(--success)]/30 bg-[var(--success)]/10 text-[var(--success)]"
+    : "border-[var(--destructive)]/30 bg-[var(--destructive)]/10 text-[var(--destructive)]"
+}
+
+function identityStatusClasses(status: string) {
+  if (status === "active") return "border-[var(--success)]/30 bg-[var(--success)]/10 text-[var(--success)]"
+  if (status === "provisioning") return "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]"
+  return "border-[var(--destructive)]/30 bg-[var(--destructive)]/10 text-[var(--destructive)]"
+}
+
+function Agent365Kpi({ label, value, sub, Icon }: { label: string; value: string | number; sub: string; Icon: ElementType }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground">{value}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
+        </div>
+        <div className="rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/10 p-2 text-[var(--primary)]">
+          <Icon className="h-5 w-5" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SpanWaterfall({ span, totalMs }: { span: TraceSpan; totalMs: number; key?: string }) {
+  const width = Math.max(8, Math.min(100, (span.durationMs / totalMs) * 100))
+
+  return (
+    <div className="grid grid-cols-[minmax(0,1.2fr)_88px_minmax(120px,1fr)_72px] items-center gap-3 text-xs">
+      <div className="min-w-0">
+        <p className="truncate font-medium text-foreground">{span.name}</p>
+        {span.attrs && span.attrs.length > 0 && (
+          <p className="truncate text-muted-foreground">{span.attrs.join(" · ")}</p>
+        )}
+      </div>
+      <span className="w-fit rounded-full border border-border bg-secondary/40 px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+        {span.kind}
+      </span>
+      <div className="h-2 overflow-hidden rounded-full bg-secondary">
+        <div
+          className={cn("h-full rounded-full", span.status === "ok" ? "bg-[var(--primary)]" : "bg-[var(--destructive)]")}
+          style={{ width: `${width}%` }}
+        />
+      </div>
+      <div className="flex items-center justify-end gap-2 font-mono text-muted-foreground">
+        <span>{formatLatency(span.durationMs)}</span>
+        <span className={cn("h-2 w-2 rounded-full", span.status === "ok" ? "bg-[var(--success)]" : "bg-[var(--destructive)]")} />
+      </div>
+    </div>
+  )
+}
+
+function TraceCard({ trace }: { trace: AgentTrace; key?: string }) {
+  const [expanded, setExpanded] = useState(true)
+  const isError = trace.status === "error"
+
+  return (
+    <div className={cn("rounded-lg border bg-card", isError ? "border-[var(--destructive)]/40" : "border-border")}>
+      <button
+        type="button"
+        onClick={() => setExpanded((p) => !p)}
+        className="flex w-full items-start justify-between gap-3 p-4 text-left transition-colors hover:bg-secondary/20"
+      >
+        <div className="flex min-w-0 items-start gap-3">
+          <ChevronRight className={cn("mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform", expanded && "rotate-90")} />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-medium text-foreground">{trace.agentName}</p>
+              <span className={cn("rounded-full border px-2 py-0.5 text-xs font-medium", statusClasses(trace.status))}>
+                {trace.status === "ok" ? "OK" : "Error"}
+              </span>
+              <span className="font-mono text-xs text-muted-foreground">{traceShortId(trace.traceId)}</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {trace.startedAt} · {trace.channel} · {trace.agentId}
+            </p>
+          </div>
+        </div>
+        <div className={cn("text-right font-mono text-sm", isError ? "text-[var(--destructive)]" : "text-foreground")}>
+          {formatLatency(trace.totalMs)}
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="space-y-3 border-t border-border px-4 py-3">
+          <div className="space-y-2">
+            {trace.spans.map((span) => (
+              <SpanWaterfall key={`${trace.traceId}-${span.name}`} span={span} totalMs={trace.totalMs} />
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-secondary/20 px-3 py-2 text-xs text-muted-foreground">
+            <span className="truncate">{trace.model}</span>
+            <span className="font-mono">
+              gen_ai tokens in/out: {formatNumber(trace.inputTokens)} / {formatNumber(trace.outputTokens)}
+            </span>
+            <span>{trace.channel} · {trace.user}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RunRow({ run }: { run: Run; key?: string }) {
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -488,6 +613,10 @@ export default function ObservabilityPage() {
 
   const tabRunning = rows.filter((r) => r.status === "running").length
   const tabFailed = rows.filter((r) => r.status === "failed").length
+  const totalInvocations30d = governedAgents.reduce((sum, agent) => sum + agent.invocations30d, 0)
+  const avgTraceLatencyMs = agentTraces.length
+    ? agentTraces.reduce((sum, trace) => sum + trace.totalMs, 0) / agentTraces.length
+    : 0
 
   return (
     <div className="min-h-screen bg-background">
@@ -515,6 +644,102 @@ export default function ObservabilityPage() {
             Refresh
           </Button>
         </div>
+
+        {/* LIVE AI Gateway telemetry (real — not mock) */}
+        <AiGatewayLive />
+
+        {/* Agent 365 OpenTelemetry header */}
+        <section className="mb-6 rounded-xl border border-border bg-card p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-3 py-1 text-xs font-medium text-[var(--primary)]">
+                <Radio className="h-3.5 w-3.5" />
+                Agent 365 · OpenTelemetry
+              </div>
+              <h2 className="mt-3 text-lg font-semibold text-foreground">Microsoft Agent 365 observability</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Distributed tracing for {NEBULA_TENANT.name} agents in Azure AI Foundry project <span className="font-mono text-foreground">{NEBULA_TENANT.foundryProject}</span>.
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-secondary/20 px-3 py-2 text-xs text-muted-foreground">
+              Tenant <span className="font-mono text-foreground">{NEBULA_TENANT.tenantId}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Agent 365 KPI strip */}
+        <section className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <Agent365Kpi label="Governed agents" value={govKpis.governedAgents} sub="Agent 365 blueprints under policy" Icon={Bot} />
+          <Agent365Kpi label="Active Entra Agent IDs" value={govKpis.entraAgentIds} sub="Live workload identities" Icon={Fingerprint} />
+          <Agent365Kpi label="30d invocations" value={formatNumber(totalInvocations30d)} sub="Summed from governed agents" Icon={Zap} />
+          <Agent365Kpi label="Avg latency" value={formatLatency(avgTraceLatencyMs)} sub="Current OpenTelemetry traces" Icon={Timer} />
+        </section>
+
+        {/* Agent 365 distributed traces and identities */}
+        <section className="mb-6 grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(360px,1fr)]">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                  <Network className="h-4 w-4 text-[var(--primary)]" />
+                  Agent 365 Distributed Traces
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">InferenceScope, Bot Framework, MCP, and channel spans from the shared governance stream.</p>
+              </div>
+              <span className="rounded-full border border-border bg-secondary/30 px-2.5 py-1 text-xs text-muted-foreground">
+                {agentTraces.length} traces
+              </span>
+            </div>
+            <div className="space-y-3">
+              {agentTraces.map((trace) => (
+                <TraceCard key={trace.traceId} trace={trace} />
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="border-b border-border p-4">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <Fingerprint className="h-4 w-4 text-[var(--primary)]" />
+                Live agent identities
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">Entra Agent IDs mapped to governed blueprints.</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-border bg-secondary/30 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-3 py-3">Agent ID</th>
+                    <th className="px-3 py-3">Model</th>
+                    <th className="px-3 py-3">Autonomy</th>
+                    <th className="px-3 py-3">30d</th>
+                    <th className="px-3 py-3 pr-4">Identity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {governedAgents.map((agent) => (
+                    <tr key={agent.agentId} className="border-b border-border/60 text-xs last:border-0 hover:bg-secondary/20">
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-foreground">{agent.name}</p>
+                        <p className="text-muted-foreground">{agent.blueprintId}</p>
+                      </td>
+                      <td className="px-3 py-3 font-mono text-muted-foreground">{agent.agentId}</td>
+                      <td className="max-w-[180px] truncate px-3 py-3 text-muted-foreground">{agent.model}</td>
+                      <td className="px-3 py-3 capitalize text-muted-foreground">{agent.autonomy}</td>
+                      <td className="px-3 py-3 font-mono text-foreground">{formatNumber(agent.invocations30d)}</td>
+                      <td className="px-3 py-3 pr-4">
+                        <span className={cn("rounded-full border px-2 py-0.5 font-medium capitalize", identityStatusClasses(agent.identityStatus))}>
+                          {agent.identityStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
         {/* Summary banner */}
         <div className="mb-6 grid grid-cols-4 gap-4">
@@ -627,7 +852,7 @@ export default function ObservabilityPage() {
             <span
               className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"
             />
-            Live · refreshed {lastRefresh.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+            Live Â· refreshed {lastRefresh.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
           </span>
         </div>
 

@@ -1,8 +1,10 @@
 "use client"
 
+import type { ElementType, ReactNode } from "react"
 import { useState } from "react"
 import { AppSidebar } from "@/components/marketplace/app-sidebar"
 import { cn } from "@/lib/utils"
+import { foundryEvaluations, governedAgents, govKpis, monitoringTrend, NEBULA_TENANT } from "@/lib/agent-governance"
 import {
   BarChart3,
   Clock,
@@ -39,19 +41,20 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts"
 
-// ─── Color palette (Enterprise brand) ─────────────────────────────────────────────
+// ─── Color palette (Deloitte brand) ───────────────────────────────────────────────
 const C = {
-  orange: "#ff612b",
-  orangeLight: "#ff8c5a",
-  blue: "#1b4f8a",
-  blueLight: "#3b82f6",
-  teal: "#06b6d4",
-  emerald: "#34d399",
-  amber: "#fbbf24",
-  red: "#f87171",
-  purple: "#a78bfa",
+  orange: "#86BC25",
+  orangeLight: "#A8D44A",
+  blue: "#3D8AFF",
+  blueLight: "#3D8AFF",
+  teal: "#14B8A6",
+  emerald: "#86BC25",
+  amber: "#F5A623",
+  red: "#E03B3B",
+  purple: "#A855F7",
   grid: "#ffffff10",
   text: "#94a3b8",
 }
@@ -165,6 +168,19 @@ const backlogData = [
   { type: "Audit Reviews", pending: 41, resolved: 671, slaBreached: 4 },
 ]
 
+const foundryScoreData = governedAgents
+  .map(({ name, serviceLine, foundryScore, invocations30d, safety }) => ({
+    name,
+    serviceLine,
+    foundryScore,
+    invocations30d,
+    safety,
+  }))
+  .sort((a, b) => b.foundryScore - a.foundryScore)
+
+const continuousEvalCount = foundryEvaluations.filter((evaluation) => evaluation.continuous).length
+const latestFoundryRun = foundryEvaluations[0]?.lastRun ?? "Monitoring active"
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function KpiCard({
@@ -181,7 +197,7 @@ function KpiCard({
   sub?: string
   trend?: "up" | "down"
   trendValue?: string
-  icon: React.ElementType
+  icon: ElementType
   iconColor: string
 }) {
   const trendUp = trend === "up"
@@ -212,7 +228,7 @@ function KpiCard({
   )
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
       {children}
@@ -228,7 +244,7 @@ function ChartCard({
 }: {
   title: string
   subtitle?: string
-  children: React.ReactNode
+  children: ReactNode
   className?: string
 }) {
   return (
@@ -356,6 +372,126 @@ export default function AnalyticsPage() {
             icon={Activity}
             iconColor="bg-[var(--brand-primary)]/20 text-[var(--brand-secondary-light)]"
           />
+        </div>
+
+        {/* ── Azure AI Foundry continuous evaluation ── */}
+        <SectionTitle>
+          <Brain className="h-4 w-4 text-[var(--accent)]" />
+          Azure AI Foundry — Continuous Evaluation
+        </SectionTitle>
+
+        <div className="mb-4 grid grid-cols-4 gap-4">
+          <KpiCard
+            label="Avg Foundry Score"
+            value={`${govKpis.avgFoundryScore.toFixed(1)} / 5`}
+            sub={`${NEBULA_TENANT.foundryProject} composite quality`}
+            trend="up"
+            trendValue="+0.2 vs prior run"
+            icon={CheckCircle2}
+            iconColor="bg-[var(--accent)]/20 text-[var(--accent)]"
+          />
+          <KpiCard
+            label="Safety Defect Rate"
+            value={`${govKpis.safetyDefectRate.toFixed(1)}%`}
+            sub="14-day monitored responses"
+            trend="down"
+            trendValue="−1.1pp in 14 days"
+            icon={AlertTriangle}
+            iconColor="bg-red-500/15 text-red-400"
+          />
+          <KpiCard
+            label="Continuous Evals"
+            value={govKpis.continuousEvals.toString()}
+            sub={`${continuousEvalCount} Foundry pipelines enabled`}
+            trend="up"
+            trendValue="Always on"
+            icon={RefreshCw}
+            iconColor="bg-teal-500/15 text-teal-300"
+          />
+          <KpiCard
+            label="Governed Agents"
+            value={govKpis.governedAgents.toString()}
+            sub="Entra Agent ID-backed inventory"
+            trend="up"
+            trendValue="+2 this month"
+            icon={Bot}
+            iconColor="bg-[var(--accent)]/20 text-[var(--accent)]"
+          />
+        </div>
+
+        <div className="mb-8 grid grid-cols-3 gap-4">
+          <ChartCard
+            title="Groundedness Trend"
+            subtitle={`0–5 Foundry score · target 4.5 · latest run ${latestFoundryRun}`}
+          >
+            <ResponsiveContainer width="100%" height={230}>
+              <AreaChart data={monitoringTrend} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gFoundryGroundedness" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={C.orange} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={C.orange} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={C.grid} />
+                <XAxis dataKey="day" tick={{ fill: C.text, fontSize: 10 }} tickLine={false} axisLine={false} interval={2} />
+                <YAxis domain={[4, 5]} tick={{ fill: C.text, fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => v.toFixed(1)} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => [v.toFixed(2), "Groundedness"]} />
+                <ReferenceLine y={4.5} stroke={C.orangeLight} strokeDasharray="4 3" label={{ value: "Target", fill: C.text, fontSize: 10 }} />
+                <Area type="monotone" dataKey="groundedness" name="Groundedness" stroke={C.orange} fill="url(#gFoundryGroundedness)" strokeWidth={2.5} dot={{ r: 2, fill: C.orange }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          <ChartCard
+            title="Safety Defect Rate"
+            subtitle="Foundry content safety monitoring — lower is better"
+          >
+            <ResponsiveContainer width="100%" height={230}>
+              <AreaChart data={monitoringTrend} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gFoundrySafety" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={C.red} stopOpacity={0.28} />
+                    <stop offset="95%" stopColor={C.amber} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={C.grid} />
+                <XAxis dataKey="day" tick={{ fill: C.text, fontSize: 10 }} tickLine={false} axisLine={false} interval={2} />
+                <YAxis tick={{ fill: C.text, fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}%`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => [`${v.toFixed(1)}%`, "Safety defect rate"]} />
+                <Area type="monotone" dataKey="safetyDefectRate" name="Defect rate" stroke={C.red} fill="url(#gFoundrySafety)" strokeWidth={2.5} dot={{ r: 2, fill: C.amber }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          <ChartCard
+            title="Per-Agent Foundry Scores"
+            subtitle="Composite quality and safety gate by governed agent"
+          >
+            <ResponsiveContainer width="100%" height={230}>
+              <BarChart data={foundryScoreData} layout="vertical" margin={{ top: 0, right: 20, left: 95, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={C.grid} horizontal={false} />
+                <XAxis type="number" domain={[0, 5]} tick={{ fill: C.text, fontSize: 11 }} tickLine={false} axisLine={false} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fill: C.text, fontSize: 10 }}
+                  tickLine={false}
+                  axisLine={false}
+                  width={92}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  formatter={(v: number, name: string) => [name === "foundryScore" ? `${v.toFixed(1)} / 5` : v.toLocaleString(), name === "foundryScore" ? "Foundry score" : "Invocations"]}
+                  labelFormatter={(label) => {
+                    const agent = foundryScoreData.find((item) => item.name === label)
+                    return agent ? `${label} · ${agent.serviceLine} · safety: ${agent.safety}` : label
+                  }}
+                />
+                <ReferenceLine x={4.5} stroke={C.orangeLight} strokeDasharray="4 3" />
+                <Bar dataKey="foundryScore" name="Foundry score" fill={C.orange} radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
         </div>
 
         {/* ── Section 1: Human-in-Loop Timing ── */}

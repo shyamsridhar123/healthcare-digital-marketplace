@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { AuthGuard } from '@/components/auth/AuthGuard'
+import { AssistantWidget } from '@/components/assistant/assistant-widget'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -30,6 +31,7 @@ export default function RootLayout({
           <AuthProvider>
             <AuthGuard>
               {children}
+              <AssistantWidget />
             </AuthGuard>
           </AuthProvider>
           <Analytics />

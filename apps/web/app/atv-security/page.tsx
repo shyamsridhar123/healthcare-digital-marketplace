@@ -256,7 +256,7 @@ export default function AtvSecurityPage() {
     <div className="min-h-screen bg-background">
       <AppSidebar />
 
-      <main className="app-shell-offset mx-auto max-w-7xl px-6 py-8">
+      <main className="app-shell-offset px-6 py-8">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-3 flex flex-wrap items-center gap-2">
