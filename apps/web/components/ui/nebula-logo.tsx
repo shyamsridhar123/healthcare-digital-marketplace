@@ -29,7 +29,7 @@ export function NebulaLogo({ className, ...props }: SVGProps<SVGSVGElement>) {
   )
 }
 
-/** Text wordmark: "Nebula-X" with an optional "by Deloitte" descriptor. */
+/** Text wordmark: "Nebula-X" with an optional platform descriptor. */
 export function NebulaWordmark({
   className,
   showByline = true,
@@ -41,7 +41,7 @@ export function NebulaWordmark({
     <span className={className}>
       <span className="font-bold tracking-tight text-foreground">Nebula-X</span>
       {showByline && (
-        <span className="ml-1.5 text-xs font-medium text-[var(--primary)]">by Deloitte</span>
+        <span className="ml-1.5 text-xs font-medium text-[var(--primary)]">AI Management Platform</span>
       )}
     </span>
   )

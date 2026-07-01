@@ -42,10 +42,13 @@ export function AuthGuard({ children }: { children: ReactNode }) {
         {/* Heading */}
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Nebula-X <span className="text-[var(--primary)]">by Deloitte</span>
+            Nebula-<span className="text-[var(--primary)]">X</span>
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            The governed AI marketplace for professional services — sign in with your Microsoft account to continue
+          <p className="mt-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">
+            Deloitte · AI Management Platform
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            The governed platform for the firm&apos;s AI — sign in with your Microsoft account to continue
           </p>
         </div>
 

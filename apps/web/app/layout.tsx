@@ -10,8 +10,8 @@ import './globals.css'
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: 'Nebula-X by Deloitte | AI Marketplace for Professional Services',
-  description: 'Nebula-X by Deloitte — a governed AI marketplace and orchestration platform for professional services. Audit-grade agents, tax-certified models, and governance-first workflows. Intelligence, governed.',
+  title: 'Nebula-X — Deloitte AI Management Platform',
+  description: 'Nebula-X — Deloitte\'s AI Management Platform. The governed platform for the firm\'s AI: agents, MCP tools, models, and skills across every org and workspace, on a multi-provider gateway with agent identity, content safety, and FinOps showback. Self-service AI, fully governed.',
   generator: 'Nebula-X',
   icons: {
     icon: { url: '/icon.svg', type: 'image/svg+xml' },

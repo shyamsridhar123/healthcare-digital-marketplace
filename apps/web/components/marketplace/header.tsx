@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
+import { NebulaLogo } from "@/components/ui/nebula-logo"
 import { Bell, HelpCircle, Settings, ChevronDown, Search } from "lucide-react"
 
 const navItems = [
@@ -23,14 +24,11 @@ export function Header() {
         {/* Logo and Project Selector */}
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-              <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-              </svg>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--accent-light)]">
+              <NebulaLogo className="h-5 w-5 text-[#0C0C0C]" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Nebula-X by Deloitte</span>
+              <span className="text-sm font-semibold text-foreground">Nebula-X</span>
               <span className="rounded-md bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-400">
                 Playground
               </span>

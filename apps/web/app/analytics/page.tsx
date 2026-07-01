@@ -294,7 +294,7 @@ export default function AnalyticsPage() {
               Analytics
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Workflow timing, human-in-loop performance, usage &amp; adoption across Nebula-X by Deloitte
+              Workflow timing, human-in-loop performance, usage &amp; adoption across the Nebula-X platform
             </p>
           </div>
           <div className="flex items-center gap-2">

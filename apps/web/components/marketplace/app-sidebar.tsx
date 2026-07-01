@@ -846,7 +846,7 @@ export function AppSidebar() {
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="text-sm font-bold tracking-tight text-foreground">Nebula-X</span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--primary)]">by Deloitte</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--primary)]">AI Management Platform</span>
             </div>
           )}
         </div>
