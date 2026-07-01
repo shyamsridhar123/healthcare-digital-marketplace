@@ -518,10 +518,10 @@ export default function OrchestrationPage() {
                     </p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {[
-                        { key: "condition" as const, label: "If / Else", icon: GitBranch, color: "text-orange-400" },
-                        { key: "fanout" as const, label: "Fan-Out/In", icon: ChevronsRight, color: "text-cyan-400" },
-                        { key: "loop" as const, label: "Loop", icon: RefreshCw, color: "text-purple-400" },
-                        { key: "approval" as const, label: "Approval", icon: UserCheck, color: "text-amber-400" },
+                        { key: "condition" as const, label: "If / Else", icon: GitBranch, color: "text-[var(--warning)]" },
+                        { key: "fanout" as const, label: "Fan-Out/In", icon: ChevronsRight, color: "text-muted-foreground" },
+                        { key: "loop" as const, label: "Loop", icon: RefreshCw, color: "text-muted-foreground" },
+                        { key: "approval" as const, label: "Approval", icon: UserCheck, color: "text-[var(--warning)]" },
                       ].map(({ key, label, icon: Icon, color }) => (
                         <button
                           key={key}
@@ -598,7 +598,7 @@ export default function OrchestrationPage() {
               {connectSourceId && (
                 <>
                   <span>·</span>
-                  <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-[10px]">
+                  <Badge className="bg-secondary text-muted-foreground border-border text-[10px]">
                     Connect mode — click target
                   </Badge>
                   <button onClick={() => setConnectSourceId(null)} className="ml-1 text-muted-foreground hover:text-foreground">
@@ -623,7 +623,7 @@ export default function OrchestrationPage() {
             <Button
               variant="outline"
               size="sm"
-              className={cn("gap-1.5 h-8 text-xs transition-colors", saved && "border-green-500 text-green-500")}
+              className={cn("gap-1.5 h-8 text-xs transition-colors", saved && "border-[var(--primary)]/30 text-[var(--primary)]")}
               onClick={handleSave}
             >
               {saved ? <CheckCircle2 className="h-3.5 w-3.5" /> : <FileCode2 className="h-3.5 w-3.5" />}
@@ -634,7 +634,7 @@ export default function OrchestrationPage() {
               size="sm"
               className="gap-1.5 h-8 text-xs"
             >
-              <Play className="h-3.5 w-3.5 text-green-400" />
+              <Play className="h-3.5 w-3.5 text-[var(--primary)]" />
               Test Run
             </Button>
             <Link href="/deployments/new">

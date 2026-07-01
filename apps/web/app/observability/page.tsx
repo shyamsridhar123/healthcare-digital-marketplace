@@ -311,26 +311,26 @@ const toolRuns: Run[] = [
 const STATUS_META: Record<RunStatus, { label: string; color: string; dot: string; Icon: ElementType }> = {
   running: {
     label: "Running",
-    color: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
-    dot: "bg-emerald-400",
+    color: "bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30",
+    dot: "bg-[var(--primary)]",
     Icon: Loader2,
   },
   completed: {
     label: "Completed",
-    color: "bg-sky-500/15 text-sky-400 border border-sky-500/30",
-    dot: "bg-sky-400",
+    color: "bg-secondary text-muted-foreground border border-border",
+    dot: "bg-muted-foreground",
     Icon: CheckCircle2,
   },
   failed: {
     label: "Failed",
-    color: "bg-red-500/15 text-red-400 border border-red-500/30",
+    color: "bg-red-500/15 text-destructive border border-red-500/30",
     dot: "bg-red-400",
     Icon: XCircle,
   },
   queued: {
     label: "Queued",
-    color: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
-    dot: "bg-amber-400",
+    color: "bg-[var(--warning)]/15 text-[var(--warning)] border border-[var(--warning)]/30",
+    dot: "bg-[var(--warning)]",
     Icon: Clock,
   },
   idle: {
@@ -358,8 +358,8 @@ function Metric({ label, value, sub, trend }: { label: string; value: string | n
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
         {value}
-        {trend === "up" && <TrendingUp className="h-3 w-3 text-emerald-400" />}
-        {trend === "down" && <TrendingDown className="h-3 w-3 text-red-400" />}
+        {trend === "up" && <TrendingUp className="h-3 w-3 text-[var(--primary)]" />}
+        {trend === "down" && <TrendingDown className="h-3 w-3 text-destructive" />}
       </span>
       {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
     </div>
@@ -532,7 +532,7 @@ function RunRow({ run }: { run: Run; key?: string }) {
         {/* req/min */}
         <td className="px-3 py-3 text-xs font-mono text-foreground">
           {run.requestsPerMin != null ? (
-            <span className={cn(run.status === "running" && run.requestsPerMin > 0 ? "text-emerald-400" : "text-muted-foreground")}>
+            <span className={cn(run.status === "running" && run.requestsPerMin > 0 ? "text-[var(--primary)]" : "text-muted-foreground")}>
               {run.requestsPerMin}
             </span>
           ) : (
@@ -543,7 +543,7 @@ function RunRow({ run }: { run: Run; key?: string }) {
         {/* Error rate */}
         <td className="px-3 py-3 text-xs font-mono">
           {run.errorRate != null ? (
-            <span className={cn(run.errorRate > 0 ? "text-red-400" : "text-emerald-400")}>
+            <span className={cn(run.errorRate > 0 ? "text-destructive" : "text-[var(--primary)]")}>
               {run.errorRate}%
             </span>
           ) : (
@@ -554,7 +554,7 @@ function RunRow({ run }: { run: Run; key?: string }) {
         {/* Latency */}
         <td className="px-3 py-3 pr-4 text-xs font-mono text-muted-foreground">
           {run.latencyMs != null && run.latencyMs > 0 ? (
-            <span className={cn(run.latencyMs > 2000 ? "text-amber-400" : "text-foreground")}>
+            <span className={cn(run.latencyMs > 2000 ? "text-[var(--warning)]" : "text-foreground")}>
               {run.latencyMs >= 1000 ? `${(run.latencyMs / 1000).toFixed(1)}s` : `${run.latencyMs}ms`}
             </span>
           ) : (
@@ -568,7 +568,7 @@ function RunRow({ run }: { run: Run; key?: string }) {
         <tr className="border-b border-border/60 bg-red-500/5">
           <td colSpan={7} className="px-4 py-2">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" />
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" />
               <p className="text-xs text-red-300">{run.lastError}</p>
             </div>
           </td>
@@ -749,26 +749,26 @@ export default function ObservabilityPage() {
               value: totalRunning,
               icon: Loader2,
               color:
-                "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+                "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]",
               iconSpin: true,
             },
             {
               label: "Completed",
               value: totalCompleted,
               icon: CheckCircle2,
-              color: "border-sky-500/30 bg-sky-500/10 text-sky-400",
+              color: "border-border bg-secondary text-muted-foreground",
             },
             {
               label: "Failed",
               value: totalFailed,
               icon: XCircle,
-              color: "border-red-500/30 bg-red-500/10 text-red-400",
+              color: "border-red-500/30 bg-red-500/10 text-destructive",
             },
             {
               label: "Queued",
               value: totalQueued,
               icon: Clock,
-              color: "border-amber-500/30 bg-amber-500/10 text-amber-400",
+              color: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
             },
           ].map((s) => {
             const Icon = s.icon
@@ -816,12 +816,12 @@ export default function ObservabilityPage() {
                 <span>{tab.label}</span>
                 <span className="flex items-center gap-1">
                   {running > 0 && (
-                    <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-xs text-emerald-400">
+                    <span className="rounded-full bg-[var(--primary)]/20 px-1.5 py-0.5 text-xs text-[var(--primary)]">
                       {running}
                     </span>
                   )}
                   {failed > 0 && (
-                    <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-xs text-red-400">
+                    <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-xs text-destructive">
                       {failed}
                     </span>
                   )}
@@ -836,13 +836,13 @@ export default function ObservabilityPage() {
           <div className="flex items-center gap-3 text-sm">
             <span className="font-medium text-foreground">{rows.length} {currentTab.label}</span>
             {tabRunning > 0 && (
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-[var(--primary)]">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 {tabRunning} active
               </span>
             )}
             {tabFailed > 0 && (
-              <span className="flex items-center gap-1 text-red-400">
+              <span className="flex items-center gap-1 text-destructive">
                 <XCircle className="h-3.5 w-3.5" />
                 {tabFailed} failed
               </span>
@@ -850,7 +850,7 @@ export default function ObservabilityPage() {
           </div>
           <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
-              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"
+              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--primary)]"
             />
             Live Â· refreshed {lastRefresh.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
           </span>

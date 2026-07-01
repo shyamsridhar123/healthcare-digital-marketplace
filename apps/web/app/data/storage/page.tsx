@@ -126,13 +126,13 @@ const accounts: StorageAccount[] = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const fileIcons: Record<string, { icon: React.ElementType; color: string }> = {
-  parquet: { icon: Database, color: "text-emerald-400" },
-  json: { icon: FileText, color: "text-amber-400" },
-  csv: { icon: FileText, color: "text-blue-400" },
-  pkl: { icon: Archive, color: "text-violet-400" },
+  parquet: { icon: Database, color: "text-[var(--primary)]" },
+  json: { icon: FileText, color: "text-[var(--warning)]" },
+  csv: { icon: FileText, color: "text-muted-foreground" },
+  pkl: { icon: Archive, color: "text-muted-foreground" },
   txt: { icon: FileText, color: "text-muted-foreground" },
-  image: { icon: Image, color: "text-pink-400" },
-  archive: { icon: Archive, color: "text-orange-400" },
+  image: { icon: Image, color: "text-muted-foreground" },
+  archive: { icon: Archive, color: "text-[var(--warning)]" },
 }
 
 function FileIcon({ type }: { type: Blob["type"] }) {
@@ -189,15 +189,15 @@ export default function AzureStoragePage() {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <HardDrive className="h-5 w-5 text-blue-400" />
+              <HardDrive className="h-5 w-5 text-[var(--primary)]" />
               <h1 className="text-2xl font-bold text-foreground">Azure Storage</h1>
-              <Badge className="bg-emerald-500/15 text-emerald-400">Connected</Badge>
+              <Badge className="bg-[var(--primary)]/15 text-[var(--primary)]">Connected</Badge>
             </div>
             <p className="text-sm text-muted-foreground">Browse containers, blobs, and files across storage accounts.</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="gap-2"><RefreshCw className="h-3.5 w-3.5" /> Refresh</Button>
-            <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"><Upload className="h-3.5 w-3.5" /> Upload</Button>
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"><Upload className="h-3.5 w-3.5" /> Upload</Button>
           </div>
         </div>
 
@@ -218,7 +218,7 @@ export default function AzureStoragePage() {
                       className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-foreground hover:bg-secondary/50 transition-colors"
                     >
                       {isExpanded ? <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
-                      <HardDrive className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                      <HardDrive className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       <span className="truncate">{account.name}</span>
                     </button>
                     {isExpanded && (
@@ -233,11 +233,11 @@ export default function AzureStoragePage() {
                               className={cn(
                                 "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors",
                                 isSelected
-                                  ? "bg-blue-500/15 text-blue-300 font-medium"
+                                  ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium"
                                   : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                               )}
                             >
-                              {isSelected ? <FolderOpen className="h-3.5 w-3.5 shrink-0 text-blue-400" /> : <Folder className="h-3.5 w-3.5 shrink-0 text-amber-400/70" />}
+                              {isSelected ? <FolderOpen className="h-3.5 w-3.5 shrink-0 text-[var(--primary)]" /> : <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" />}
                               <span className="truncate">{container.name}</span>
                               <span className="ml-auto text-[10px] text-muted-foreground/50">{container.blobs.length}</span>
                             </button>
@@ -261,11 +261,11 @@ export default function AzureStoragePage() {
                     <HardDrive className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">{selectedContainer.account}</span>
                     <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/40" />
-                    <FolderOpen className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                    <FolderOpen className="h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                     <span className="text-xs font-medium text-foreground">{selectedContainer.container}</span>
                     {selectedContainerData && (
                       <Badge className={cn("ml-1 text-[10px]",
-                        selectedContainerData.access === "Private" ? "bg-secondary text-muted-foreground" : "bg-amber-500/15 text-amber-400"
+                        selectedContainerData.access === "Private" ? "bg-secondary text-muted-foreground" : "bg-[var(--warning)]/15 text-[var(--warning)]"
                       )}>
                         {selectedContainerData.access}
                       </Badge>
@@ -353,7 +353,7 @@ export default function AzureStoragePage() {
               ) : (
                 <div className="grid grid-cols-3 gap-3 p-4">
                   {selectedBlobs.map((blob) => (
-                    <Card key={blob.name} className="cursor-pointer border-border bg-secondary/30 hover:border-blue-500/40 transition-all">
+                    <Card key={blob.name} className="cursor-pointer border-border bg-secondary/30 hover:border-[var(--primary)]/30 transition-all">
                       <CardContent className="p-3">
                         <div className="mb-2 flex items-center gap-2">
                           <FileIcon type={blob.type} />

@@ -33,25 +33,25 @@ const statuses = ["All Status", "Production", "Beta", "Review", "Demo Ready"]
 
 function ModelCard({ model }: { model: ModelData }) {
   const statusColors: Record<string, string> = {
-    production: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-    "demo-ready": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
-    beta: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-    review: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    production: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+    "demo-ready": "bg-secondary text-muted-foreground border-border",
+    beta: "bg-[var(--warning)]/20 text-[var(--warning)] border-[var(--warning)]/30",
+    review: "bg-secondary text-muted-foreground border-border",
   }
   
   const typeColors: Record<string, string> = {
-    internal: "bg-cyan-500/20 text-cyan-400",
-    partner: "bg-purple-500/20 text-purple-400",
+    internal: "bg-secondary text-muted-foreground",
+    partner: "bg-secondary text-muted-foreground",
   }
 
   return (
     <Link href={`/models/${model.id}`} className="group block">
       <div className="flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-all duration-200 hover:border-[var(--accent)]/40 hover:bg-card/80">
         {model.experienceType === "published-model-experience" && model.preview && (
-          <div className="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
+          <div className="mb-4 rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/10 p-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-emerald-300">Runnable preview</span>
-              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300">Ready</span>
+              <span className="text-xs font-semibold text-[var(--primary)]">Runnable preview</span>
+              <span className="rounded-full bg-[var(--primary)]/20 px-2 py-0.5 text-[10px] text-[var(--primary)]">Ready</span>
             </div>
             <p className="line-clamp-2 text-xs text-muted-foreground">{model.preview.sampleOutput}</p>
           </div>
@@ -99,7 +99,7 @@ function ModelCard({ model }: { model: ModelData }) {
         <div className="mb-4 grid grid-cols-3 gap-2">
           <div className="rounded-lg bg-secondary/50 p-2 text-center">
             <p className="text-xs text-muted-foreground">Accuracy</p>
-            <p className="text-sm font-semibold text-emerald-400">{model.metrics.accuracy}%</p>
+            <p className="text-sm font-semibold text-[var(--primary)]">{model.metrics.accuracy}%</p>
           </div>
           <div className="rounded-lg bg-secondary/50 p-2 text-center">
             <p className="text-xs text-muted-foreground">Latency</p>
@@ -114,7 +114,7 @@ function ModelCard({ model }: { model: ModelData }) {
         {/* Compliance Badges */}
         <div className="mb-4 flex flex-wrap gap-1.5">
           {model.trustStatus && (
-            <span className="flex items-center gap-1 rounded bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-300">
+            <span className="flex items-center gap-1 rounded bg-[var(--primary)]/15 px-2 py-0.5 text-xs text-[var(--primary)]">
               <CheckCircle2 className="h-3 w-3" />
               Governance passed
             </span>
@@ -139,7 +139,7 @@ function ModelCard({ model }: { model: ModelData }) {
                 className={cn(
                   "h-3 w-3",
                   i <= Math.floor(model.rating)
-                    ? "fill-amber-400 text-amber-400"
+                    ? "fill-[var(--warning)] text-[var(--warning)]"
                     : "fill-muted/30 text-muted/30"
                 )}
               />

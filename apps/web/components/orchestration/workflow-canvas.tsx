@@ -20,18 +20,18 @@ interface WorkflowCanvasProps {
 
 const EDGE_COLORS: Record<string, string> = {
   default: "stroke-muted-foreground",
-  true: "stroke-green-500",
-  false: "stroke-red-500",
-  loop: "stroke-purple-500",
-  fan: "stroke-cyan-400",
+  true: "stroke-[#86BC25]",
+  false: "stroke-[#E03B3B]",
+  loop: "stroke-[#0076A8]",
+  fan: "stroke-[#00ABAB]",
 }
 
 const MARKER_FILL: Record<string, string> = {
   default: "fill-muted-foreground",
-  true: "fill-green-500",
-  false: "fill-red-500",
-  loop: "fill-purple-500",
-  fan: "fill-cyan-400",
+  true: "fill-[#86BC25]",
+  false: "fill-[#E03B3B]",
+  loop: "fill-[#0076A8]",
+  fan: "fill-[#00ABAB]",
 }
 
 const NODE_WIDTH = 200
@@ -289,7 +289,7 @@ export function WorkflowCanvas({
 
       {/* Connect mode overlay hint */}
       {connectSourceId && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-white shadow-lg pointer-events-none">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-lg bg-[#00ABAB] px-4 py-2 text-sm font-medium text-white shadow-lg pointer-events-none">
           Click the input connector of a target node to connect, or press Esc to cancel
         </div>
       )}

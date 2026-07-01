@@ -36,82 +36,82 @@ export const NODE_META: Record<
   start: {
     label: "Start",
     icon: Zap,
-    borderColor: "border-yellow-500/60",
-    bgColor: "bg-yellow-500/5",
-    iconColor: "text-yellow-400",
-    headerBg: "bg-yellow-500/10",
+    borderColor: "border-[#86BC25]/60",
+    bgColor: "bg-[#86BC25]/5",
+    iconColor: "text-[#86BC25]",
+    headerBg: "bg-[#86BC25]/10",
     description: "Workflow entry point",
   },
   trigger: {
     label: "Start",
     icon: Zap,
-    borderColor: "border-yellow-500/60",
-    bgColor: "bg-yellow-500/5",
-    iconColor: "text-yellow-400",
-    headerBg: "bg-yellow-500/10",
+    borderColor: "border-[#86BC25]/60",
+    bgColor: "bg-[#86BC25]/5",
+    iconColor: "text-[#86BC25]",
+    headerBg: "bg-[#86BC25]/10",
     description: "Workflow entry point",
   },
   agent: {
     label: "AI Agent",
     icon: Bot,
-    borderColor: "border-violet-500/60",
-    bgColor: "bg-violet-500/5",
-    iconColor: "text-violet-400",
-    headerBg: "bg-violet-500/10",
+    borderColor: "border-[#0076A8]/60",
+    bgColor: "bg-[#0076A8]/5",
+    iconColor: "text-[#0076A8]",
+    headerBg: "bg-[#0076A8]/10",
     description: "LLM-powered reasoning step",
   },
   tool: {
     label: "MCP Tool",
     icon: Wrench,
-    borderColor: "border-emerald-500/60",
-    bgColor: "bg-emerald-500/5",
-    iconColor: "text-emerald-400",
-    headerBg: "bg-emerald-500/10",
+    borderColor: "border-[#86BC25]/60",
+    bgColor: "bg-[#86BC25]/5",
+    iconColor: "text-[#86BC25]",
+    headerBg: "bg-[#86BC25]/10",
     description: "External tool or API call",
   },
   condition: {
     label: "If / Else",
     icon: GitBranch,
-    borderColor: "border-orange-500/60",
-    bgColor: "bg-orange-500/5",
-    iconColor: "text-orange-400",
-    headerBg: "bg-orange-500/10",
+    borderColor: "border-[#26890D]/60",
+    bgColor: "bg-[#26890D]/5",
+    iconColor: "text-[#26890D]",
+    headerBg: "bg-[#26890D]/10",
     description: "Conditional branching",
   },
   "fan-out": {
     label: "Fan-Out",
     icon: ChevronsRight,
-    borderColor: "border-cyan-500/60",
-    bgColor: "bg-cyan-500/5",
-    iconColor: "text-cyan-400",
-    headerBg: "bg-cyan-500/10",
+    borderColor: "border-[#00ABAB]/60",
+    bgColor: "bg-[#00ABAB]/5",
+    iconColor: "text-[#00ABAB]",
+    headerBg: "bg-[#00ABAB]/10",
     description: "Parallel dispatch to branches",
   },
   "fan-in": {
     label: "Fan-In",
     icon: Merge,
-    borderColor: "border-teal-500/60",
-    bgColor: "bg-teal-500/5",
-    iconColor: "text-teal-400",
-    headerBg: "bg-teal-500/10",
+    borderColor: "border-[#00ABAB]/60",
+    bgColor: "bg-[#00ABAB]/5",
+    iconColor: "text-[#00ABAB]",
+    headerBg: "bg-[#00ABAB]/10",
     description: "Collect & merge parallel results",
   },
   loop: {
     label: "Loop",
     icon: RefreshCw,
-    borderColor: "border-purple-500/60",
-    bgColor: "bg-purple-500/5",
-    iconColor: "text-purple-400",
-    headerBg: "bg-purple-500/10",
+    borderColor: "border-[#0076A8]/60",
+    bgColor: "bg-[#0076A8]/5",
+    iconColor: "text-[#0076A8]",
+    headerBg: "bg-[#0076A8]/10",
     description: "Iterate while condition holds",
   },
   approval: {
     label: "Approval Gate",
     icon: UserCheck,
-    borderColor: "border-amber-500/60",
-    bgColor: "bg-amber-500/5",
-    iconColor: "text-amber-400",
-    headerBg: "bg-amber-500/10",
+    borderColor: "border-[#C4D600]/60",
+    bgColor: "bg-[#C4D600]/5",
+    iconColor: "text-[#C4D600]",
+    headerBg: "bg-[#C4D600]/10",
     description: "Human-in-the-loop review",
   },
   transform: {
@@ -126,19 +126,19 @@ export const NODE_META: Record<
   end: {
     label: "End",
     icon: CheckCircle2,
-    borderColor: "border-blue-500/60",
-    bgColor: "bg-blue-500/5",
-    iconColor: "text-blue-400",
-    headerBg: "bg-blue-500/10",
+    borderColor: "border-[#0076A8]/60",
+    bgColor: "bg-[#0076A8]/5",
+    iconColor: "text-[#0076A8]",
+    headerBg: "bg-[#0076A8]/10",
     description: "Workflow completion",
   },
   output: {
     label: "End",
     icon: Send,
-    borderColor: "border-blue-500/60",
-    bgColor: "bg-blue-500/5",
-    iconColor: "text-blue-400",
-    headerBg: "bg-blue-500/10",
+    borderColor: "border-[#0076A8]/60",
+    bgColor: "bg-[#0076A8]/5",
+    iconColor: "text-[#0076A8]",
+    headerBg: "bg-[#0076A8]/10",
     description: "Workflow completion",
   },
 }
@@ -266,7 +266,7 @@ export function WorkflowNodeCard({
         meta.borderColor,
         meta.bgColor,
         isSelected && "ring-2 ring-accent ring-offset-2 ring-offset-background scale-[1.02]",
-        isConnectSource && "ring-2 ring-cyan-400 ring-offset-2 ring-offset-background",
+        isConnectSource && "ring-2 ring-[#00ABAB] ring-offset-2 ring-offset-background",
       )}
       style={{ left: node.position.x, top: node.position.y, minWidth: 200 }}
       onClick={(e) => { e.stopPropagation(); onSelect() }}
@@ -316,7 +316,7 @@ export function WorkflowNodeCard({
           {[25, 50, 75].map((pct, i) => (
             <button
               key={i}
-              className="absolute -left-2 h-4 w-4 rounded-full border-2 border-teal-500/70 bg-background hover:bg-teal-500/20 transition-colors z-10"
+              className="absolute -left-2 h-4 w-4 rounded-full border-2 border-[#00ABAB]/70 bg-background hover:bg-[#00ABAB]/20 transition-colors z-10"
               style={{ top: `${pct}%`, transform: "translateY(-50%)" }}
               onClick={(e) => { e.stopPropagation(); onConnectorClick("in") }}
               title={`Merge input ${i + 1}`}
@@ -338,17 +338,17 @@ export function WorkflowNodeCard({
       {isCondition && (
         <>
           <button
-            className="absolute -right-2 top-[30%] -translate-y-1/2 h-4 w-4 rounded-full border-2 border-green-500 bg-background hover:bg-green-500/20 transition-colors z-10"
+            className="absolute -right-2 top-[30%] -translate-y-1/2 h-4 w-4 rounded-full border-2 border-[#86BC25] bg-background hover:bg-[#86BC25]/20 transition-colors z-10"
             onClick={(e) => { e.stopPropagation(); onConnectorClick("out") }}
             title="True branch"
           />
           <button
-            className="absolute -right-2 top-[70%] -translate-y-1/2 h-4 w-4 rounded-full border-2 border-red-500 bg-background hover:bg-red-500/20 transition-colors z-10"
+            className="absolute -right-2 top-[70%] -translate-y-1/2 h-4 w-4 rounded-full border-2 border-[#E03B3B] bg-background hover:bg-[#E03B3B]/20 transition-colors z-10"
             onClick={(e) => { e.stopPropagation(); onConnectorClick("out") }}
             title="False branch"
           />
-          <span className="absolute right-2 top-[22%] -translate-y-1/2 rounded-sm bg-green-500/20 px-1 text-[8px] font-medium text-green-400 pointer-events-none">T</span>
-          <span className="absolute right-2 top-[78%] -translate-y-1/2 rounded-sm bg-red-500/20 px-1 text-[8px] font-medium text-red-400 pointer-events-none">F</span>
+          <span className="absolute right-2 top-[22%] -translate-y-1/2 rounded-sm bg-[#86BC25]/20 px-1 text-[8px] font-medium text-[#86BC25] pointer-events-none">T</span>
+          <span className="absolute right-2 top-[78%] -translate-y-1/2 rounded-sm bg-[#E03B3B]/20 px-1 text-[8px] font-medium text-[#E03B3B] pointer-events-none">F</span>
         </>
       )}
 
@@ -358,7 +358,7 @@ export function WorkflowNodeCard({
           {[25, 50, 75].map((pct, i) => (
             <button
               key={i}
-              className="absolute -right-2 h-4 w-4 rounded-full border-2 border-cyan-500/70 bg-background hover:bg-cyan-500/20 transition-colors z-10"
+              className="absolute -right-2 h-4 w-4 rounded-full border-2 border-[#00ABAB]/70 bg-background hover:bg-[#00ABAB]/20 transition-colors z-10"
               style={{ top: `${pct}%`, transform: "translateY(-50%)" }}
               onClick={(e) => { e.stopPropagation(); onConnectorClick("out") }}
               title={`Branch ${i + 1}`}
@@ -471,11 +471,11 @@ export function AssetQuickAdd({ onDragStart }: AssetQuickAddProps) {
           {agentAssets.slice(0, 6).map((asset) => (
             <div
               key={asset.id}
-              className="flex cursor-grab items-center gap-2 rounded-md border border-violet-500/30 bg-violet-500/5 p-2 hover:border-violet-500/60 transition-colors"
+              className="flex cursor-grab items-center gap-2 rounded-md border border-[#0076A8]/30 bg-[#0076A8]/5 p-2 hover:border-[#0076A8]/60 transition-colors"
               draggable
               onDragStart={(e) => onDragStart(e, asset.id, "agent")}
             >
-              <Bot className="h-3.5 w-3.5 shrink-0 text-violet-400" />
+              <Bot className="h-3.5 w-3.5 shrink-0 text-[#0076A8]" />
               <span className="truncate text-xs text-foreground">{asset.name}</span>
             </div>
           ))}
@@ -487,11 +487,11 @@ export function AssetQuickAdd({ onDragStart }: AssetQuickAddProps) {
           {toolAssets.slice(0, 6).map((asset) => (
             <div
               key={asset.id}
-              className="flex cursor-grab items-center gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/5 p-2 hover:border-emerald-500/60 transition-colors"
+              className="flex cursor-grab items-center gap-2 rounded-md border border-[#86BC25]/30 bg-[#86BC25]/5 p-2 hover:border-[#86BC25]/60 transition-colors"
               draggable
               onDragStart={(e) => onDragStart(e, asset.id, "tool")}
             >
-              <Wrench className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+              <Wrench className="h-3.5 w-3.5 shrink-0 text-[#86BC25]" />
               <span className="truncate text-xs text-foreground">{asset.name}</span>
             </div>
           ))}

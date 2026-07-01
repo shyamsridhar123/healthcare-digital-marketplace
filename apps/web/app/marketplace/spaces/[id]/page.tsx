@@ -104,7 +104,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
       <AppSidebar />
       <main className="app-shell-offset p-6">
         {toast && (
-          <div className="fixed right-6 top-6 z-50 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200 shadow-lg">
+          <div className="fixed right-6 top-6 z-50 rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-3 text-sm text-[var(--primary)] shadow-lg">
             Sandbox draft seeded from {space.snapshotVersion}. No source data or secrets were copied.
           </div>
         )}
@@ -116,18 +116,18 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
 
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-6">
-            <Card className="border-violet-500/30 bg-violet-500/5">
+            <Card className="border-border bg-secondary/40">
               <CardHeader>
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge className="bg-violet-500/20 text-violet-200 border-violet-500/30">IMDE Space</Badge>
+                      <Badge className="bg-secondary text-muted-foreground border-border">IMDE Space</Badge>
                       <Badge variant="outline" className="gap-1">
-                        <BadgeCheck className="h-3 w-3 text-emerald-400" />
+                        <BadgeCheck className="h-3 w-3 text-[var(--primary)]" />
                         {space.visibility} visible
                       </Badge>
                       <Badge variant="outline" className="gap-1">
-                        <Play className="h-3 w-3 text-emerald-400" />
+                        <Play className="h-3 w-3 text-[var(--primary)]" />
                         {statusCopy}
                       </Badge>
                     </div>
@@ -147,7 +147,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <MessageSquare className="h-5 w-5 text-violet-400" />
+                  <MessageSquare className="h-5 w-5 text-muted-foreground" />
                   Try the Space
                 </CardTitle>
                 <CardDescription>
@@ -155,7 +155,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-200">
+                <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-3 text-xs text-[var(--warning)]">
                   Engagement-confidential warning: do not paste client names, engagement IDs, source documents, or credentials. This demo stores no raw visitor transcript.
                 </div>
 
@@ -168,7 +168,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                       <div
                         className={`max-w-[78%] rounded-lg px-3 py-2 text-sm ${
                           message.role === "visitor"
-                            ? "bg-violet-600 text-white"
+                            ? "bg-[var(--primary)] text-white"
                             : "border border-border bg-card text-muted-foreground"
                         }`}
                       >
@@ -193,7 +193,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                         </Button>
                       ))}
                     </div>
-                    <Button onClick={sendMessage} className="gap-2 bg-violet-600 hover:bg-violet-700">
+                    <Button onClick={sendMessage} className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90">
                       <Sparkles className="h-4 w-4" />
                       Run Space
                     </Button>
@@ -207,7 +207,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <GitFork className="h-4 w-4 text-emerald-400" />
+                  <GitFork className="h-4 w-4 text-[var(--primary)]" />
                   Use this agent
                 </CardTitle>
                 <CardDescription>Seed your own sandbox from the sanitized snapshot.</CardDescription>
@@ -258,7 +258,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Zap className="h-4 w-4 text-amber-400" />
+                  <Zap className="h-4 w-4 text-[var(--warning)]" />
                   Daily budget
                 </CardTitle>
                 <CardDescription>Demo token proxy from the Spaces plan.</CardDescription>
@@ -276,14 +276,14 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Shield className="h-4 w-4 text-emerald-400" />
+                  <Shield className="h-4 w-4 text-[var(--primary)]" />
                   Guardrails
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 {space.guardrails.map((guardrail) => (
                   <div key={guardrail} className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-[var(--primary)]" />
                     {guardrail}
                   </div>
                 ))}
@@ -293,7 +293,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Database className="h-4 w-4 text-blue-400" />
+                  <Database className="h-4 w-4 text-muted-foreground" />
                   Data references
                 </CardTitle>
               </CardHeader>

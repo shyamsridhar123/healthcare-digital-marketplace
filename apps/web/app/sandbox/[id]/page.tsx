@@ -18,13 +18,13 @@ import { imdeDemoScenario } from "@/lib/imde-demo-data";
 import type { SandboxWorkspace, SandboxLifecycleEvent, SandboxStatus } from "@/lib/types";
 
 const STATUS_COLORS: Record<SandboxStatus, string> = {
-  requested: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  approved: "bg-sky-500/20 text-sky-400 border-sky-500/30",
-  provisioning: "bg-violet-500/20 text-violet-400 border-violet-500/30",
-  ready: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  suspended: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  expired: "bg-red-500/20 text-red-400 border-red-500/30",
-  retired: "bg-slate-500/20 text-slate-400 border-slate-500/30",
+  requested: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
+  approved: "bg-secondary text-muted-foreground border-border",
+  provisioning: "bg-secondary text-muted-foreground border-border",
+  ready: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+  suspended: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
+  expired: "bg-destructive/15 text-destructive border-destructive/30",
+  retired: "bg-secondary text-muted-foreground border-border",
   failed: "bg-destructive/20 text-destructive border-destructive/30",
 };
 
@@ -127,7 +127,7 @@ export default function SandboxDetailPage() {
               <p className="mt-1 text-sm text-muted-foreground">{sandbox.description}</p>
             )}
             {isDemoSandbox && (
-              <p className="mt-2 text-xs font-medium text-emerald-400">
+              <p className="mt-2 text-xs font-medium text-[var(--primary)]">
                 Executive demo sandbox · synthetic/de-identified data · base model {sandbox.baseModelId}
               </p>
             )}
@@ -166,7 +166,7 @@ export default function SandboxDetailPage() {
               <InfoRow
                 label="Expires"
                 value={
-                  <span className={daysLeft <= 3 ? "text-red-400" : ""}>
+                  <span className={daysLeft <= 3 ? "text-destructive" : ""}>
                     {new Date(sandbox.expiresAt).toLocaleDateString()} ({daysLeft}d left)
                   </span>
                 }
@@ -193,7 +193,7 @@ export default function SandboxDetailPage() {
             ) : (
               <div className="space-y-3">
                 {sandbox.demoDataStatement && (
-                  <p className="text-xs text-emerald-400">{sandbox.demoDataStatement}</p>
+                  <p className="text-xs text-[var(--primary)]">{sandbox.demoDataStatement}</p>
                 )}
                 <div className="flex flex-wrap gap-2">
                 {sandbox.dataPackages.map((pkg) => (
@@ -236,7 +236,7 @@ export default function SandboxDetailPage() {
                 {events.map((evt) => (
                   <li key={evt.id} className="flex items-start gap-3">
                     <span
-                      className={`mt-1 h-2 w-2 shrink-0 rounded-full ${evt.outcome === "success" ? "bg-emerald-400" : "bg-destructive"}`}
+                      className={`mt-1 h-2 w-2 shrink-0 rounded-full ${evt.outcome === "success" ? "bg-[var(--primary)]" : "bg-destructive"}`}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-foreground">{evt.action}</p>

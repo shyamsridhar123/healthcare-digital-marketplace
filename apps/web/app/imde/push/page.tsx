@@ -148,8 +148,8 @@ export default function IMDEPushPage() {
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/20">
-              <Upload className="h-5 w-5 text-violet-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+              <Upload className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Push to Marketplace</h1>
@@ -157,8 +157,8 @@ export default function IMDEPushPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary/30 px-3 py-2">
-            <Terminal className="h-4 w-4 text-amber-400" />
-            <code className="text-xs font-mono text-amber-300">imde push --run {formData.sourceRun} --to marketplace</code>
+            <Terminal className="h-4 w-4 text-[var(--warning)]" />
+            <code className="text-xs font-mono text-[var(--warning)]">imde push --run {formData.sourceRun} --to marketplace</code>
             <Button variant="ghost" size="icon" className="h-6 w-6 ml-1">
               <Copy className="h-3.5 w-3.5 text-muted-foreground" />
             </Button>
@@ -177,18 +177,18 @@ export default function IMDEPushPage() {
                       <button
                         className={cn(
                           "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all w-full",
-                          s.status === "completed" ? "text-emerald-400" :
-                          s.status === "active" ? "bg-violet-500/10 text-violet-300" :
+                          s.status === "completed" ? "text-[var(--primary)]" :
+                          s.status === "active" ? "bg-[var(--primary)]/10 text-[var(--primary)]" :
                           "text-muted-foreground"
                         )}
                         onClick={() => s.status !== "pending" && setStep(s.id)}
                       >
                         {s.status === "completed" ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                          <CheckCircle2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
                         ) : (
                           <div className={cn(
                             "h-5 w-5 rounded-full border-2 flex items-center justify-center text-[10px] font-bold shrink-0",
-                            s.status === "active" ? "border-violet-400 text-violet-400" : "border-muted-foreground/30 text-muted-foreground/30"
+                            s.status === "active" ? "border-[var(--primary)] text-[var(--primary)]" : "border-muted-foreground/30 text-muted-foreground/30"
                           )}>
                             {s.id}
                           </div>
@@ -209,7 +209,7 @@ export default function IMDEPushPage() {
               <Card className="border-border">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <FlaskConical className="h-4 w-4 text-violet-400" />
+                    <FlaskConical className="h-4 w-4 text-muted-foreground" />
                     Select Experiment Run
                   </CardTitle>
                   <CardDescription>Choose which run to package as a model artifact</CardDescription>
@@ -225,14 +225,14 @@ export default function IMDEPushPage() {
                       key={run.id}
                       onClick={() => setFormData((f) => ({ ...f, sourceRun: run.id }))}
                       className={cn(
-                        "w-full rounded-lg border p-4 text-left transition-all hover:border-violet-500/50",
-                        formData.sourceRun === run.id ? "border-violet-500/60 bg-violet-500/10" : "border-border"
+                        "w-full rounded-lg border p-4 text-left transition-all hover:border-[var(--primary)]/30",
+                        formData.sourceRun === run.id ? "border-[var(--primary)]/30 bg-[var(--primary)]/10" : "border-border"
                       )}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-mono text-sm font-medium">{run.name}</span>
-                        {run.highlighted && <Badge className="bg-amber-500/20 text-amber-400 text-xs">Best F1</Badge>}
-                        {formData.sourceRun === run.id && <CheckCircle2 className="h-4 w-4 text-violet-400" />}
+                        {run.highlighted && <Badge className="bg-[var(--warning)]/20 text-[var(--warning)] text-xs">Best F1</Badge>}
+                        {formData.sourceRun === run.id && <CheckCircle2 className="h-4 w-4 text-[var(--primary)]" />}
                       </div>
                       <span className="text-xs text-muted-foreground">{run.model}</span>
                       <div className="mt-2 flex gap-4 text-xs">
@@ -243,7 +243,7 @@ export default function IMDEPushPage() {
                     </button>
                   ))}
                   <Button
-                    className="w-full gap-2 bg-violet-600 hover:bg-violet-700 text-white mt-2"
+                    className="w-full gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white mt-2"
                     disabled={!formData.sourceRun}
                     onClick={() => setStep(2)}
                   >
@@ -257,7 +257,7 @@ export default function IMDEPushPage() {
               <Card className="border-border">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-violet-400" />
+                    <Brain className="h-4 w-4 text-muted-foreground" />
                     Model Information
                   </CardTitle>
                   <CardDescription>Marketplace listing details</CardDescription>
@@ -333,7 +333,7 @@ export default function IMDEPushPage() {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
-                    <Button className="flex-1 gap-2 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setStep(3)}>
+                    <Button className="flex-1 gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" onClick={() => setStep(3)}>
                       Continue <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -345,7 +345,7 @@ export default function IMDEPushPage() {
               <Card className="border-border">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4 text-violet-400" />
+                    <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     Automated Evaluation
                   </CardTitle>
                   <CardDescription>Standard eval suite run automatically before publishing</CardDescription>
@@ -363,22 +363,22 @@ export default function IMDEPushPage() {
                   ].map((item) => (
                     <div key={item.check} className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/20 p-3">
                       {item.status === "pass" ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-[var(--primary)] shrink-0" />
                       ) : (
-                        <Shield className="h-4 w-4 text-amber-400 shrink-0" />
+                        <Shield className="h-4 w-4 text-[var(--warning)] shrink-0" />
                       )}
                       <div className="flex-1">
                         <div className="text-xs font-medium">{item.check}</div>
                         <div className="text-xs text-muted-foreground">{item.result}</div>
                       </div>
-                      <Badge className={item.status === "pass" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}>
+                      <Badge className={item.status === "pass" ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "bg-[var(--warning)]/20 text-[var(--warning)]"}>
                         {item.status === "pass" ? "PASS" : "WARN"}
                       </Badge>
                     </div>
                   ))}
                   <div className="flex gap-2 mt-4">
                     <Button variant="outline" className="flex-1" onClick={() => setStep(2)}>Back</Button>
-                    <Button className="flex-1 gap-2 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setStep(4)}>
+                    <Button className="flex-1 gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" onClick={() => setStep(4)}>
                       All checks OK — Continue <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -390,7 +390,7 @@ export default function IMDEPushPage() {
               <Card className="border-border">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-violet-400" />
+                    <Shield className="h-4 w-4 text-muted-foreground" />
                     Governance Sign-off
                   </CardTitle>
                   <CardDescription>Required approvals before marketplace publication</CardDescription>
@@ -405,7 +405,7 @@ export default function IMDEPushPage() {
                     <div key={item.role} className="flex items-center gap-3 rounded-lg border border-border p-3">
                       <div className={cn(
                         "h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
-                        item.status === "approved" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"
+                        item.status === "approved" ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "bg-[var(--warning)]/20 text-[var(--warning)]"
                       )}>
                         {item.person[0]}
                       </div>
@@ -413,14 +413,14 @@ export default function IMDEPushPage() {
                         <div className="text-xs font-medium">{item.role}</div>
                         <div className="text-xs text-muted-foreground">{item.person} · {item.note}</div>
                       </div>
-                      <Badge className={item.status === "approved" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"}>
+                      <Badge className={item.status === "approved" ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "bg-[var(--warning)]/20 text-[var(--warning)]"}>
                         {item.status}
                       </Badge>
                     </div>
                   ))}
                   <div className="flex gap-2 mt-4">
                     <Button variant="outline" className="flex-1" onClick={() => setStep(3)}>Back</Button>
-                    <Button className="flex-1 gap-2 bg-amber-600 hover:bg-amber-700 text-white" onClick={() => setStep(5)}>
+                    <Button className="flex-1 gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" onClick={() => setStep(5)}>
                       3 of 4 approved — Continue <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
@@ -429,10 +429,10 @@ export default function IMDEPushPage() {
             )}
 
             {step === 5 && (
-              <Card className={cn("border-border", published && "border-emerald-500/40")}>
+              <Card className={cn("border-border", published && "border-[var(--primary)]/40")}>
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2">
-                    <Rocket className={cn("h-4 w-4", published ? "text-emerald-400" : "text-violet-400")} />
+                    <Rocket className={cn("h-4 w-4", published ? "text-[var(--primary)]" : "text-muted-foreground")} />
                     Publish to Model Marketplace
                   </CardTitle>
                   <CardDescription>
@@ -442,10 +442,10 @@ export default function IMDEPushPage() {
                 <CardContent>
                   {published ? (
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
-                        <CheckCircle2 className="h-8 w-8 text-emerald-400 shrink-0" />
+                      <div className="flex items-center gap-3 rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/10 p-4">
+                        <CheckCircle2 className="h-8 w-8 text-[var(--primary)] shrink-0" />
                         <div>
-                          <div className="font-semibold text-emerald-300">Model published successfully!</div>
+                          <div className="font-semibold text-[var(--primary)]">Model published successfully!</div>
                           <div className="text-xs text-muted-foreground mt-0.5">
                             {formData.modelName || "LedgerSentinel"} {formData.version || "v2.1.0"} is now live on the Model Marketplace
                           </div>
@@ -468,11 +468,11 @@ export default function IMDEPushPage() {
                     <div className="space-y-4">
                       <div className="rounded-lg border border-border bg-secondary/20 p-4 font-mono text-xs space-y-1.5">
                         <div className="text-muted-foreground"># Publishing model artifact...</div>
-                        <div className="text-emerald-400">✓ Packaging model weights + config ({formData.sourceRun || "run-001"})</div>
-                        <div className="text-emerald-400">✓ Generating model card (README + eval report)</div>
-                        <div className="text-emerald-400">✓ Pushing to ACR: aimktacrp7a65r22.azurecr.io/models/</div>
-                        <div className="text-emerald-400">✓ Registering in Model Marketplace (Azure ML backend)</div>
-                        <div className="text-amber-400">⏳ Registering governance metadata...</div>
+                        <div className="text-[var(--primary)]">✓ Packaging model weights + config ({formData.sourceRun || "run-001"})</div>
+                        <div className="text-[var(--primary)]">✓ Generating model card (README + eval report)</div>
+                        <div className="text-[var(--primary)]">✓ Pushing to ACR: aimktacrp7a65r22.azurecr.io/models/</div>
+                        <div className="text-[var(--primary)]">✓ Registering in Model Marketplace (Azure ML backend)</div>
+                        <div className="text-[var(--warning)]">⏳ Registering governance metadata...</div>
                       </div>
                       {publishError && (
                         <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs text-destructive">
@@ -482,7 +482,7 @@ export default function IMDEPushPage() {
                       <div className="flex gap-2">
                         <Button variant="outline" className="flex-1" onClick={() => setStep(4)}>Back</Button>
                         <Button
-                          className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                          className="flex-1 gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
                           disabled={publishing}
                           onClick={handlePublish}
                         >
@@ -505,7 +505,7 @@ export default function IMDEPushPage() {
             <Card className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Package className="h-4 w-4 text-violet-400" />
+                  <Package className="h-4 w-4 text-muted-foreground" />
                   Recent Publishes
                 </CardTitle>
               </CardHeader>
@@ -519,9 +519,9 @@ export default function IMDEPushPage() {
                       </div>
                       <Badge className={cn(
                         "text-[10px]",
-                        p.status === "published" ? "bg-emerald-500/20 text-emerald-400" :
-                        p.status === "under-review" ? "bg-amber-500/20 text-amber-400" :
-                        "bg-red-500/20 text-red-400"
+                        p.status === "published" ? "bg-[var(--primary)]/20 text-[var(--primary)]" :
+                        p.status === "under-review" ? "bg-[var(--warning)]/20 text-[var(--warning)]" :
+                        "bg-destructive/20 text-destructive"
                       )}>
                         {p.status}
                       </Badge>
@@ -542,23 +542,23 @@ export default function IMDEPushPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-violet-500/30 bg-violet-500/5">
+            <Card className="border-border bg-secondary">
               <CardContent className="p-4 space-y-2">
                 <div className="flex items-center gap-2 mb-2">
-                  <Terminal className="h-4 w-4 text-violet-400" />
-                  <span className="text-xs font-semibold text-violet-400">CLI Quick Push</span>
+                  <Terminal className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs font-semibold text-muted-foreground">CLI Quick Push</span>
                 </div>
                 <p className="text-xs text-muted-foreground mb-3">
                   From within your sandbox terminal, publish directly with the IMDE CLI:
                 </p>
-                <div className="rounded bg-background/50 border border-border p-3 font-mono text-[10px] space-y-1 text-emerald-400/90">
+                <div className="rounded bg-background/50 border border-border p-3 font-mono text-[10px] space-y-1 text-[var(--primary)]/90">
                   <div># Auto-select best run and push</div>
-                  <div className="text-violet-300">imde push --auto --to marketplace</div>
+                  <div className="text-muted-foreground">imde push --auto --to marketplace</div>
                   <div className="mt-2"># Push specific run</div>
-                  <div className="text-violet-300">imde push run-001 \</div>
-                  <div className="text-violet-300 pl-4">--name "LedgerSentinel" \</div>
-                  <div className="text-violet-300 pl-4">--version v2.1.0 \</div>
-                  <div className="text-violet-300 pl-4">--to marketplace</div>
+                  <div className="text-muted-foreground">imde push run-001 \</div>
+                  <div className="text-muted-foreground pl-4">--name "LedgerSentinel" \</div>
+                  <div className="text-muted-foreground pl-4">--version v2.1.0 \</div>
+                  <div className="text-muted-foreground pl-4">--to marketplace</div>
                 </div>
               </CardContent>
             </Card>

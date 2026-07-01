@@ -80,7 +80,7 @@ export default function OnboardingPage() {
           <div>
             <div className="mb-2 flex items-center gap-2">
               <Badge variant="outline">Onboarding Agent</Badge>
-              <Badge className="bg-emerald-500/15 text-emerald-400">VS Code Skill Ready</Badge>
+              <Badge className="bg-[var(--primary)]/15 text-[var(--primary)]">VS Code Skill Ready</Badge>
             </div>
             <h1 className="text-2xl font-semibold text-foreground">Onboard a Domain Agent</h1>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
             { icon: GitBranch, title: "GitHub", text: "Push code and post CI evidence into the same onboarding API." },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="rounded-lg border border-border bg-card p-4">
-              <Icon className="mb-3 h-5 w-5 text-emerald-400" />
+              <Icon className="mb-3 h-5 w-5 text-[var(--primary)]" />
               <h2 className="text-sm font-medium text-foreground">{title}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{text}</p>
             </div>
@@ -125,7 +125,7 @@ export default function OnboardingPage() {
               <Field label="Commit SHA" value={commitSha} onChange={setCommitSha} />
               <label className="md:col-span-2">
                 <span className="mb-1 block text-xs font-medium text-muted-foreground">Description</span>
-                <textarea value={description} onChange={(event) => setDescription(event.target.value)} className="min-h-24 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-emerald-500/60" />
+                <textarea value={description} onChange={(event) => setDescription(event.target.value)} className="min-h-24 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-[var(--primary)]/30" />
               </label>
             </div>
 
@@ -139,9 +139,9 @@ export default function OnboardingPage() {
               </Button>
             </div>
 
-            {error && <p className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">{error}</p>}
+            {error && <p className="mt-4 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
             {result && (
-              <div className="mt-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">
+              <div className="mt-4 rounded-md border border-[var(--primary)]/30 bg-[var(--primary)]/10 p-3 text-sm text-[var(--primary)]">
                 Submission {result.submissionId} is {result.status} at {result.currentStage}.
               </div>
             )}
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
           <aside className="space-y-4">
             <div className="rounded-lg border border-border bg-card p-5">
               <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
-                <Code2 className="h-4 w-4 text-emerald-400" /> Preview
+                <Code2 className="h-4 w-4 text-[var(--primary)]" /> Preview
               </div>
               <pre className="max-h-[34rem] overflow-auto rounded-md bg-background p-3 text-xs text-muted-foreground">{JSON.stringify(manifest, null, 2)}</pre>
             </div>
@@ -172,7 +172,7 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
   return (
     <label>
       <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
-      <input value={value} onChange={(event) => onChange(event.target.value)} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-emerald-500/60" />
+      <input value={value} onChange={(event) => onChange(event.target.value)} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none focus:border-[var(--primary)]/30" />
     </label>
   )
 }

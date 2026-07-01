@@ -32,15 +32,15 @@ import {
 import { Button } from "@/components/ui/button"
 
 const statusColors: Record<string, string> = {
-  production: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  "demo-ready": "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
-  beta: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  review: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  production: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+  "demo-ready": "bg-secondary text-muted-foreground border-border",
+  beta: "bg-[var(--warning)]/20 text-[var(--warning)] border-[var(--warning)]/30",
+  review: "bg-secondary text-muted-foreground border-border",
 }
 
 const typeColors: Record<string, string> = {
-  internal: "bg-cyan-500/20 text-cyan-400",
-  partner: "bg-purple-500/20 text-purple-400",
+  internal: "bg-secondary text-muted-foreground",
+  partner: "bg-secondary text-muted-foreground",
 }
 
 type Tab = "overview" | "model-card" | "api" | "changelog"
@@ -199,7 +199,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       {[1, 2, 3, 4, 5].map((i) => (
                         <Star
                           key={i}
-                          className={cn("h-3.5 w-3.5", i <= Math.floor(model.rating) ? "fill-amber-400 text-amber-400" : "fill-muted/30 text-muted/30")}
+                          className={cn("h-3.5 w-3.5", i <= Math.floor(model.rating) ? "fill-[var(--warning)] text-[var(--warning)]" : "fill-muted/30 text-muted/30")}
                         />
                       ))}
                       <span className="ml-1">{model.rating}</span>
@@ -240,13 +240,13 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {model.experienceType === "published-model-experience" && model.preview && (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-6">
+              <div className="rounded-xl border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-6">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">{model.preview.title}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">{model.preview.description}</p>
                   </div>
-                  <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                  <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--warning)]">
                     <FlaskConical className="h-3.5 w-3.5" />
                     Synthetic data only
                   </span>
@@ -275,8 +275,8 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                               className={cn(
                                 "flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
                                 isSelected
-                                  ? "border-emerald-500/50 bg-emerald-500/10 text-foreground"
-                                  : "border-border bg-background/60 text-muted-foreground hover:border-emerald-500/30 hover:text-foreground",
+                                  ? "border-[var(--primary)]/50 bg-[var(--primary)]/10 text-foreground"
+                                  : "border-border bg-background/60 text-muted-foreground hover:border-[var(--primary)]/30 hover:text-foreground",
                                 running && "cursor-not-allowed opacity-60"
                               )}
                             >
@@ -286,7 +286,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                                 className={cn(
                                   "h-3 w-3 rounded-full border",
                                   isSelected
-                                    ? "border-emerald-400 bg-emerald-400"
+                                    ? "border-[var(--primary)] bg-[var(--primary)]"
                                     : "border-muted-foreground/40"
                                 )}
                               />
@@ -311,7 +311,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                         type="button"
                         onClick={handleRunPreview}
                         disabled={running || !selectedScenario}
-                        className="gap-2 self-start bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60 sm:self-auto"
+                        className="gap-2 self-start bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 disabled:opacity-60 sm:self-auto"
                       >
                         {running ? (
                           <>
@@ -327,9 +327,9 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       </Button>
                     </div>
 
-                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
+                    <div className="rounded-lg border border-[var(--primary)]/20 bg-[var(--primary)]/10 p-4">
                       <div className="mb-3 flex items-center justify-between">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
                           Preview output
                         </p>
                         {result && (
@@ -343,9 +343,9 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                             <span
                               className={cn(
                                 "text-base font-semibold",
-                                result.output.prediction === "High" && "text-red-300",
-                                result.output.prediction === "Medium" && "text-amber-300",
-                                result.output.prediction === "Low" && "text-emerald-300"
+                                result.output.prediction === "High" && "text-destructive",
+                                result.output.prediction === "Medium" && "text-[var(--warning)]",
+                                result.output.prediction === "Low" && "text-[var(--primary)]"
                               )}
                             >
                               {result.output.prediction}
@@ -379,8 +379,8 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       <p className="mb-2 text-xs font-semibold text-muted-foreground">Synthetic input</p>
                       <p className="text-sm text-foreground">{model.preview.sampleInput}</p>
                     </div>
-                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
-                      <p className="mb-2 text-xs font-semibold text-emerald-300">Preview output</p>
+                    <div className="rounded-lg border border-[var(--primary)]/20 bg-[var(--primary)]/10 p-3">
+                      <p className="mb-2 text-xs font-semibold text-[var(--primary)]">Preview output</p>
                       <p className="text-sm text-foreground">{model.preview.sampleOutput}</p>
                     </div>
                   </div>
@@ -423,7 +423,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                         <ul className="space-y-2">
                           {model.useCases.map((uc) => (
                             <li key={uc} className="flex items-start gap-2 text-sm text-muted-foreground">
-                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
                               {uc}
                             </li>
                           ))}
@@ -480,7 +480,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       <div className="grid grid-cols-3 gap-4">
                         <div className="rounded-xl border border-border bg-secondary/30 p-4 text-center">
                           <Zap className="mx-auto mb-1 h-5 w-5 text-[var(--accent)]" />
-                          <p className="text-2xl font-bold text-emerald-400">{model.metrics.accuracy}%</p>
+                          <p className="text-2xl font-bold text-[var(--primary)]">{model.metrics.accuracy}%</p>
                           <p className="text-xs text-muted-foreground">Accuracy</p>
                         </div>
                         <div className="rounded-xl border border-border bg-secondary/30 p-4 text-center">
@@ -509,7 +509,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                               <Shield className="h-4 w-4 text-[var(--accent)]" />
                               <span className="text-sm font-medium text-foreground">{badge}</span>
                             </div>
-                            <span className="flex items-center gap-1 text-xs text-emerald-400">
+                            <span className="flex items-center gap-1 text-xs text-[var(--primary)]">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               {model.experienceType === "published-model-experience" ? "Recorded" : "Certified"}
                             </span>
@@ -531,9 +531,9 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
 
                     {model.status !== "production" && (
-                      <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                        <p className="text-sm text-amber-300">
+                      <div className="flex items-start gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4">
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--warning)]" />
+                        <p className="text-sm text-[var(--warning)]">
                           This model is in <strong>{model.status}</strong> status and has not completed full production certification.
                           Use in non-production environments only.
                         </p>
@@ -555,7 +555,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                             onClick={() => handleCopy(model.endpoint!)}
                             className="text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                            {copied ? <Check className="h-4 w-4 text-[var(--primary)]" /> : <Copy className="h-4 w-4" />}
                           </button>
                         </div>
                       </div>
@@ -615,22 +615,22 @@ console.log(response.result);`}</pre>
                     <div className="rounded-lg border border-border bg-card p-4">
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-foreground">{model.version}</span>
-                        <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-400">Latest</span>
+                        <span className="rounded-full bg-[var(--primary)]/20 px-2 py-0.5 text-xs font-medium text-[var(--primary)]">Latest</span>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {new Date(model.lastUpdated).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                       </p>
                       <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
                         <li className="flex items-start gap-2">
-                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                           Performance improvements and latency optimization
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                           {model.experienceType === "published-model-experience" ? "Published synthetic-data lineage evidence" : "Updated compliance certifications"}
                         </li>
                         <li className="flex items-start gap-2">
-                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                           Bug fixes and stability improvements
                         </li>
                       </ul>
@@ -666,7 +666,7 @@ console.log(response.result);`}</pre>
                       onClick={() => handleCopy(`az ai model install ${model.id}`)}
                       className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copied ? <Check className="h-3.5 w-3.5 text-[var(--primary)]" /> : <Copy className="h-3.5 w-3.5" />}
                     </button>
                   </div>
                 </div>
@@ -713,11 +713,11 @@ console.log(response.result);`}</pre>
                 <div>
                   <div className="mb-1 flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Accuracy</span>
-                    <span className="font-medium text-emerald-400">{model.metrics.accuracy}%</span>
+                    <span className="font-medium text-[var(--primary)]">{model.metrics.accuracy}%</span>
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
                     <div
-                      className="h-full rounded-full bg-emerald-400"
+                      className="h-full rounded-full bg-[var(--primary)]"
                       style={{ width: `${model.metrics.accuracy}%` }}
                     />
                   </div>

@@ -186,8 +186,8 @@ export default function RegisterModelPage() {
         <AppSidebar />
         <main className="app-shell-offset p-6">
           <div className="mx-auto max-w-lg pt-16 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20">
-              <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--primary)]/20">
+              <CheckCircle2 className="h-10 w-10 text-[var(--primary)]" />
             </div>
             <h2 className="mb-2 text-2xl font-semibold text-foreground">
               {submitResult.amlConfigured === false ? "Request Captured" : "Model Registered"}
@@ -195,9 +195,9 @@ export default function RegisterModelPage() {
             <p className="mb-6 text-sm text-muted-foreground">{submitResult.message}</p>
 
             {!submitResult.amlConfigured && (
-              <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-left text-sm">
-                <p className="mb-2 font-medium text-amber-400">To enable live registration:</p>
-                <ol className="list-decimal space-y-1 pl-4 text-amber-300/80">
+              <div className="mb-6 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4 text-left text-sm">
+                <p className="mb-2 font-medium text-[var(--warning)]">To enable live registration:</p>
+                <ol className="list-decimal space-y-1 pl-4 text-[var(--warning)]/80">
                   <li>Create an Azure Machine Learning workspace in your subscription</li>
                   <li>
                     Set <code className="rounded bg-card px-1">AZURE_ML_WORKSPACE</code>,{" "}
@@ -290,7 +290,7 @@ export default function RegisterModelPage() {
                   className={cn(
                     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-colors",
                     step > s.id
-                      ? "border-transparent bg-emerald-500/80 text-white"
+                      ? "border-transparent bg-[var(--primary)]/80 text-white"
                       : step === s.id
                       ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
                       : "border-border bg-secondary/50 text-muted-foreground"
@@ -469,19 +469,19 @@ export default function RegisterModelPage() {
                 <p className="mb-2 font-medium text-foreground">Supported artifact sources</p>
                 <ul className="space-y-1 text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                     <span><strong>Azure ML Datastore:</strong> <code className="text-xs">azureml://subscriptions/…/datastores/…/paths/…</code></span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                     <span><strong>Azure Blob Storage:</strong> <code className="text-xs">https://&lt;storage&gt;.blob.core.windows.net/…</code></span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                     <span><strong>HuggingFace Hub:</strong> <code className="text-xs">huggingface://models/&lt;org&gt;/&lt;model&gt;</code></span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                     <span><strong>MLflow:</strong> <code className="text-xs">mlflow-model://…</code></span>
                   </li>
                 </ul>

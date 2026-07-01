@@ -29,7 +29,7 @@ export function Header() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">Nebula-X</span>
-              <span className="rounded-md bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-400">
+              <span className="rounded-md bg-secondary px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
                 Playground
               </span>
             </div>
@@ -58,7 +58,7 @@ export function Header() {
             >
               {item.label}
               {(pathname === item.href || (item.href === "/" && pathname === "/")) && (
-                <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-blue-500 rounded-t" />
+                <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[var(--primary)] rounded-t" />
               )}
             </Link>
           ))}
@@ -82,8 +82,8 @@ export function Header() {
           
           <div className="ml-2 h-4 w-px bg-border" />
           
-          <button className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-medium text-white">
-            HC
+          <button className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--primary)] text-xs font-semibold text-[var(--primary-foreground)]">
+            NX
           </button>
         </div>
       </div>

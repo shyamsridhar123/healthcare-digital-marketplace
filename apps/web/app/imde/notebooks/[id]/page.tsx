@@ -169,7 +169,7 @@ export default function NotebookDetailPage() {
                   disabled={!hasEditor}
                   title={hasEditor ? undefined : "Coming soon"}
                   onClick={hasEditor ? () => setEditorOpen((prev) => !prev) : undefined}
-                  className="gap-2 bg-violet-600 hover:bg-violet-700 text-white disabled:opacity-60"
+                  className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white disabled:opacity-60"
                 >
                   {editorOpen && hasEditor ? (
                     <>
@@ -215,7 +215,7 @@ export default function NotebookDetailPage() {
               <Badge
                 variant="outline"
                 className={
-                  notebook.status === "active" ? "bg-green-500/10 text-green-700" : ""
+                  notebook.status === "active" ? "bg-[var(--primary)]/10 text-[var(--primary)]" : ""
                 }
               >
                 {notebook.status}
@@ -238,7 +238,7 @@ export default function NotebookDetailPage() {
                         Outputs are pre-baked so the demo always renders · live kernel execution via Pyodide is optional
                       </CardDescription>
                     </div>
-                    <Badge variant="outline" className="bg-violet-500/10 text-violet-700 dark:text-violet-300">
+                    <Badge variant="outline" className="bg-secondary text-muted-foreground">
                       live
                     </Badge>
                   </CardHeader>
@@ -263,7 +263,7 @@ export default function NotebookDetailPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-6 font-mono text-sm whitespace-pre-wrap break-words">
+                    <div className="bg-secondary rounded-lg p-6 font-mono text-sm whitespace-pre-wrap break-words">
                       {notebook.content}
                     </div>
                   </CardContent>

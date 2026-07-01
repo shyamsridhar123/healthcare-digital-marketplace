@@ -128,29 +128,29 @@ const toolPresets = [
   {
     category: "ML Frameworks",
     icon: Zap,
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
+    color: "text-[var(--warning)]",
+    bg: "bg-[var(--warning)]/10",
     tools: ["PyTorch 2.2", "TensorFlow 2.15", "scikit-learn", "XGBoost", "LightGBM"],
   },
   {
     category: "Data & ETL",
     icon: Database,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
+    color: "text-muted-foreground",
+    bg: "bg-secondary",
     tools: ["pandas", "Spark 3.5", "dbt", "Great Expectations", "Arrow"],
   },
   {
     category: "Dev Tools",
     icon: Code2,
-    color: "text-violet-400",
-    bg: "bg-violet-500/10",
+    color: "text-muted-foreground",
+    bg: "bg-secondary",
     tools: ["JupyterLab", "VS Code Server", "git", "Poetry", "Docker"],
   },
   {
     category: "Observability",
     icon: Layers,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10",
+    color: "text-[var(--primary)]",
+    bg: "bg-[var(--primary)]/10",
     tools: ["MLflow", "Weights & Biases", "Prometheus", "OpenTelemetry"],
   },
 ]
@@ -299,14 +299,14 @@ function amlComputeToSandbox(c: AmlComputeInstance, index: number): Sandbox {
 
 function StatusPill({ status }: { status: Sandbox["status"] }) {
   const map: Record<string, string> = {
-    running: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-    idle: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    running: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+    idle: "bg-[var(--warning)]/20 text-[var(--warning)] border-[var(--warning)]/30",
     stopped: "bg-secondary text-muted-foreground border-border",
-    building: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    starting: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-    stopping: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-    requested: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-    provisioning: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    building: "bg-secondary text-muted-foreground border-border",
+    starting: "bg-secondary text-muted-foreground border-border",
+    stopping: "bg-[var(--warning)]/20 text-[var(--warning)] border-[var(--warning)]/30",
+    requested: "bg-[var(--warning)]/20 text-[var(--warning)] border-[var(--warning)]/30",
+    provisioning: "bg-secondary text-muted-foreground border-border",
   }
   const labels: Record<string, string> = {
     running: "● Running",
@@ -526,29 +526,29 @@ export default function IMDEWorkspacePage() {
 
         {/* AML Workspace Banner */}
         {amlConfigured && amlWorkspace && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 px-4 py-2.5">
-            <CloudCog className="h-4 w-4 text-violet-400 shrink-0" />
-            <span className="text-xs text-violet-300 font-medium">Azure ML Project:</span>
-            <code className="text-xs text-violet-200 font-mono">{amlWorkspace}</code>
-            <span className="ml-auto flex items-center gap-1 text-[10px] text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2.5">
+            <CloudCog className="h-4 w-4 text-muted-foreground shrink-0" />
+            <span className="text-xs text-muted-foreground font-medium">Azure ML Project:</span>
+            <code className="text-xs text-muted-foreground font-mono">{amlWorkspace}</code>
+            <span className="ml-auto flex items-center gap-1 text-[10px] text-[var(--primary)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--primary)] animate-pulse" />
               Live
             </span>
           </div>
         )}
         {!amlConfigured && !isLoading && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-2.5">
-            <Info className="h-4 w-4 text-amber-400 shrink-0" />
-            <span className="text-xs text-amber-300">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-4 py-2.5">
+            <Info className="h-4 w-4 text-[var(--warning)] shrink-0" />
+            <span className="text-xs text-[var(--warning)]">
               Showing demo data — set{" "}
               <code className="font-mono">AZURE_ML_WORKSPACE=ai-project-q2w5uxlkh4c6o</code> to connect to Azure ML.
             </span>
           </div>
         )}
         {loadError && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-4 py-2.5">
-            <AlertCircle className="h-4 w-4 text-red-400 shrink-0" />
-            <span className="text-xs text-red-300 flex-1 truncate">{loadError}</span>
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-2.5">
+            <AlertCircle className="h-4 w-4 text-destructive shrink-0" />
+            <span className="text-xs text-destructive flex-1 truncate">{loadError}</span>
             <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={fetchCompute}>Retry</Button>
           </div>
         )}
@@ -556,8 +556,8 @@ export default function IMDEWorkspacePage() {
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/20">
-              <Code2 className="h-5 w-5 text-violet-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+              <Code2 className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">IMDE Workspace</h1>
@@ -568,7 +568,7 @@ export default function IMDEWorkspacePage() {
           </div>
           <div className="flex items-center gap-2">
             <Badge className={cn("border", running > 0
-              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+              ? "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30"
               : "bg-secondary text-muted-foreground border-border"
             )}>
               {running}/{total} Active
@@ -581,7 +581,7 @@ export default function IMDEWorkspacePage() {
               <Settings className="h-4 w-4" />
               Manage Compute
             </Button>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setProvisionOpen(true)}>
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" onClick={() => setProvisionOpen(true)}>
               <Plus className="h-4 w-4" />
               New Sandbox
             </Button>
@@ -591,10 +591,10 @@ export default function IMDEWorkspacePage() {
         {/* Stats Bar */}
         <div className="mb-6 grid grid-cols-4 gap-4">
           {[
-            { label: "Active Sandboxes", value: `${running}`, sub: `of ${total} total`, icon: Code2, color: "text-violet-400" },
-            { label: "GPU Instances", value: `${amlComputes.filter((c) => c.isGpu).length || sandboxes.filter((s) => s.gpu).length}`, sub: "GPU compute", icon: Zap, color: "text-amber-400" },
-            { label: "Compute Types", value: `${[...new Set(amlComputes.map((c) => c.computeType))].length || 2}`, sub: "in workspace", icon: Server, color: "text-blue-400" },
-            { label: "Team Engagements", value: "12", sub: "collaborators", icon: Users, color: "text-emerald-400" },
+            { label: "Active Sandboxes", value: `${running}`, sub: `of ${total} total`, icon: Code2, color: "text-muted-foreground" },
+            { label: "GPU Instances", value: `${amlComputes.filter((c) => c.isGpu).length || sandboxes.filter((s) => s.gpu).length}`, sub: "GPU compute", icon: Zap, color: "text-[var(--warning)]" },
+            { label: "Compute Types", value: `${[...new Set(amlComputes.map((c) => c.computeType))].length || 2}`, sub: "in workspace", icon: Server, color: "text-muted-foreground" },
+            { label: "Team Engagements", value: "12", sub: "collaborators", icon: Users, color: "text-[var(--primary)]" },
           ].map((stat) => (
             <Card key={stat.label} className="border-border">
               <CardContent className="p-4">
@@ -617,21 +617,21 @@ export default function IMDEWorkspacePage() {
                 {amlConfigured ? `Compute Instances · ${amlWorkspace}` : "Your Sandboxes"}
               </h2>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Shield className="h-3.5 w-3.5 text-emerald-400" />
+                <Shield className="h-3.5 w-3.5 text-[var(--primary)]" />
                 Enterprise network isolated · SOC2 compliant
               </div>
             </div>
 
             {isLoading && sandboxes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
-                <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                 <span className="text-sm">Loading compute instances from Azure ML…</span>
               </div>
             ) : (
               sandboxes.map((sb) => (
                 <Card
                   key={sb.id}
-                  className={cn("border-border transition-all hover:border-violet-500/40", sb.status === "stopped" && "opacity-60")}
+                  className={cn("border-border transition-all hover:border-[var(--primary)]/30", sb.status === "stopped" && "opacity-60")}
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
@@ -640,7 +640,7 @@ export default function IMDEWorkspacePage() {
                           <CardTitle className="text-sm font-semibold font-mono">{sb.name}</CardTitle>
                           <StatusPill status={sb.status} />
                           {(sb.status === "building" || sb.status === "starting" || sb.status === "stopping") && (
-                            <Loader2 className="h-3 w-3 animate-spin text-blue-400" />
+                            <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
                           )}
                         </div>
                         <CardDescription className="text-xs">{sb.description}</CardDescription>
@@ -653,7 +653,7 @@ export default function IMDEWorkspacePage() {
                         ) : sb.status === "running" ? (
                           <Button
                             variant="ghost" size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-red-400"
+                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
                             onClick={() => handleAction(sb, "stop")}
                             title="Stop compute"
                           >
@@ -662,7 +662,7 @@ export default function IMDEWorkspacePage() {
                         ) : (sb.status === "stopped" || sb.status === "idle") ? (
                           <Button
                             variant="ghost" size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-emerald-400"
+                            className="h-7 w-7 text-muted-foreground hover:text-[var(--primary)]"
                             onClick={() => handleAction(sb, "start")}
                             title="Start compute"
                           >
@@ -673,7 +673,7 @@ export default function IMDEWorkspacePage() {
                           <>
                             <Button
                               variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-amber-400"
+                              className="h-7 w-7 text-muted-foreground hover:text-[var(--warning)]"
                               title="Upgrade compute profile"
                               onClick={() => { setUpgradeSandbox(sb); setUpgradeOpen(true) }}
                             >
@@ -681,7 +681,7 @@ export default function IMDEWorkspacePage() {
                             </Button>
                             <Button
                               variant="ghost" size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-blue-400"
+                              className="h-7 w-7 text-muted-foreground hover:text-[var(--primary)]"
                               title="Extend sandbox expiry"
                               onClick={() => { setExtendSandbox(sb); setExtendOpen(true) }}
                             >
@@ -698,7 +698,7 @@ export default function IMDEWorkspacePage() {
                         )}
                         {sb.notebookUrl && (
                           <a href={sb.notebookUrl} target="_blank" rel="noreferrer">
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-blue-300" title="Open Notebook">
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-[var(--primary)]" title="Open Notebook">
                               <NotebookPen className="h-4 w-4" />
                             </Button>
                           </a>
@@ -710,7 +710,7 @@ export default function IMDEWorkspacePage() {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><Cpu className="h-3.5 w-3.5" />{sb.cpu} vCPU</span>
                       <span className="flex items-center gap-1"><MemoryStick className="h-3.5 w-3.5" />{sb.memoryGb} GB RAM</span>
-                      {sb.gpu && <span className="flex items-center gap-1 text-amber-400"><Zap className="h-3.5 w-3.5" />{sb.gpu}</span>}
+                      {sb.gpu && <span className="flex items-center gap-1 text-[var(--warning)]"><Zap className="h-3.5 w-3.5" />{sb.gpu}</span>}
                       <span className="flex items-center gap-1"><HardDrive className="h-3.5 w-3.5" />{sb.storageGb} GB</span>
                     </div>
                     {sb.status !== "stopped" && (
@@ -733,15 +733,15 @@ export default function IMDEWorkspacePage() {
                     )}
                     <div className="flex flex-wrap gap-1.5">
                       {sb.dataSources.map((ds) => (
-                        <span key={ds} className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] text-blue-400 border border-blue-500/20">
+                        <span key={ds} className="flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground border border-border">
                           <Database className="h-2.5 w-2.5" />{ds}
                         </span>
                       ))}
                     </div>
-                    <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 p-3">
+                    <div className="rounded-lg border border-border bg-secondary p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="flex items-center gap-2 text-xs font-semibold text-violet-200">
+                          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                             <Brain className="h-3.5 w-3.5" />
                             Publish trained agent as Space
                           </div>
@@ -776,7 +776,7 @@ export default function IMDEWorkspacePage() {
             <Card className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Database className="h-4 w-4 text-blue-400" />
+                  <Database className="h-4 w-4 text-muted-foreground" />
                   Enterprise Data Sources
                 </CardTitle>
                 <CardDescription className="text-xs">Securely mirrored — no direct prod access</CardDescription>
@@ -794,7 +794,7 @@ export default function IMDEWorkspacePage() {
                 ].map((ds) => (
                   <div key={ds.name} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <div className={cn("h-1.5 w-1.5 rounded-full", ds.status === "connected" ? "bg-emerald-400" : "bg-amber-400")} />
+                      <div className={cn("h-1.5 w-1.5 rounded-full", ds.status === "connected" ? "bg-[var(--primary)]" : "bg-[var(--warning)]")} />
                       <span className="text-foreground font-medium">{ds.name}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -809,7 +809,7 @@ export default function IMDEWorkspacePage() {
             <Card className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-violet-400" />
+                  <Layers className="h-4 w-4 text-muted-foreground" />
                   Pre-Loaded Tool Stack
                 </CardTitle>
                 <CardDescription className="text-xs">Available in every new sandbox</CardDescription>
@@ -833,16 +833,16 @@ export default function IMDEWorkspacePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-emerald-500/30 bg-emerald-500/5">
+            <Card className="border-[var(--primary)]/30 bg-[var(--primary)]/5">
               <CardContent className="p-4 space-y-2">
                 <div className="flex items-center gap-2 mb-2">
-                  <Shield className="h-4 w-4 text-emerald-400" />
-                  <span className="text-xs font-semibold text-emerald-400">Sandbox Security</span>
+                  <Shield className="h-4 w-4 text-[var(--primary)]" />
+                  <span className="text-xs font-semibold text-[var(--primary)]">Sandbox Security</span>
                 </div>
                 {["VNet-isolated per sandbox", "No direct prod DB access", "Data masking enforced",
                   "Audit log on all data reads", "MFA + RBAC scoped access", "SOC2 Type II compliant"].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <CheckCircle2 className="h-3 w-3 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-3 w-3 text-[var(--primary)] shrink-0" />
                     {item}
                   </div>
                 ))}
@@ -857,7 +857,7 @@ export default function IMDEWorkspacePage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-violet-400" />
+              <Brain className="h-5 w-5 text-muted-foreground" />
               Publish IMDE sandbox as Space
             </DialogTitle>
             <DialogDescription>
@@ -875,7 +875,7 @@ export default function IMDEWorkspacePage() {
                       Source sandbox: {publishSandbox.name} · Snapshot: snapshot-v1.2.0
                     </div>
                   </div>
-                  <Badge className="bg-violet-500/20 text-violet-200 border-violet-500/30">Team visibility</Badge>
+                  <Badge className="bg-secondary text-muted-foreground border-border">Team visibility</Badge>
                 </div>
               </div>
 
@@ -886,8 +886,8 @@ export default function IMDEWorkspacePage() {
                   ["Snapshot boundary", "Data, credentials, and runtime threads excluded"],
                   ["Budget guardrail", "250k daily token cap with 80% publisher alert"],
                 ].map(([label, description]) => (
-                  <div key={label} className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
+                  <div key={label} className="rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-3">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[var(--primary)]">
                       <CheckCircle2 className="h-3.5 w-3.5" />
                       {label}
                     </div>
@@ -897,8 +897,8 @@ export default function IMDEWorkspacePage() {
               </div>
 
               {publishStage === "publishing" && (
-                <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 p-4">
-                  <div className="mb-2 flex items-center gap-2 text-sm text-violet-200">
+                <div className="rounded-lg border border-border bg-secondary p-4">
+                  <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Validating, snapshotting, provisioning runtime, and indexing Space...
                   </div>
@@ -907,11 +907,11 @@ export default function IMDEWorkspacePage() {
               )}
 
               {publishStage === "published" && (
-                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+                <div className="rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-4">
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-[var(--primary)]" />
                     <div>
-                      <div className="text-sm font-semibold text-emerald-200">Space published</div>
+                      <div className="text-sm font-semibold text-[var(--primary)]">Space published</div>
                       <p className="mt-1 text-xs text-muted-foreground">
                         Teammates can now run the chat-only Space from the marketplace and seed their own sandbox from the sanitized snapshot.
                       </p>
@@ -925,13 +925,13 @@ export default function IMDEWorkspacePage() {
           <DialogFooter>
             {publishStage === "published" ? (
               <a href="/marketplace/spaces/revenue-recognition-anomaly">
-                <Button className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+                <Button className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                   <ExternalLink className="h-4 w-4" />
                   Open Space
                 </Button>
               </a>
             ) : (
-              <Button onClick={publishAsSpace} disabled={publishStage === "publishing"} className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+              <Button onClick={publishAsSpace} disabled={publishStage === "publishing"} className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                 {publishStage === "publishing" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
                 {publishStage === "publishing" ? "Publishing..." : "Publish Space"}
               </Button>
@@ -945,7 +945,7 @@ export default function IMDEWorkspacePage() {
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CloudCog className="h-5 w-5 text-violet-400" />
+              <CloudCog className="h-5 w-5 text-muted-foreground" />
               Manage Compute · {amlWorkspace ?? "ai-project-q2w5uxlkh4c6o"}
             </DialogTitle>
             <DialogDescription>
@@ -986,22 +986,22 @@ export default function IMDEWorkspacePage() {
                         <span className="font-mono">{c.vmSize}</span>
                         <span className="flex items-center gap-1"><Cpu className="h-3 w-3" />{c.cpuCores ?? "?"} vCPU</span>
                         <span className="flex items-center gap-1"><MemoryStick className="h-3 w-3" />{c.memoryGb ?? "?"} GB</span>
-                        {c.isGpu && <span className="text-amber-400 flex items-center gap-1"><Zap className="h-3 w-3" />{c.gpuSpec}</span>}
+                        {c.isGpu && <span className="text-[var(--warning)] flex items-center gap-1"><Zap className="h-3 w-3" />{c.gpuSpec}</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-1 ml-3 shrink-0">
                       {(status === "stopped" || status === "idle") ? (
-                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-emerald-400 hover:text-emerald-300"
+                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-[var(--primary)] hover:text-[var(--primary)]/90"
                           onClick={() => matchedSb && handleAction(matchedSb, "start")}>
                           <Play className="h-3 w-3" />Start
                         </Button>
                       ) : status === "running" ? (
-                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-orange-400 hover:text-orange-300"
+                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-[var(--warning)] hover:text-[var(--warning)]/90"
                           onClick={() => matchedSb && handleAction(matchedSb, "stop")}>
                           <StopCircle className="h-3 w-3" />Stop
                         </Button>
                       ) : null}
-                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-muted-foreground hover:text-blue-400"
+                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-muted-foreground hover:text-[var(--primary)]"
                         onClick={() => matchedSb && handleAction(matchedSb, "restart")}>
                         <RotateCcw className="h-3 w-3" />Restart
                       </Button>
@@ -1012,7 +1012,7 @@ export default function IMDEWorkspacePage() {
                           </Button>
                         </a>
                       )}
-                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-muted-foreground hover:text-red-400"
+                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-muted-foreground hover:text-destructive"
                         onClick={() => handleDelete(c.name)}>
                         <Trash2 className="h-3 w-3" />Delete
                       </Button>
@@ -1028,7 +1028,7 @@ export default function IMDEWorkspacePage() {
               {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <RefreshCw className="h-3.5 w-3.5 mr-1" />}
               Refresh
             </Button>
-            <Button size="sm" className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
+            <Button size="sm" className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white gap-2"
               onClick={() => { setManageOpen(false); setProvisionOpen(true) }}>
               <Plus className="h-3.5 w-3.5" />New Compute
             </Button>
@@ -1041,7 +1041,7 @@ export default function IMDEWorkspacePage() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-violet-400" />
+              <Plus className="h-5 w-5 text-muted-foreground" />
               Request New Sandbox
             </DialogTitle>
             <DialogDescription>
@@ -1051,7 +1051,7 @@ export default function IMDEWorkspacePage() {
 
           {provisionSuccess ? (
             <div className="py-8 text-center space-y-3">
-              <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
+              <CheckCircle2 className="h-10 w-10 text-[var(--primary)] mx-auto" />
               <p className="text-sm font-medium">Sandbox requested!</p>
               <p className="text-xs text-muted-foreground">
                 <code className="font-mono bg-secondary px-1 rounded">{provisionName}</code> is queued.{" "}
@@ -1065,7 +1065,7 @@ export default function IMDEWorkspacePage() {
             <div className="space-y-4 py-2">
               <div className="space-y-1.5">
                 <Label htmlFor="compute-name" className="text-xs font-medium">
-                  Sandbox Name <span className="text-red-400">*</span>
+                  Sandbox Name <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="compute-name"
@@ -1079,7 +1079,7 @@ export default function IMDEWorkspacePage() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="workspace-template" className="text-xs font-medium">
-                  Workspace Template <span className="text-red-400">*</span>
+                  Workspace Template <span className="text-destructive">*</span>
                 </Label>
                 <Select value={provisionTemplate} onValueChange={setProvisionTemplate}>
                   <SelectTrigger id="workspace-template" className="h-8 text-sm">
@@ -1110,7 +1110,7 @@ export default function IMDEWorkspacePage() {
 
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">
-                  Data Packages <span className="text-red-400">*</span>
+                  Data Packages <span className="text-destructive">*</span>
                 </Label>
                 <div className="rounded-lg border border-border p-3 space-y-2">
                   {[
@@ -1134,7 +1134,7 @@ export default function IMDEWorkspacePage() {
                         <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
                           <span className={cn(
                             "rounded-full px-1.5 py-0.5",
-                            pkg.classification === "restricted" ? "bg-red-500/10 text-red-400" : "bg-blue-500/10 text-blue-400"
+                            pkg.classification === "restricted" ? "bg-destructive/10 text-destructive" : "bg-secondary text-muted-foreground"
                           )}>{pkg.classification}</span>
                           <span>·</span>
                           <span>{pkg.policy}</span>
@@ -1148,7 +1148,7 @@ export default function IMDEWorkspacePage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="compute-profile" className="text-xs font-medium">
-                    Compute Profile <span className="text-red-400">*</span>
+                    Compute Profile <span className="text-destructive">*</span>
                   </Label>
                   <Select value={provisionComputeProfile} onValueChange={setProvisionComputeProfile}>
                     <SelectTrigger id="compute-profile" className="h-8 text-sm">
@@ -1159,7 +1159,7 @@ export default function IMDEWorkspacePage() {
                       <SelectItem value="cpu-medium">CPU Medium — 16 vCPU / 64 GB</SelectItem>
                       <SelectItem value="gpu-small">
                         <span className="flex items-center gap-1.5">
-                          <Zap className="h-3 w-3 text-amber-400" />GPU Small — V100 × 1 (approval required)
+                          <Zap className="h-3 w-3 text-[var(--warning)]" />GPU Small — V100 × 1 (approval required)
                         </span>
                       </SelectItem>
                     </SelectContent>
@@ -1203,19 +1203,19 @@ export default function IMDEWorkspacePage() {
               </div>
 
               {provisionComputeProfile === "gpu-small" && (
-                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+                <div className="flex items-center gap-2 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-3 py-2 text-xs text-[var(--warning)]">
                   <Info className="h-3.5 w-3.5 shrink-0" />
                   GPU profile requires manager approval before provisioning starts.
                 </div>
               )}
               {provisionDataPkgs.includes("engagement_memos_confidential") && (
-                <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
+                <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
                   <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                   engagement-confidential data requires restricted template and privacy officer review.
                 </div>
               )}
               {provisionError && (
-                <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
+                <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
                   <AlertCircle className="h-3.5 w-3.5 shrink-0" />{provisionError}
                 </div>
               )}
@@ -1227,7 +1227,7 @@ export default function IMDEWorkspacePage() {
               <Button variant="outline" size="sm" onClick={closeProvision}>Cancel</Button>
               <Button
                 size="sm"
-                className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
+                className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white gap-2"
                 onClick={handleProvision}
                 disabled={provisionLoading || !provisionName.trim() || provisionDataPkgs.length === 0}
               >
@@ -1243,7 +1243,7 @@ export default function IMDEWorkspacePage() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ArrowUpCircle className="h-5 w-5 text-amber-400" />
+              <ArrowUpCircle className="h-5 w-5 text-[var(--warning)]" />
               Upgrade Compute — {upgradeSandbox?.name}
             </DialogTitle>
             <DialogDescription>
@@ -1259,24 +1259,24 @@ export default function IMDEWorkspacePage() {
                 <SelectItem value="cpu-medium">CPU Medium — 16 vCPU / 64 GB</SelectItem>
                 <SelectItem value="gpu-small">
                   <span className="flex items-center gap-1.5">
-                    <Zap className="h-3 w-3 text-amber-400" />GPU Small — V100 × 1
+                    <Zap className="h-3 w-3 text-[var(--warning)]" />GPU Small — V100 × 1
                   </span>
                 </SelectItem>
                 <SelectItem value="gpu-large">
                   <span className="flex items-center gap-1.5">
-                    <Zap className="h-3 w-3 text-amber-400" />GPU Large — A100 × 2
+                    <Zap className="h-3 w-3 text-[var(--warning)]" />GPU Large — A100 × 2
                   </span>
                 </SelectItem>
               </SelectContent>
             </Select>
-            <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-3 py-2 text-xs text-[var(--warning)]">
               <Info className="h-3.5 w-3.5 shrink-0" />
               GPU upgrades require manager approval. Estimated downtime: ~3 min.
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setUpgradeOpen(false)}>Cancel</Button>
-            <Button size="sm" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
               onClick={() => {
                 setUpgradeOpen(false)
                 setSandboxes((prev) => prev.map((s) =>
@@ -1297,7 +1297,7 @@ export default function IMDEWorkspacePage() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CalendarPlus className="h-5 w-5 text-blue-400" />
+              <CalendarPlus className="h-5 w-5 text-muted-foreground" />
               Extend Sandbox — {extendSandbox?.name}
             </DialogTitle>
             <DialogDescription>
@@ -1319,7 +1319,7 @@ export default function IMDEWorkspacePage() {
               </Select>
             </div>
             {Number(extendDays) > 30 && (
-              <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+              <div className="flex items-center gap-2 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-3 py-2 text-xs text-[var(--warning)]">
                 <Info className="h-3.5 w-3.5 shrink-0" />
                 Extensions beyond 30 days require manager approval.
               </div>
@@ -1327,7 +1327,7 @@ export default function IMDEWorkspacePage() {
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setExtendOpen(false)}>Cancel</Button>
-            <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
               onClick={() => {
                 setExtendOpen(false)
               }}>

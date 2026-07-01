@@ -225,17 +225,17 @@ const scopeCopy: Record<AuditScope, { label: string; detail: string; checks: str
 }
 
 const severityStyles: Record<FindingSeverity, string> = {
-  critical: "border-red-500/30 bg-red-500/10 text-red-300",
-  high: "border-orange-500/30 bg-orange-500/10 text-orange-300",
-  medium: "border-yellow-500/30 bg-yellow-500/10 text-yellow-300",
-  low: "border-sky-500/30 bg-sky-500/10 text-sky-300",
+  critical: "border-destructive/30 bg-destructive/10 text-destructive",
+  high: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
+  medium: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
+  low: "border-border bg-secondary text-muted-foreground",
 }
 
 const statusStyles: Record<FindingStatus, string> = {
-  open: "border-red-500/30 bg-red-500/10 text-red-300",
-  needs_remediation: "border-orange-500/30 bg-orange-500/10 text-orange-300",
-  waived_by_reviewer: "border-yellow-500/30 bg-yellow-500/10 text-yellow-300",
-  approved_remediated_version: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+  open: "border-destructive/30 bg-destructive/10 text-destructive",
+  needs_remediation: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
+  waived_by_reviewer: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
+  approved_remediated_version: "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]",
 }
 
 export default function AtvSecurityPage() {
@@ -260,13 +260,13 @@ export default function AtvSecurityPage() {
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              <Badge className="border-orange-500/30 bg-orange-500/10 text-orange-300" variant="outline">
+              <Badge className="border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]" variant="outline">
                 Submitted AI asset security review
               </Badge>
-              <Badge className="border-blue-500/30 bg-blue-500/10 text-blue-300" variant="outline">
+              <Badge className="border-border bg-secondary text-muted-foreground" variant="outline">
                 Local-only demo fixture
               </Badge>
-              <Badge className="border-yellow-500/30 bg-yellow-500/10 text-yellow-300" variant="outline">
+              <Badge className="border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]" variant="outline">
                 Seeded fallback available
               </Badge>
             </div>
@@ -289,7 +289,7 @@ export default function AtvSecurityPage() {
           <div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
             <div>
               <div className="mb-3 flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-orange-400" />
+                <ShieldAlert className="h-5 w-5 text-[var(--warning)]" />
                 <h2 className="text-base font-semibold text-foreground">Marketplace Review Packet</h2>
               </div>
               <div className="grid gap-3 md:grid-cols-3">
@@ -308,8 +308,8 @@ export default function AtvSecurityPage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 p-4">
-              <p className="text-xs uppercase text-orange-300">Publication decision</p>
+            <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4">
+              <p className="text-xs uppercase text-[var(--warning)]">Publication decision</p>
               <p className="mt-2 text-sm font-medium text-foreground">{assetPacket.decision}</p>
               <p className="mt-3 text-xs text-muted-foreground">Approval applies only to {assetPacket.remediatedVersion} after review.</p>
             </div>
@@ -320,7 +320,7 @@ export default function AtvSecurityPage() {
           <Card className="rounded-lg">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Publication Grade</CardTitle>
-              <ShieldCheck className="h-4 w-4 text-orange-400" />
+              <ShieldCheck className="h-4 w-4 text-[var(--warning)]" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold text-foreground">Block</div>
@@ -330,7 +330,7 @@ export default function AtvSecurityPage() {
           <Card className="rounded-lg">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Critical Findings</CardTitle>
-              <ShieldAlert className="h-4 w-4 text-red-400" />
+              <ShieldAlert className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold text-foreground">{criticalCount}</div>
@@ -340,7 +340,7 @@ export default function AtvSecurityPage() {
           <Card className="rounded-lg">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Blocked Items</CardTitle>
-              <ClipboardCheck className="h-4 w-4 text-blue-400" />
+              <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold text-foreground">{blockedCount}</div>
@@ -419,7 +419,7 @@ export default function AtvSecurityPage() {
             <div className="mt-5 space-y-3">
               {scopeCopy[scope].checks.map((check) => (
                 <div key={check} className="flex items-center gap-3 rounded-lg border border-border bg-background/40 px-3 py-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--primary)]" />
                   <span className="text-sm text-foreground">{check}</span>
                 </div>
               ))}

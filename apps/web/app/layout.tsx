@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth/AuthProvider'
@@ -7,7 +7,7 @@ import { AuthGuard } from '@/components/auth/AuthGuard'
 import { AssistantWidget } from '@/components/assistant/assistant-widget'
 import './globals.css'
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const openSans = Open_Sans({ subsets: ["latin"], variable: "--font-open-sans", display: "swap", weight: ["400", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: 'Nebula-X — Deloitte AI Management Platform',
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={openSans.variable}>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange storageKey="theme-preference">
           <AuthProvider>

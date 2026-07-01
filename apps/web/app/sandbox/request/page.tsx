@@ -186,7 +186,7 @@ export default function RequestSandboxPage() {
               <p className="text-xs text-muted-foreground">{selectedTemplate.description}</p>
             )}
             {isDemoRequest && (
-              <p className="text-xs font-medium text-emerald-400">
+              <p className="text-xs font-medium text-[var(--primary)]">
                 Demo scenario: {form.demoScenarioId} · Base model: {form.baseModelId}
               </p>
             )}
@@ -300,16 +300,16 @@ export default function RequestSandboxPage() {
                         <p className="text-sm font-medium text-foreground">{pkg.displayName}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">{pkg.description}</p>
                         {pkg.demoDataStatement && (
-                          <p className="mt-1 text-xs text-emerald-400">{pkg.demoDataStatement}</p>
+                          <p className="mt-1 text-xs text-[var(--primary)]">{pkg.demoDataStatement}</p>
                         )}
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase ${
                           pkg.classification === "phi"
-                            ? "bg-red-500/20 text-red-400"
+                            ? "bg-destructive/15 text-destructive"
                             : pkg.classification === "restricted"
-                            ? "bg-amber-500/20 text-amber-400"
-                            : "bg-emerald-500/20 text-emerald-400"
+                            ? "bg-[var(--warning)]/15 text-[var(--warning)]"
+                            : "bg-[var(--primary)]/20 text-[var(--primary)]"
                         }`}>
                           {pkg.classification}
                         </span>
@@ -336,7 +336,7 @@ export default function RequestSandboxPage() {
 
         {/* Approval notice */}
         {requiresApproval && (
-          <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-400">
+          <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-4 py-3 text-xs text-[var(--warning)]">
             This request requires platform admin approval before deterministic demo provisioning begins.
           </div>
         )}

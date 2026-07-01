@@ -44,19 +44,23 @@ import {
   ReferenceLine,
 } from "recharts"
 
-// ─── Color palette (Deloitte brand) ───────────────────────────────────────────────
+// ─── Chart palette — Deloitte green ramp + brand neutrals ────────────────────
+// Keys keep legacy names (orange/blue/teal/purple) to avoid touching every
+// chart reference, but all values are now official Deloitte greens so series
+// read as one sequential green family. Red is retained ONLY for error/defect
+// semantics; secondary/neutral series use Deloitte gray.
 const C = {
-  orange: "#86BC25",
-  orangeLight: "#A8D44A",
-  blue: "#3D8AFF",
-  blueLight: "#3D8AFF",
-  teal: "#14B8A6",
+  orange: "#86BC25",      // signature green — primary series
+  orangeLight: "#A6D65B", // light green — targets/reference lines
+  blue: "#009A44",        // medium emerald — 2nd series
+  blueLight: "#009A44",
+  teal: "#43B02A",        // bright green — 3rd series
   emerald: "#86BC25",
-  amber: "#F5A623",
-  red: "#E03B3B",
-  purple: "#A855F7",
-  grid: "#ffffff10",
-  text: "#94a3b8",
+  amber: "#C4D600",       // Deloitte lime — caution/attention (on-brand)
+  red: "#E03B3B",         // semantic error/defect only
+  purple: "#046A38",      // dark emerald — 4th series
+  grid: "#ffffff0d",
+  text: "#A7A8AA",        // Deloitte gray for axes/labels
 }
 
 // ─── Static mock data ─────────────────────────────────────────────────────────
@@ -212,8 +216,8 @@ function KpiCard({
             className={cn(
               "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
               trendUp
-                ? "bg-emerald-500/15 text-emerald-400"
-                : "bg-red-500/15 text-red-400"
+                ? "bg-[var(--primary)]/15 text-[var(--primary)]"
+                : "bg-destructive/15 text-destructive"
             )}
           >
             {trendUp ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
@@ -259,18 +263,18 @@ function ChartCard({
 }
 
 const ASSET_TYPE_COLORS: Record<string, string> = {
-  Model: C.orange,
-  Agent: C.blueLight,
-  Tool: C.teal,
-  MCP: C.purple,
+  Model: "#0076A8",   // Deloitte blue
+  Agent: "#86BC25",   // signature green
+  Tool: "#00ABAB",    // Deloitte teal
+  MCP: "#26890D",     // dark green
 }
 
 const tooltipStyle = {
-  backgroundColor: "#0f172a",
-  border: "1px solid #1e293b",
+  backgroundColor: "#141414",
+  border: "1px solid #262626",
   borderRadius: "8px",
   fontSize: "12px",
-  color: "#e2e8f0",
+  color: "#FFFFFF",
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -352,7 +356,7 @@ export default function AnalyticsPage() {
             trend="down"
             trendValue="−47% vs 2 wks ago"
             icon={Clock}
-            iconColor="bg-amber-500/20 text-amber-400"
+            iconColor="bg-secondary text-[var(--primary)]"
           />
           <KpiCard
             label="SLA Compliance"
@@ -361,7 +365,7 @@ export default function AnalyticsPage() {
             trend="up"
             trendValue="+8pp this month"
             icon={CheckCircle2}
-            iconColor="bg-emerald-500/20 text-emerald-400"
+            iconColor="bg-secondary text-[var(--primary)]"
           />
           <KpiCard
             label="Total API Calls (Mar)"
@@ -397,7 +401,7 @@ export default function AnalyticsPage() {
             trend="down"
             trendValue="−1.1pp in 14 days"
             icon={AlertTriangle}
-            iconColor="bg-red-500/15 text-red-400"
+            iconColor="bg-destructive/15 text-destructive"
           />
           <KpiCard
             label="Continuous Evals"
@@ -406,7 +410,7 @@ export default function AnalyticsPage() {
             trend="up"
             trendValue="Always on"
             icon={RefreshCw}
-            iconColor="bg-teal-500/15 text-teal-300"
+            iconColor="bg-secondary text-[var(--primary)]"
           />
           <KpiCard
             label="Governed Agents"
@@ -496,7 +500,7 @@ export default function AnalyticsPage() {
 
         {/* ── Section 1: Human-in-Loop Timing ── */}
         <SectionTitle>
-          <Clock className="h-4 w-4 text-amber-400" />
+          <Clock className="h-4 w-4 text-[var(--primary)]" />
           Human-in-Loop Workflow Timing
         </SectionTitle>
 
@@ -538,7 +542,7 @@ export default function AnalyticsPage() {
                 <Bar dataKey="p95Min" name="p95" fill={C.blueLight} radius={[0, 3, 3, 0]} fillOpacity={0.7} />
               </BarChart>
             </ResponsiveContainer>
-            <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-300">
+            <div className="mt-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-4 py-2.5 text-xs text-[var(--warning)]">
               <strong>Bottleneck identified:</strong> "Human Review Queue" accounts for <strong>78%</strong> of total workflow time (38 min avg, 112 min p95). Consider adding auto-routing for high-confidence predictions (&gt; 95%).
             </div>
           </ChartCard>
@@ -623,7 +627,7 @@ export default function AnalyticsPage() {
                 ))}
                 <div className="mt-3 border-t border-border pt-2 text-xs">
                   <span className="text-muted-foreground">SLA target</span>
-                  <span className="ml-1 font-semibold text-emerald-400">67% within 60 min</span>
+                  <span className="ml-1 font-semibold text-[var(--primary)]">67% within 60 min</span>
                 </div>
               </div>
             </div>
@@ -771,7 +775,7 @@ export default function AnalyticsPage() {
 
         {/* ── Section 5: Error rate & throughput ── */}
         <SectionTitle>
-          <AlertTriangle className="h-4 w-4 text-red-400" />
+          <AlertTriangle className="h-4 w-4 text-destructive" />
           Error Rate &amp; Throughput
         </SectionTitle>
 

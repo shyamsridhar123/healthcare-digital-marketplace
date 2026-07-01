@@ -187,19 +187,19 @@ export default function CosmosDbPage() {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Database className="h-5 w-5 text-orange-400" />
+              <Database className="h-5 w-5 text-[var(--warning)]" />
               <h1 className="text-2xl font-bold text-foreground">Cosmos DB</h1>
-              <Badge className="bg-amber-500/15 text-amber-400">
+              <Badge className="bg-[var(--warning)]/15 text-[var(--warning)]">
                 <AlertCircle className="mr-1 h-3 w-3" />
                 Provisioning
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Browse containers and items in <span className="font-mono text-xs text-orange-400">{ACCOUNT}</span>
+              Browse containers and items in <span className="font-mono text-xs text-[var(--warning)]">{ACCOUNT}</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-1.5 text-xs text-amber-400">
+            <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 px-3 py-1.5 text-xs text-[var(--warning)]">
               <Info className="mr-1.5 inline h-3.5 w-3.5" />
               Account fixing in progress — showing last-known state
             </div>
@@ -211,7 +211,7 @@ export default function CosmosDbPage() {
         <div className="mb-4 grid grid-cols-4 gap-3">
           <Card className="border-border bg-card">
             <CardContent className="flex items-center gap-3 p-3">
-              <Database className="h-8 w-8 text-orange-400/70" />
+              <Database className="h-8 w-8 text-[var(--warning)]/70" />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Database</p>
                 <p className="text-sm font-semibold text-foreground">{DB_NAME}</p>
@@ -220,8 +220,8 @@ export default function CosmosDbPage() {
           </Card>
           <Card className="border-border bg-card">
             <CardContent className="flex items-center gap-3 p-3">
-              <div className="h-8 w-8 rounded-lg bg-orange-500/15 flex items-center justify-center">
-                <span className="text-sm font-bold text-orange-400">{containers.length}</span>
+              <div className="h-8 w-8 rounded-lg bg-[var(--warning)]/15 flex items-center justify-center">
+                <span className="text-sm font-bold text-[var(--warning)]">{containers.length}</span>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Containers</p>
@@ -231,7 +231,7 @@ export default function CosmosDbPage() {
           </Card>
           <Card className="border-border bg-card">
             <CardContent className="flex items-center gap-3 p-3">
-              <Zap className="h-8 w-8 text-amber-400/70" />
+              <Zap className="h-8 w-8 text-[var(--warning)]/70" />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Throughput</p>
                 <p className="text-sm font-semibold text-foreground">Serverless</p>
@@ -240,7 +240,7 @@ export default function CosmosDbPage() {
           </Card>
           <Card className="border-border bg-card">
             <CardContent className="flex items-center gap-3 p-3">
-              <FileJson className="h-8 w-8 text-sky-400/70" />
+              <FileJson className="h-8 w-8 text-muted-foreground/70" />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total Items</p>
                 <p className="text-sm font-semibold text-foreground">{containers.reduce((s, c) => s + c.itemCount, 0).toLocaleString()}</p>
@@ -263,11 +263,11 @@ export default function CosmosDbPage() {
                   className={cn(
                     "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-xs transition-colors",
                     selectedContainer === c.id
-                      ? "bg-orange-500/15 text-orange-300 font-medium"
+                      ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
                 >
-                  <Database className={cn("h-3.5 w-3.5 shrink-0", selectedContainer === c.id ? "text-orange-400" : "text-muted-foreground")} />
+                  <Database className={cn("h-3.5 w-3.5 shrink-0", selectedContainer === c.id ? "text-[var(--primary)]" : "text-muted-foreground")} />
                   <span className="flex-1 truncate text-left">{c.id}</span>
                   <span className="text-[10px] text-muted-foreground/50">{c.itemCount}</span>
                 </button>
@@ -287,7 +287,7 @@ export default function CosmosDbPage() {
                     className={cn(
                       "px-4 py-2.5 text-xs font-medium capitalize transition-colors",
                       activeTab === tab
-                        ? "border-b-2 border-orange-400 text-foreground"
+                        ? "border-b-2 border-[var(--primary)] text-foreground"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -297,9 +297,9 @@ export default function CosmosDbPage() {
               </div>
               {container && (
                 <div className="flex items-center gap-3 pr-3 text-[10px] text-muted-foreground">
-                  <span>Partition: <code className="text-orange-400">{container.partitionKey}</code></span>
-                  {container.ttl && <span>TTL: <code className="text-amber-400">{container.ttl}</code></span>}
-                  <span>Mode: <code className="text-emerald-400">{container.throughput}</code></span>
+                  <span>Partition: <code className="text-[var(--primary)]">{container.partitionKey}</code></span>
+                  {container.ttl && <span>TTL: <code className="text-[var(--warning)]">{container.ttl}</code></span>}
+                  <span>Mode: <code className="text-[var(--primary)]">{container.throughput}</code></span>
                 </div>
               )}
             </div>
@@ -322,12 +322,12 @@ export default function CosmosDbPage() {
                         className={cn(
                           "flex w-full flex-col gap-0.5 px-3 py-2.5 text-left text-xs transition-colors",
                           selectedItem?.id === item.id
-                            ? "bg-orange-500/10 text-orange-300"
+                            ? "bg-[var(--primary)]/10 text-[var(--primary)]"
                             : "hover:bg-secondary/30 text-foreground"
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <FileJson className="h-3.5 w-3.5 shrink-0 text-orange-400/70" />
+                          <FileJson className="h-3.5 w-3.5 shrink-0 text-[var(--primary)]/70" />
                           <span className="font-mono font-medium truncate">{item.id}</span>
                         </div>
                         <p className="truncate pl-5 text-[10px] text-muted-foreground">
@@ -369,13 +369,13 @@ export default function CosmosDbPage() {
                     spellCheck={false}
                   />
                   <div className="mt-2 flex items-center gap-2">
-                    <Button size="sm" onClick={runQuery} disabled={running} className="gap-2 bg-orange-600 hover:bg-orange-700 text-white">
+                    <Button size="sm" onClick={runQuery} disabled={running} className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                       {running ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
                       {running ? "Running…" : "Execute"}
                     </Button>
                     <span className="text-xs text-muted-foreground">SQL API (Cosmos DB)</span>
                     {queryResults && (
-                      <span className="ml-auto text-xs text-emerald-400"><CheckCircle2 className="mr-1 inline h-3.5 w-3.5" />{queryResults.length} results</span>
+                      <span className="ml-auto text-xs text-[var(--primary)]"><CheckCircle2 className="mr-1 inline h-3.5 w-3.5" />{queryResults.length} results</span>
                     )}
                   </div>
                 </div>

@@ -67,31 +67,31 @@ export default function SkillsRegistryPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Agent Skills Registry</h1>
-          <p className="text-sm text-gray-500 mt-1">Reusable SKILL.md agent skills — import from GitHub or GitLab</p>
+          <h1 className="text-2xl font-bold text-foreground">Agent Skills Registry</h1>
+          <p className="text-sm text-muted-foreground mt-1">Reusable SKILL.md agent skills — import from GitHub or GitLab</p>
         </div>
       </div>
 
       {/* Import from URL */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <p className="text-sm font-medium text-blue-900 mb-2">Import SKILL.md from GitHub / GitLab</p>
+      <div className="bg-secondary border border-border rounded-lg p-4 mb-6">
+        <p className="text-sm font-medium text-foreground mb-2">Import SKILL.md from GitHub / GitLab</p>
         <form onSubmit={handleImport} className="flex gap-2">
           <input
             value={importUrl}
             onChange={(e) => setImportUrl(e.target.value)}
             placeholder="https://github.com/owner/repo/blob/main/.claude/skills/my-skill/SKILL.md"
-            className="flex-1 px-3 py-2 border border-blue-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="flex-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] bg-white"
           />
           <button
             type="submit"
             disabled={importing || !importUrl.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shrink-0"
+            className="px-4 py-2 bg-[var(--primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--primary)]/90 disabled:opacity-50 transition-colors shrink-0"
           >
             {importing ? "Importing..." : "Import"}
           </button>
         </form>
         {importMsg && (
-          <p className={`mt-2 text-sm ${importMsg.type === "success" ? "text-green-700" : "text-red-600"}`}>
+          <p className={`mt-2 text-sm ${importMsg.type === "success" ? "text-[var(--primary)]" : "text-destructive"}`}>
             {importMsg.text}
           </p>
         )}
@@ -104,14 +104,14 @@ export default function SkillsRegistryPage() {
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search skills..."
-          className="flex-1 max-w-sm px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 max-w-sm px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
         <input
           type="text"
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
           placeholder="Category..."
-          className="w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none"
+          className="w-40 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none"
         />
       </div>
 
@@ -119,11 +119,11 @@ export default function SkillsRegistryPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-lg h-44 animate-pulse" />
+            <div key={i} className="bg-secondary rounded-lg h-44 animate-pulse" />
           ))}
         </div>
       ) : skills.length === 0 ? (
-        <div className="text-center py-16 text-gray-500 text-sm">
+        <div className="text-center py-16 text-muted-foreground text-sm">
           No skills registered yet. Import one from GitHub!
         </div>
       ) : (
@@ -136,9 +136,9 @@ export default function SkillsRegistryPage() {
 
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-8">
-          <button disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40">Previous</button>
-          <span className="px-3 py-1.5 text-sm text-gray-600">{page} / {totalPages}</span>
-          <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40">Next</button>
+          <button disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-sm border border-border rounded-lg disabled:opacity-40">Previous</button>
+          <span className="px-3 py-1.5 text-sm text-muted-foreground">{page} / {totalPages}</span>
+          <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-sm border border-border rounded-lg disabled:opacity-40">Next</button>
         </div>
       )}
     </div>

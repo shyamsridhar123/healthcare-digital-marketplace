@@ -101,10 +101,10 @@ export const PERSONA_TIERS: PersonaTier[] = [
     label: "Second Party — Provider",
     shortLabel: "Provider",
     color: "blue",
-    borderColor: "border-blue-500/40",
-    bgColor: "bg-blue-500/10",
-    textColor: "text-blue-400",
-    badgeColor: "bg-blue-500/20 text-blue-400",
+    borderColor: "border-border",
+    bgColor: "bg-secondary",
+    textColor: "text-muted-foreground",
+    badgeColor: "bg-secondary text-muted-foreground",
     personas: [
       {
         id: "provider-admin",
@@ -172,10 +172,10 @@ export const PERSONA_TIERS: PersonaTier[] = [
     label: "Third Party — Ecosystem Partners",
     shortLabel: "Partners",
     color: "violet",
-    borderColor: "border-violet-500/40",
-    bgColor: "bg-violet-500/10",
-    textColor: "text-violet-400",
-    badgeColor: "bg-violet-500/20 text-violet-400",
+    borderColor: "border-border",
+    bgColor: "bg-secondary",
+    textColor: "text-muted-foreground",
+    badgeColor: "bg-secondary text-muted-foreground",
     personas: [
       {
         id: "startup-science",

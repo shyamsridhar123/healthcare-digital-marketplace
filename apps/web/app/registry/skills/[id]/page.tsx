@@ -16,7 +16,7 @@ function CopyButton({ text }: { text: string }) {
           setTimeout(() => setCopied(false), 2000);
         });
       }}
-      className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-200 rounded transition-colors shrink-0"
+      className="px-2 py-1 text-xs bg-secondary hover:bg-secondary/80 text-foreground rounded transition-colors shrink-0"
     >
       {copied ? "Copied!" : "Copy"}
     </button>
@@ -25,12 +25,12 @@ function CopyButton({ text }: { text: string }) {
 
 function CodeBlock({ code, lang }: { code: string; lang?: string }) {
   return (
-    <div className="rounded-lg bg-gray-900 text-sm overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700">
-        <span className="text-xs text-gray-400">{lang}</span>
+    <div className="rounded-lg bg-card text-sm overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+        <span className="text-xs text-muted-foreground">{lang}</span>
         <CopyButton text={code} />
       </div>
-      <pre className="p-4 overflow-x-auto text-gray-100 text-xs leading-relaxed">{code}</pre>
+      <pre className="p-4 overflow-x-auto text-foreground text-xs leading-relaxed">{code}</pre>
     </div>
   );
 }
@@ -57,7 +57,7 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-100 rounded-xl h-32 animate-pulse" />
+            <div key={i} className="bg-secondary rounded-xl h-32 animate-pulse" />
           ))}
         </div>
       </div>
@@ -67,8 +67,8 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
   if (error || !skill) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-        <p className="text-red-500 text-sm">{error ?? "Skill not found"}</p>
-        <Link href="/registry/skills" className="text-blue-600 text-sm mt-4 inline-block">
+        <p className="text-destructive text-sm">{error ?? "Skill not found"}</p>
+        <Link href="/registry/skills" className="text-[var(--primary)] text-sm mt-4 inline-block hover:text-[var(--primary)]/90">
           ← Back to registry
         </Link>
       </div>
@@ -97,61 +97,61 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-5">
-      <Link href="/registry/skills" className="text-sm text-blue-600 hover:text-blue-700 inline-block">
+      <Link href="/registry/skills" className="text-sm text-[var(--primary)] hover:text-[var(--primary)]/90 inline-block">
         ← Agent Skills Registry
       </Link>
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-border p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl font-bold text-gray-900">{skill.name}</h1>
-              <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700">
+              <h1 className="text-xl font-bold text-foreground">{skill.name}</h1>
+              <span className="px-2 py-0.5 rounded text-xs font-medium bg-[var(--warning)]/10 text-[var(--warning)]">
                 v{skill.version}
               </span>
-              <span className="px-2 py-0.5 rounded text-xs bg-green-50 text-green-700 capitalize">
+              <span className="px-2 py-0.5 rounded text-xs bg-[var(--primary)]/10 text-[var(--primary)] capitalize">
                 {skill.visibility}
               </span>
             </div>
             {skill.author && (
-              <p className="text-sm text-gray-500 mt-1">
-                Published by <span className="font-medium text-gray-700">{skill.author}</span>
+              <p className="text-sm text-muted-foreground mt-1">
+                Published by <span className="font-medium text-foreground">{skill.author}</span>
               </p>
             )}
-            <p className="text-sm text-gray-700 mt-2">{skill.description}</p>
+            <p className="text-sm text-foreground mt-2">{skill.description}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-1 mt-4">
           {skill.tags.map((tag) => (
-            <span key={tag} className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs">
+            <span key={tag} className="px-2 py-0.5 bg-[var(--primary)]/10 text-[var(--primary)] rounded text-xs">
               {tag}
             </span>
           ))}
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-gray-500 mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-4 pt-4 border-t border-border">
           <span>★ {skill.stars} stars</span>
           <span>{skill.downloadCount} downloads</span>
           {skill.license && <span>{skill.license}</span>}
           {skill.category && (
-            <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600">{skill.category}</span>
+            <span className="bg-secondary px-2 py-0.5 rounded text-muted-foreground">{skill.category}</span>
           )}
-          <span className="ml-auto text-gray-400">
+          <span className="ml-auto text-muted-foreground">
             Registered {new Date(skill.registeredAt).toLocaleDateString()}
           </span>
         </div>
       </div>
 
       {/* Install Panel */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-border p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-gray-900">Install in VS Code Copilot</h2>
+          <h2 className="text-base font-semibold text-foreground">Install in VS Code Copilot</h2>
           <a
             href={downloadUrl}
             download="SKILL.md"
-            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1.5 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white text-xs font-medium rounded-lg transition-colors"
           >
             Download SKILL.md
           </a>
@@ -162,7 +162,7 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
           <a
             href="/downloads/ai-marketplace-skills-0.1.0.vsix"
             download
-            className="inline-flex items-center gap-2 rounded-md border border-blue-500 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 self-start"
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-3 py-2 text-sm font-medium text-[var(--primary)] hover:bg-[var(--primary)]/15 self-start"
           >
             Download VS Code Extension (.vsix)
           </a>
@@ -173,7 +173,7 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Trust note */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-xs text-amber-800 mb-5">
+        <div className="bg-[var(--warning)]/10 border border-[var(--warning)]/30 rounded-lg px-4 py-3 text-xs text-[var(--warning)] mb-5">
           <strong>Security note:</strong> Skills run as Copilot instructions inside VS Code. Only install
           skills from publishers you trust. This skill is published by{" "}
           <strong>{skill.author ?? "AI Marketplace"}</strong> and is{" "}
@@ -182,10 +182,10 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* Required files */}
         <div className="mb-5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
             Required folder structure
           </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 font-mono text-xs text-gray-700 leading-relaxed">
+          <div className="bg-secondary border border-border rounded-lg px-4 py-3 font-mono text-xs text-foreground leading-relaxed">
             {`~/.copilot/\n  skills/\n    ${skillDir}/\n      SKILL.md`}
           </div>
         </div>
@@ -198,8 +198,8 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
               onClick={() => setOsTab(os)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                 osTab === os
-                  ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-card text-foreground"
+                  : "bg-secondary text-muted-foreground hover:bg-secondary/80"
               }`}
             >
               {os === "windows" ? "Windows (PowerShell)" : "macOS / Linux"}
@@ -208,7 +208,7 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Download from marketplace */}
-        <p className="text-xs font-medium text-gray-500 mb-2">Download from marketplace</p>
+        <p className="text-xs font-medium text-muted-foreground mb-2">Download from marketplace</p>
         <div className="mb-4">
           <CodeBlock
             code={osTab === "windows" ? windowsDownloadCmd : macDownloadCmd}
@@ -217,7 +217,7 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Install from local clone */}
-        <p className="text-xs font-medium text-gray-500 mb-2">
+        <p className="text-xs font-medium text-muted-foreground mb-2">
           Install from local clone (if you cloned this repo)
         </p>
         <CodeBlock
@@ -226,27 +226,27 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
         />
 
         {/* CLI */}
-        <div className="mt-5 pt-4 border-t border-gray-100">
-          <p className="text-xs font-medium text-gray-500 mb-2">
+        <div className="mt-5 pt-4 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-2">
             CLI (if ai-marketplace CLI is installed)
           </p>
           <CodeBlock code={cliCmd} lang="shell" />
         </div>
 
-        <p className="text-xs text-gray-400 mt-4">
+        <p className="text-xs text-muted-foreground mt-4">
           After installation, restart or reload VS Code so Copilot discovers the new skill.
         </p>
       </div>
 
       {/* Trigger phrases */}
       {skill.triggerPhrases.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-3">Trigger Phrases</h2>
+        <div className="bg-white rounded-xl border border-border p-6">
+          <h2 className="text-base font-semibold text-foreground mb-3">Trigger Phrases</h2>
           <div className="flex flex-wrap gap-2">
             {skill.triggerPhrases.map((phrase) => (
               <span
                 key={phrase}
-                className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-mono"
+                className="px-3 py-1 bg-secondary text-muted-foreground rounded-lg text-xs font-mono"
               >
                 &ldquo;{phrase}&rdquo;
               </span>
@@ -256,21 +256,21 @@ export default function SkillDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {/* SKILL.md content */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-border p-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-gray-900">SKILL.md</h2>
+          <h2 className="text-base font-semibold text-foreground">SKILL.md</h2>
           {skill.sourceUrl && (
             <a
               href={skill.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-600 hover:text-blue-700"
+              className="text-xs text-[var(--primary)] hover:text-[var(--primary)]/90"
             >
               View source →
             </a>
           )}
         </div>
-        <pre className="text-xs text-gray-700 bg-gray-50 rounded-lg p-4 overflow-x-auto leading-relaxed whitespace-pre-wrap">
+        <pre className="text-xs text-foreground bg-secondary rounded-lg p-4 overflow-x-auto leading-relaxed whitespace-pre-wrap">
           {skill.content}
         </pre>
       </div>

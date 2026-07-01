@@ -138,7 +138,7 @@ function MetricCell({ value, best, low }: { value?: number; best?: number; low?:
   return (
     <span className={cn(
       "font-mono text-xs tabular-nums",
-      isTop && !low ? "font-bold text-emerald-400" : isTop && low ? "font-bold text-red-400" : "text-foreground"
+      isTop && !low ? "font-bold text-[var(--primary)]" : isTop && low ? "font-bold text-destructive" : "text-foreground"
     )}>
       {(value * 100).toFixed(1)}%
       {isTop && !low && <span className="ml-1 text-[10px]">★</span>}
@@ -152,7 +152,7 @@ function LatencyCell({ value, best }: { value?: number; best?: number }) {
   return (
     <span className={cn(
       "font-mono text-xs tabular-nums",
-      isTop ? "font-bold text-emerald-400" : "text-foreground"
+      isTop ? "font-bold text-[var(--primary)]" : "text-foreground"
     )}>
       {value}ms
       {isTop && <span className="ml-1 text-[10px]">★</span>}
@@ -161,9 +161,9 @@ function LatencyCell({ value, best }: { value?: number; best?: number }) {
 }
 
 function StatusIcon({ status }: { status: Run["status"] }) {
-  if (status === "completed") return <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-  if (status === "running") return <Play className="h-4 w-4 text-blue-400 animate-pulse" />
-  return <XCircle className="h-4 w-4 text-red-400" />
+  if (status === "completed") return <CheckCircle2 className="h-4 w-4 text-[var(--primary)]" />
+  if (status === "running") return <Play className="h-4 w-4 text-muted-foreground animate-pulse" />
+  return <XCircle className="h-4 w-4 text-destructive" />
 }
 
 export default function IMDEExperimentsPage() {
@@ -193,8 +193,8 @@ export default function IMDEExperimentsPage() {
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/20">
-              <FlaskConical className="h-5 w-5 text-violet-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+              <FlaskConical className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Experiments</h1>
@@ -212,24 +212,24 @@ export default function IMDEExperimentsPage() {
               <Download className="h-4 w-4" />
               Export CSV
             </Button>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
               <Play className="h-4 w-4" />
               New Run
             </Button>
           </div>
         </div>
 
-        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+        <div className="mb-6 rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <Badge className="mb-2 bg-emerald-500/20 text-emerald-300">Selected winner</Badge>
+              <Badge className="mb-2 bg-[var(--primary)]/20 text-[var(--primary)]">Selected winner</Badge>
               <p className="text-sm font-semibold text-foreground">{winningRun?.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Governance-ready run from {imdeDemoScenario.requestDefaults.name}; lineage includes notebook, base model, and synthetic/de-identified data package versions.
               </p>
             </div>
             <Link href={`/imde/push?runId=${imdeDemoScenario.selectedRunId}&demo=${imdeDemoScenario.demoScenarioId}&sandboxId=${searchParams.get("sandboxId") ?? ""}`}>
-              <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+              <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                 <CheckCircle2 className="h-4 w-4" />
                 Publish selected run
               </Button>
@@ -240,10 +240,10 @@ export default function IMDEExperimentsPage() {
         {/* Summary Stats */}
         <div className="mb-6 grid grid-cols-4 gap-4">
           {[
-            { label: "Total Runs", value: runs.length.toString(), icon: FlaskConical, color: "text-violet-400" },
-            { label: "Best Accuracy", value: `${(bestAccuracy * 100).toFixed(1)}%`, icon: TrendingUp, color: "text-emerald-400" },
-            { label: "Best F1 Score", value: `${(bestF1 * 100).toFixed(1)}%`, icon: BarChart3, color: "text-blue-400" },
-            { label: "Fastest Model", value: `${bestLatency}ms`, icon: Zap, color: "text-amber-400" },
+            { label: "Total Runs", value: runs.length.toString(), icon: FlaskConical, color: "text-muted-foreground" },
+            { label: "Best Accuracy", value: `${(bestAccuracy * 100).toFixed(1)}%`, icon: TrendingUp, color: "text-[var(--primary)]" },
+            { label: "Best F1 Score", value: `${(bestF1 * 100).toFixed(1)}%`, icon: BarChart3, color: "text-muted-foreground" },
+            { label: "Fastest Model", value: `${bestLatency}ms`, icon: Zap, color: "text-[var(--warning)]" },
           ].map((stat) => (
             <Card key={stat.label} className="border-border">
               <CardContent className="p-4">
@@ -289,7 +289,7 @@ export default function IMDEExperimentsPage() {
                       <tr
                         className={cn(
                           "border-b border-border/50 hover:bg-secondary/20 cursor-pointer transition-colors",
-                          selected.has(run.id) && "bg-violet-500/5"
+                          selected.has(run.id) && "bg-secondary"
                         )}
                         onClick={() => toggleSelect(run.id)}
                       >
@@ -304,7 +304,7 @@ export default function IMDEExperimentsPage() {
                         </td>
                         <td className="px-3 py-3">
                           <div className="flex items-center gap-2">
-                            {run.starred && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />}
+                            {run.starred && <Star className="h-3.5 w-3.5 fill-[var(--warning)] text-[var(--warning)]" />}
                             <span className="font-mono text-xs text-foreground">{run.name}</span>
                           </div>
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -334,7 +334,7 @@ export default function IMDEExperimentsPage() {
                         <td className="px-3 py-3 text-right">
                           <span className={cn(
                             "font-mono text-xs tabular-nums",
-                            run.metrics.loss === bestLoss ? "font-bold text-emerald-400" : "text-foreground"
+                            run.metrics.loss === bestLoss ? "font-bold text-[var(--primary)]" : "text-foreground"
                           )}>
                             {run.metrics.loss !== undefined ? run.metrics.loss.toFixed(3) : "—"}
                             {run.metrics.loss === bestLoss && <span className="ml-1 text-[10px]">★</span>}
@@ -393,13 +393,13 @@ export default function IMDEExperimentsPage() {
                 .filter((r) => r.status === "completed" && r.metrics.f1 !== undefined)
                 .sort((a, b) => (b.metrics.f1 || 0) - (a.metrics.f1 || 0))
                 .map((run, idx) => (
-                  <Card key={run.id} className={cn("border-border", idx === 0 && "border-amber-500/40 bg-amber-500/5")}>
+                  <Card key={run.id} className={cn("border-border", idx === 0 && "border-[var(--warning)]/30 bg-[var(--warning)]/5")}>
                     <CardContent className="p-4 flex items-center gap-4">
                       <div className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold",
-                        idx === 0 ? "bg-amber-500/20 text-amber-400" :
-                        idx === 1 ? "bg-slate-500/20 text-slate-300" :
-                        idx === 2 ? "bg-orange-800/20 text-orange-500" :
+                        idx === 0 ? "bg-[var(--warning)]/20 text-[var(--warning)]" :
+                        idx === 1 ? "bg-secondary text-muted-foreground" :
+                        idx === 2 ? "bg-[var(--warning)]/20 text-[var(--warning)]" :
                         "bg-secondary text-muted-foreground"
                       )}>
                         #{idx + 1}
@@ -407,7 +407,7 @@ export default function IMDEExperimentsPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-mono text-sm font-medium">{run.name}</span>
-                          {run.starred && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />}
+                          {run.starred && <Star className="h-3.5 w-3.5 fill-[var(--warning)] text-[var(--warning)]" />}
                         </div>
                         <span className="text-xs text-muted-foreground">{run.model} · {run.startedBy}</span>
                       </div>

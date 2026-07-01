@@ -124,11 +124,11 @@ const auditLog: AuditEntry[] = [
 ]
 
 const categoryColors: Record<AuditEntry["category"], string> = {
-  "data-access": "bg-blue-500/20 text-blue-400",
-  "model-change": "bg-violet-500/20 text-violet-400",
-  "publish": "bg-emerald-500/20 text-emerald-400",
-  "config": "bg-amber-500/20 text-amber-400",
-  "permission": "bg-orange-500/20 text-orange-400",
+  "data-access": "bg-secondary text-muted-foreground",
+  "model-change": "bg-secondary text-muted-foreground",
+  "publish": "bg-[var(--primary)]/20 text-[var(--primary)]",
+  "config": "bg-[var(--warning)]/20 text-[var(--warning)]",
+  "permission": "bg-[var(--warning)]/20 text-[var(--warning)]",
 }
 
 export default function IMDECollaborationPage() {
@@ -141,8 +141,8 @@ export default function IMDECollaborationPage() {
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/20">
-              <GitBranch className="h-5 w-5 text-violet-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+              <GitBranch className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Collaboration</h1>
@@ -154,7 +154,7 @@ export default function IMDECollaborationPage() {
               <Download className="h-4 w-4" />
               Export Audit Log
             </Button>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
               <Plus className="h-4 w-4" />
               New Review Request
             </Button>
@@ -166,7 +166,7 @@ export default function IMDECollaborationPage() {
             <TabsTrigger value="commits">Commit History</TabsTrigger>
             <TabsTrigger value="reviews">
               Peer Reviews
-              <Badge className="ml-1.5 bg-amber-500/20 text-amber-400 text-[10px]">2</Badge>
+              <Badge className="ml-1.5 bg-[var(--warning)]/20 text-[var(--warning)] text-[10px]">2</Badge>
             </TabsTrigger>
             <TabsTrigger value="audit">Audit Log</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
@@ -177,28 +177,28 @@ export default function IMDECollaborationPage() {
               <div className="col-span-2 space-y-2">
                 {commits.map((c) => (
                   <div key={c.hash} className="flex items-start gap-3 rounded-lg border border-border/50 bg-secondary/10 p-3 hover:bg-secondary/20 transition-colors">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-bold text-violet-400">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground">
                       {c.authorInitials}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-sm font-medium text-foreground">{c.message}</span>
                         {c.verified && (
-                          <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 text-[10px] text-emerald-400">verified</span>
+                          <span className="rounded-full bg-[var(--primary)]/15 border border-[var(--primary)]/30 px-1.5 py-0.5 text-[10px] text-[var(--primary)]">verified</span>
                         )}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="font-mono">{c.hash}</span>
                         <span>{c.author}</span>
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{c.timestamp}</span>
-                        <span className="flex items-center gap-1 rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400">
+                        <span className="flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-[10px] text-muted-foreground">
                           <GitBranch className="h-2.5 w-2.5" />{c.branch}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-emerald-400">+{c.additions}</span>
-                      <span className="text-red-400">-{c.deletions}</span>
+                      <span className="text-[var(--primary)]">+{c.additions}</span>
+                      <span className="text-destructive">-{c.deletions}</span>
                     </div>
                   </div>
                 ))}
@@ -208,7 +208,7 @@ export default function IMDECollaborationPage() {
                 <Card className="border-border">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <GitBranch className="h-4 w-4 text-violet-400" />
+                      <GitBranch className="h-4 w-4 text-muted-foreground" />
                       Active Branches
                     </CardTitle>
                   </CardHeader>
@@ -221,7 +221,7 @@ export default function IMDECollaborationPage() {
                     ].map((b) => (
                       <div key={b.name} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-1.5">
-                          <GitBranch className="h-3.5 w-3.5 text-violet-400" />
+                          <GitBranch className="h-3.5 w-3.5 text-muted-foreground" />
                           <span className={cn("font-mono", b.protected ? "text-foreground font-semibold" : "text-muted-foreground")}>{b.name}</span>
                           {b.protected && <Lock className="h-2.5 w-2.5 text-muted-foreground" />}
                         </div>
@@ -236,7 +236,7 @@ export default function IMDECollaborationPage() {
                 <Card className="border-border">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <GitCommit className="h-4 w-4 text-emerald-400" />
+                      <GitCommit className="h-4 w-4 text-[var(--primary)]" />
                       Activity (7 days)
                     </CardTitle>
                   </CardHeader>
@@ -245,7 +245,7 @@ export default function IMDECollaborationPage() {
                       {[4, 7, 3, 12, 8, 6, 9].map((h, i) => (
                         <div
                           key={i}
-                          className="flex-1 rounded-t bg-violet-500/40 hover:bg-violet-500/60 transition-colors"
+                          className="flex-1 rounded-t bg-[var(--primary)]/30 hover:bg-[var(--primary)]/40 transition-colors"
                           style={{ height: `${(h / 12) * 100}%` }}
                           title={`${h} commits`}
                         />
@@ -269,9 +269,9 @@ export default function IMDECollaborationPage() {
                       <div className="flex items-start gap-3 flex-1">
                         <div className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs",
-                          pr.status === "approved" ? "bg-emerald-500/20 text-emerald-400" :
-                          pr.status === "changes-requested" ? "bg-red-500/20 text-red-400" :
-                          "bg-blue-500/20 text-blue-400"
+                          pr.status === "approved" ? "bg-[var(--primary)]/20 text-[var(--primary)]" :
+                          pr.status === "changes-requested" ? "bg-destructive/20 text-destructive" :
+                          "bg-secondary text-muted-foreground"
                         )}>
                           <GitMerge className="h-4 w-4" />
                         </div>
@@ -280,9 +280,9 @@ export default function IMDECollaborationPage() {
                             <span className="text-sm font-semibold">{pr.title}</span>
                             <Badge className={cn(
                               "text-xs",
-                              pr.status === "approved" ? "bg-emerald-500/20 text-emerald-400" :
-                              pr.status === "changes-requested" ? "bg-red-500/20 text-red-400" :
-                              "bg-blue-500/20 text-blue-400"
+                              pr.status === "approved" ? "bg-[var(--primary)]/20 text-[var(--primary)]" :
+                              pr.status === "changes-requested" ? "bg-destructive/20 text-destructive" :
+                              "bg-secondary text-muted-foreground"
                             )}>
                               {pr.status}
                             </Badge>
@@ -299,10 +299,10 @@ export default function IMDECollaborationPage() {
                       <div className="flex items-center gap-1">
                         {pr.status === "open" && (
                           <>
-                            <Button variant="outline" size="sm" className="gap-1.5 text-xs text-red-400 hover:text-red-300 border-red-500/30">
+                            <Button variant="outline" size="sm" className="gap-1.5 text-xs text-destructive hover:text-destructive border-destructive/30">
                               <ThumbsDown className="h-3.5 w-3.5" /> Request Changes
                             </Button>
-                            <Button size="sm" className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white">
+                            <Button size="sm" className="gap-1.5 text-xs bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                               <ThumbsUp className="h-3.5 w-3.5" /> Approve
                             </Button>
                           </>
@@ -320,10 +320,10 @@ export default function IMDECollaborationPage() {
               ))}
 
               {/* Domain Expert Comment Box */}
-              <Card className="border-violet-500/30 bg-violet-500/5">
+              <Card className="border-border bg-secondary">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-violet-400" />
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     Domain Expert Feedback
                   </CardTitle>
                   <CardDescription className="text-xs">Engagement billing and tax classification experts can leave feedback directly on models and experiments</CardDescription>
@@ -337,7 +337,7 @@ export default function IMDECollaborationPage() {
                   />
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Commenting on: <strong>Going-Concern-Risk-Model-v3</strong></span>
-                    <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white" disabled={!comment.trim()}>
+                    <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" disabled={!comment.trim()}>
                       <MessageSquare className="h-4 w-4" /> Post Feedback
                     </Button>
                   </div>
@@ -376,7 +376,7 @@ export default function IMDECollaborationPage() {
                   {auditLog.map((entry) => (
                     <tr key={entry.id} className={cn(
                       "border-b border-border/50 transition-colors hover:bg-secondary/20",
-                      entry.severity === "critical" && "bg-red-500/5"
+                      entry.severity === "critical" && "bg-destructive/5"
                     )}>
                       <td className="px-4 py-3 text-muted-foreground font-mono">{entry.timestamp}</td>
                       <td className="px-4 py-3">
@@ -391,8 +391,8 @@ export default function IMDECollaborationPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {entry.severity === "info" && <span className="text-muted-foreground">—</span>}
-                        {entry.severity === "warning" && <AlertTriangle className="h-4 w-4 text-amber-400 mx-auto" />}
-                        {entry.severity === "critical" && <AlertTriangle className="h-4 w-4 text-red-400 mx-auto" />}
+                        {entry.severity === "warning" && <AlertTriangle className="h-4 w-4 text-[var(--warning)] mx-auto" />}
+                        {entry.severity === "critical" && <AlertTriangle className="h-4 w-4 text-destructive mx-auto" />}
                       </td>
                     </tr>
                   ))}
@@ -400,7 +400,7 @@ export default function IMDECollaborationPage() {
               </table>
             </div>
             <p className="mt-3 text-xs text-muted-foreground flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-emerald-400" />
+              <Shield className="h-3.5 w-3.5 text-[var(--primary)]" />
               Audit logs are immutable, tamper-evident, and retained for 7 years per independence requirements.
             </p>
           </TabsContent>
@@ -420,13 +420,13 @@ export default function IMDECollaborationPage() {
                 <Card key={m.name} className="border-border">
                   <CardContent className="p-4 flex items-start gap-3">
                     <div className="relative shrink-0">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-500/20 text-sm font-bold text-violet-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-sm font-bold text-muted-foreground">
                         {m.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                       </div>
                       <div className={cn(
                         "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background",
-                        m.status === "online" ? "bg-emerald-400" :
-                        m.status === "away" ? "bg-amber-400" : "bg-muted-foreground"
+                        m.status === "online" ? "bg-[var(--primary)]" :
+                        m.status === "away" ? "bg-[var(--warning)]" : "bg-muted-foreground"
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -439,7 +439,7 @@ export default function IMDECollaborationPage() {
                       </div>
                     </div>
                     <div className="text-right text-xs text-muted-foreground shrink-0">
-                      <Star className="h-3 w-3 text-amber-400 inline mr-0.5" />
+                      <Star className="h-3 w-3 text-[var(--warning)] inline mr-0.5" />
                       {m.contributions}
                     </div>
                   </CardContent>

@@ -136,9 +136,9 @@ export default function MarketplacePage() {
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
                { label: "Agents",      value: counts.agents, color: "text-[var(--accent)]" },
-               { label: "Spaces",      value: counts.spaces, color: "text-violet-400" },
+               { label: "Spaces",      value: counts.spaces, color: "text-muted-foreground" },
                { label: "MCP Servers & Tools", value: counts.mcp,    color: "text-[var(--success)]" },
-              { label: "Models",      value: counts.models, color: "text-purple-400" },
+              { label: "Models",      value: counts.models, color: "text-muted-foreground" },
               { label: "Skills",      value: counts.skills, color: "text-[var(--brand-teal)]" },
             ].map(({ label, value, color }) => (
               <div key={label} className="rounded-lg border border-border bg-card/50 p-4">

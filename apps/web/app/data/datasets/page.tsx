@@ -313,15 +313,15 @@ const datasets: Dataset[] = [
 // ── Config ─────────────────────────────────────────────────────────────────────
 
 const categories: { id: Category | "all"; label: string; icon: React.ElementType; color: string }[] = [
-  { id: "all",        label: "All",         icon: Sparkles,    color: "text-sky-400" },
-  { id: "professional-services", label: "Professional Services",  icon: Stethoscope, color: "text-rose-400" },
-  { id: "nlp",        label: "NLP / Text",  icon: FileText,    color: "text-blue-400" },
-  { id: "tabular",    label: "Tabular",     icon: BarChart3,   color: "text-emerald-400" },
-  { id: "vision",     label: "Vision",      icon: Image,       color: "text-pink-400" },
-  { id: "multimodal", label: "Multimodal",  icon: Layers,      color: "text-violet-400" },
-  { id: "finance",    label: "Finance",     icon: DollarSign,  color: "text-amber-400" },
-  { id: "synthetic",  label: "Synthetic",   icon: FlaskConical, color: "text-orange-400" },
-  { id: "benchmark",  label: "Benchmarks",  icon: Star,        color: "text-yellow-400" },
+  { id: "all",        label: "All",         icon: Sparkles,    color: "text-muted-foreground" },
+  { id: "professional-services", label: "Professional Services",  icon: Stethoscope, color: "text-muted-foreground" },
+  { id: "nlp",        label: "NLP / Text",  icon: FileText,    color: "text-muted-foreground" },
+  { id: "tabular",    label: "Tabular",     icon: BarChart3,   color: "text-[var(--primary)]" },
+  { id: "vision",     label: "Vision",      icon: Image,       color: "text-muted-foreground" },
+  { id: "multimodal", label: "Multimodal",  icon: Layers,      color: "text-muted-foreground" },
+  { id: "finance",    label: "Finance",     icon: DollarSign,  color: "text-muted-foreground" },
+  { id: "synthetic",  label: "Synthetic",   icon: FlaskConical, color: "text-muted-foreground" },
+  { id: "benchmark",  label: "Benchmarks",  icon: Star,        color: "text-muted-foreground" },
 ]
 
 const sortOptions = [
@@ -333,11 +333,11 @@ const sortOptions = [
 ]
 
 const modalityConfig: Record<Modality, { color: string; label: string }> = {
-  text:       { color: "bg-blue-500/15 text-blue-400",    label: "Text" },
-  tabular:    { color: "bg-emerald-500/15 text-emerald-400", label: "Tabular" },
-  image:      { color: "bg-pink-500/15 text-pink-400",    label: "Image" },
-  multimodal: { color: "bg-violet-500/15 text-violet-400", label: "Multimodal" },
-  code:       { color: "bg-amber-500/15 text-amber-400",  label: "Code" },
+  text:       { color: "bg-secondary text-muted-foreground", label: "Text" },
+  tabular:    { color: "bg-[var(--primary)]/15 text-[var(--primary)]", label: "Tabular" },
+  image:      { color: "bg-secondary text-muted-foreground", label: "Image" },
+  multimodal: { color: "bg-secondary text-muted-foreground", label: "Multimodal" },
+  code:       { color: "bg-secondary text-muted-foreground", label: "Code" },
 }
 
 function fmtDownloads(n: number) {
@@ -350,14 +350,14 @@ function fmtDownloads(n: number) {
 function DatasetCard({ ds, onUse }: { ds: Dataset; onUse: (id: string) => void }) {
   const mod = modalityConfig[ds.modality]
   return (
-    <Card className="group flex flex-col border-border bg-card hover:border-sky-500/30 transition-all hover:shadow-md hover:shadow-sky-500/5">
+    <Card className="group flex flex-col border-border bg-card hover:border-[var(--primary)]/30 transition-all hover:shadow-md hover:shadow-[var(--primary)]/5">
       <CardContent className="flex flex-1 flex-col p-4">
         {/* Top */}
         <div className="mb-2 flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              {ds.featured && <Star className="h-3.5 w-3.5 shrink-0 text-amber-400 fill-amber-400" />}
-              <span className="text-sm font-semibold text-foreground group-hover:text-sky-300 transition-colors line-clamp-1">{ds.name}</span>
+              {ds.featured && <Star className="h-3.5 w-3.5 shrink-0 text-[var(--warning)] fill-[var(--warning)]" />}
+              <span className="text-sm font-semibold text-foreground group-hover:text-[var(--primary)] transition-colors line-clamp-1">{ds.name}</span>
             </div>
             <span className="text-xs text-muted-foreground">{ds.org}</span>
           </div>
@@ -390,7 +390,7 @@ function DatasetCard({ ds, onUse }: { ds: Dataset; onUse: (id: string) => void }
         <div className="flex gap-2">
           <Button
             size="sm"
-            className="flex-1 h-7 gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs"
+            className="flex-1 h-7 gap-1.5 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white text-xs"
             onClick={() => onUse(ds.id)}
           >
             <Zap className="h-3 w-3" /> Use Dataset
@@ -412,19 +412,19 @@ function DatasetCard({ ds, onUse }: { ds: Dataset; onUse: (id: string) => void }
 function FeaturedBanner({ ds, onUse }: { ds: Dataset; onUse: (id: string) => void }) {
   const mod = modalityConfig[ds.modality]
   return (
-    <div className="group col-span-1 flex flex-col rounded-xl border border-sky-500/20 bg-gradient-to-br from-sky-500/5 to-background p-4 hover:border-sky-500/40 transition-all">
+    <div className="group col-span-1 flex flex-col rounded-xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/5 to-background p-4 hover:border-[var(--primary)]/30 transition-all">
       <div className="mb-1 flex items-center gap-1.5">
-        <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-        <span className="text-[10px] uppercase tracking-wider text-amber-400 font-medium">Featured</span>
+        <Star className="h-3.5 w-3.5 text-[var(--warning)] fill-[var(--warning)]" />
+        <span className="text-[10px] uppercase tracking-wider text-[var(--warning)] font-medium">Featured</span>
       </div>
       <p className="mb-1 text-sm font-bold text-foreground">{ds.name}</p>
-      <p className="mb-2 text-xs text-sky-400">{ds.org}</p>
+      <p className="mb-2 text-xs text-[var(--primary)]">{ds.org}</p>
       <p className="mb-3 flex-1 text-xs text-muted-foreground leading-relaxed line-clamp-2">{ds.description}</p>
       <div className="flex items-center gap-2">
         <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", mod.color)}>{mod.label}</span>
         <span className="text-[10px] text-muted-foreground">{ds.size}</span>
         <span className="text-[10px] text-muted-foreground">{fmtDownloads(ds.downloads)} downloads</span>
-        <Button size="sm" className="ml-auto h-6 gap-1 bg-sky-600 hover:bg-sky-700 text-white text-[11px] px-2" onClick={() => onUse(ds.id)}>
+        <Button size="sm" className="ml-auto h-6 gap-1 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white text-[11px] px-2" onClick={() => onUse(ds.id)}>
           <Zap className="h-3 w-3" /> Use
         </Button>
       </div>
@@ -464,10 +464,10 @@ export default function DatasetsPage() {
       <AppSidebar />
       <main className="app-shell-offset p-6">
         {/* Hero */}
-        <div className="mb-8 rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-500/10 via-background to-violet-500/5 p-8">
+        <div className="mb-8 rounded-2xl border border-[var(--primary)]/20 bg-gradient-to-br from-[var(--primary)]/10 via-background to-[var(--primary)]/5 p-8">
           <div className="mb-2 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-sky-400" />
-            <span className="text-sm font-semibold text-sky-400 uppercase tracking-wider">Dataset Hub</span>
+            <Sparkles className="h-5 w-5 text-[var(--primary)]" />
+            <span className="text-sm font-semibold text-[var(--primary)] uppercase tracking-wider">Dataset Hub</span>
           </div>
           <h1 className="mb-2 text-3xl font-bold text-foreground">
             Built-in Datasets
@@ -480,7 +480,7 @@ export default function DatasetsPage() {
           <div className="relative max-w-2xl">
             <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             <input
-              className="h-12 w-full rounded-xl border border-border bg-card pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+              className="h-12 w-full rounded-xl border border-border bg-card pl-12 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
               placeholder="Search datasets, tags, tasks, or organizations…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -523,11 +523,11 @@ export default function DatasetsPage() {
                       className={cn(
                         "flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-xs transition-colors",
                         selectedCategory === id
-                          ? "bg-sky-500/15 text-sky-300 font-medium"
+                          ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium"
                           : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                       )}
                     >
-                      <Icon className={cn("h-3.5 w-3.5 shrink-0", selectedCategory === id ? "text-sky-400" : color)} />
+                      <Icon className={cn("h-3.5 w-3.5 shrink-0", selectedCategory === id ? "text-[var(--primary)]" : color)} />
                       <span className="flex-1 text-left">{label}</span>
                       <span className="text-[10px] text-muted-foreground/50">{count}</span>
                     </button>
@@ -547,7 +547,7 @@ export default function DatasetsPage() {
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-xs transition-colors capitalize",
                       modalityFilter === m
-                        ? "bg-sky-500/15 text-sky-300 font-medium"
+                        ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium"
                         : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                     )}
                   >
@@ -580,7 +580,7 @@ export default function DatasetsPage() {
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">{filtered.length}</span> datasets
-                {selectedCategory !== "all" && <> in <span className="text-sky-400">{categories.find((c) => c.id === selectedCategory)?.label}</span></>}
+                {selectedCategory !== "all" && <> in <span className="text-[var(--primary)]">{categories.find((c) => c.id === selectedCategory)?.label}</span></>}
               </p>
               <div className="flex items-center gap-2">
                 <SortAsc className="h-4 w-4 text-muted-foreground" />
@@ -617,12 +617,12 @@ export default function DatasetsPage() {
 
         {/* Use dataset toast / modal simulation */}
         {usedDataset && (
-          <div className="fixed bottom-6 right-6 flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-card p-4 shadow-xl shadow-emerald-500/10">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+          <div className="fixed bottom-6 right-6 flex items-center gap-3 rounded-xl border border-[var(--primary)]/30 bg-card p-4 shadow-xl shadow-[var(--primary)]/10">
+            <CheckCircle2 className="h-5 w-5 text-[var(--primary)]" />
             <div>
               <p className="text-sm font-semibold text-foreground">Dataset added to IMDE notebook</p>
               <p className="text-xs text-muted-foreground">
-                {datasets.find((d) => d.id === usedDataset)?.name} · Load with <code className="text-sky-400">dataset.load("{usedDataset}")</code>
+                {datasets.find((d) => d.id === usedDataset)?.name} · Load with <code className="text-[var(--primary)]">dataset.load("{usedDataset}")</code>
               </p>
             </div>
             <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => setUsedDataset(null)}>Open Notebook <ExternalLink className="h-3.5 w-3.5" /></Button>

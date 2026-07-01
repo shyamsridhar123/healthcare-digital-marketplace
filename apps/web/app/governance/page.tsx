@@ -204,16 +204,16 @@ const policies: Policy[] = [
 
 const riskColors = {
   low: "bg-green-500/10 text-green-500 border-green-500/20",
-  medium: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+  medium: "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20",
   high: "bg-red-500/10 text-red-500 border-red-500/20",
 }
 
 const statusColors = {
-  pending: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+  pending: "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/20",
   approved: "bg-green-500/10 text-green-500 border-green-500/20",
   rejected: "bg-red-500/10 text-red-500 border-red-500/20",
   active: "bg-green-500/10 text-green-500 border-green-500/20",
-  draft: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  draft: "bg-secondary text-muted-foreground border-border",
   disabled: "bg-muted text-muted-foreground border-border",
 }
 
@@ -362,7 +362,7 @@ export default function GovernancePage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
                       {request.type === "deployment" && <Activity className="h-5 w-5 text-accent" />}
                       {request.type === "asset" && <Shield className="h-5 w-5 text-green-500" />}
-                      {request.type === "policy-change" && <FileText className="h-5 w-5 text-yellow-500" />}
+                      {request.type === "policy-change" && <FileText className="h-5 w-5 text-[var(--warning)]" />}
                     </div>
                     <div>
                       <p className="font-medium text-foreground">{request.title}</p>
@@ -534,7 +534,7 @@ export default function GovernancePage() {
                       className={
                         a.identityStatus === "active"
                           ? "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]"
-                          : "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
+                          : "border-[var(--warning)]/20 bg-[var(--warning)]/10 text-[var(--warning)]"
                       }
                     >
                       {a.identityStatus}
@@ -563,7 +563,7 @@ export default function GovernancePage() {
                           ev.gate === "passed"
                             ? "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]"
                             : ev.gate === "review"
-                            ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
+                            ? "border-[var(--warning)]/20 bg-[var(--warning)]/10 text-[var(--warning)]"
                             : "border-red-500/20 bg-red-500/10 text-red-500"
                         }
                       >
@@ -598,7 +598,7 @@ export default function GovernancePage() {
                             s.severity === "none"
                               ? "border-[var(--primary)]/25 text-muted-foreground"
                               : s.severity === "low"
-                              ? "border-yellow-500/25 text-yellow-500"
+                              ? "border-[var(--warning)]/25 text-[var(--warning)]"
                               : "border-red-500/25 text-red-500"
                           }
                         >
@@ -647,12 +647,12 @@ export default function GovernancePage() {
                 >
                   <div
                     className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                      e.severity === "high" ? "bg-red-500/10" : e.severity === "medium" ? "bg-yellow-500/10" : "bg-[var(--primary)]/10"
+                      e.severity === "high" ? "bg-destructive/10" : e.severity === "medium" ? "bg-[var(--warning)]/10" : "bg-[var(--primary)]/10"
                     }`}
                   >
                     <ShieldCheck
                       className={`h-5 w-5 ${
-                        e.severity === "high" ? "text-red-500" : e.severity === "medium" ? "text-yellow-500" : "text-[var(--primary)]"
+                        e.severity === "high" ? "text-destructive" : e.severity === "medium" ? "text-[var(--warning)]" : "text-[var(--primary)]"
                       }`}
                     />
                   </div>

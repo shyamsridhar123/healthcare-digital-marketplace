@@ -380,8 +380,8 @@ export default function NewDeploymentPage() {
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4">
-                  <p className="text-sm text-yellow-500">
+                <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4">
+                  <p className="text-sm text-[var(--warning)]">
                     Deploying to {config.environment} will make this workflow accessible to{" "}
                     {config.environment === "production" ? "all users" : "authorized testers"}.
                   </p>

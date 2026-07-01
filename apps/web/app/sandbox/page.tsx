@@ -17,13 +17,13 @@ import { imdeDemoScenario } from "@/lib/imde-demo-data";
 import type { SandboxWorkspace, SandboxStatus } from "@/lib/types";
 
 const STATUS_COLORS: Record<SandboxStatus, string> = {
-  requested: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  approved: "bg-sky-500/20 text-sky-400 border-sky-500/30",
-  provisioning: "bg-violet-500/20 text-violet-400 border-violet-500/30",
-  ready: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  suspended: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  expired: "bg-red-500/20 text-red-400 border-red-500/30",
-  retired: "bg-slate-500/20 text-slate-400 border-slate-500/30",
+  requested: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
+  approved: "bg-secondary text-muted-foreground border-border",
+  provisioning: "bg-secondary text-muted-foreground border-border",
+  ready: "bg-[var(--primary)]/20 text-[var(--primary)] border-[var(--primary)]/30",
+  suspended: "bg-[var(--warning)]/15 text-[var(--warning)] border-[var(--warning)]/30",
+  expired: "bg-destructive/15 text-destructive border-destructive/30",
+  retired: "bg-secondary text-muted-foreground border-border",
   failed: "bg-destructive/20 text-destructive border-destructive/30",
 };
 
@@ -149,7 +149,7 @@ export default function SandboxPage() {
       <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-2xl">
-            <Badge className="mb-2 border-emerald-500/30 bg-emerald-500/15 text-emerald-300">
+            <Badge className="mb-2 border-[var(--primary)]/30 bg-[var(--primary)]/15 text-[var(--primary)]">
               Executive demo path
             </Badge>
             <h2 className="text-lg font-semibold text-foreground">{imdeDemoScenario.title}</h2>
@@ -165,7 +165,7 @@ export default function SandboxPage() {
 
       {/* Alert for pending approvals (admin view) */}
       {pendingApproval > 0 && (
-        <div className="flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
+        <div className="flex items-center gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-4 py-3 text-sm text-[var(--warning)]">
           <span className="font-semibold">{pendingApproval} sandbox{pendingApproval > 1 ? "es" : ""} awaiting approval</span>
           <button
             type="button"

@@ -5,151 +5,166 @@
 
 :root {
   --app-sidebar-width: 16rem;
-  /* Enterprise Brand - Dark Theme */
-  /* Primary: Accent Orange | Secondary: Brand Blue | Accent: Teal */
-  --background: #0C0C0C;
-  --foreground: #F2F2F2;
-  --card: #161616;
-  --card-foreground: #F2F2F2;
+
+  /* ─────────────────────────────────────────────────────────────
+     Deloitte brand system — Dark theme (default)
+     Discipline (Pentagram / deloitte.com): black + warm-gray carry
+     the layout (~90–95%); Deloitte Green #86BC25 is punctuation
+     (~5–10%) — CTAs, accent stripes, one highlight per view.
+     Green buttons take BLACK text. Never flood surfaces with green.
+     ───────────────────────────────────────────────────────────── */
+
+  /* Core surfaces — Deloitte black carries the layout */
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --card: #141414;
+  --card-foreground: #FFFFFF;
   --popover: #1A1A1A;
-  --popover-foreground: #F2F2F2;
+  --popover-foreground: #FFFFFF;
+
+  /* Deloitte Green — the one true green (#86BC25), black text on green */
   --primary: #86BC25;
-  --primary-foreground: #0C0C0C;
-  --secondary: #202020;
-  --secondary-foreground: #F2F2F2;
-  --muted: #1E1E1E;
-  --muted-foreground: #A0A0A0;
+  --primary-foreground: #000000;
   --accent: #86BC25;
-  --accent-foreground: #0C0C0C;
-  --destructive: #E03B3B;
-  --destructive-foreground: #F2F2F2;
-  --border: #2A2A2A;
+  --accent-foreground: #000000;
+
+  /* Neutrals — warm Deloitte grays, not cold slate */
+  --secondary: #242424;              /* Deloitte off-black */
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #A7A8AA;       /* Deloitte mid-light gray */
+  --border: #262626;
   --input: #1E1E1E;
   --ring: #86BC25;
+
+  /* Semantic status — used ONLY to encode state, never decoration */
+  --destructive: #E03B3B;
+  --destructive-foreground: #FFFFFF;
+  --success: #43B02A;                /* Deloitte bright green */
+  --warning: #C4D600;                /* Deloitte lime (attention) */
+  --info: #0076A8;                   /* Deloitte blue */
+
+  /* Chart ramp — official Deloitte GREEN family (sequential, no rainbow) */
   --chart-1: #86BC25;
-  --chart-2: #3D8AFF;
-  --chart-3: #F5A623;
-  --chart-4: #A855F7;
-  --chart-5: #14B8A6;
+  --chart-2: #43B02A;
+  --chart-3: #009A44;
+  --chart-4: #046A38;
+  --chart-5: #26890D;
+  --chart-neutral: #75787B;          /* Deloitte gray for a contrast series */
+
   --radius: 0.5rem;
-  --sidebar: #111111;
-  --sidebar-foreground: #F2F2F2;
+
+  /* Sidebar — near-black, green only as active-state punctuation */
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #FFFFFF;
   --sidebar-primary: #86BC25;
-  --sidebar-primary-foreground: #0C0C0C;
-  --sidebar-accent: #202020;
-  --sidebar-accent-foreground: #F2F2F2;
-  --sidebar-border: #262626;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #1F1F1F;
   --sidebar-ring: #86BC25;
-  
-  /* Enterprise Brand Tokens */
-  --accent: #86BC25;
-  --accent-light: #A8D44A;
-  --brand-primary: #6A9420;
-  --brand-secondary-light: #A8D44A;
-  --brand-teal: #14B8A6;
-  --success: #86BC25;
-  --warning: #F5A623;
-  --info: #3D8AFF;
-  
-  /* Category colors - Professional healthcare palette */
+
+  /* Brand accent scale (for hovers / borders / subtle tints) */
+  --accent-light: #A6D65B;
+  --accent-strong: #6B961E;          /* Deloitte green hover */
+  --brand-primary: #26890D;          /* Deloitte dark green */
+  --brand-secondary-light: #A6D65B;
+  --brand-teal: #00ABAB;             /* Deloitte teal (rare tech accent) */
+  --brand-blue: #0076A8;             /* Deloitte blue (rare, links/data) */
+  --warm-gray: #D0D0CE;              /* Deloitte "parchment" gray */
+
+  /* Asset categories — brand-only hues (green / teal / blue family) */
   --cat-agents: #86BC25;
-  --cat-agents-bg: #1A2E0A;
-  --cat-mcp-servers: #14B8A6;
-  --cat-mcp-servers-bg: #06231F;
-  --cat-mcp-tools: #3D8AFF;
-  --cat-mcp-tools-bg: #0A1A2E;
-  --cat-models: #A855F7;
-  --cat-models-bg: #1E0A2E;
-  --cat-workflows: #F5A623;
-  --cat-workflows-bg: #2E1E04;
-  --cat-claims: #3D8AFF;
-  --cat-claims-bg: #0A1A2E;
-  --cat-denials: #E03B3B;
-  --cat-denials-bg: #2E0A0A;
-  --cat-collections: #86BC25;
-  --cat-collections-bg: #1A2E0A;
-  --cat-eligibility: #A855F7;
-  --cat-eligibility-bg: #1E0A2E;
-  --cat-coding: #F5A623;
-  --cat-coding-bg: #2E1E04;
-  --cat-payments: #14B8A6;
-  --cat-payments-bg: #06231F;
+  --cat-agents-bg: #16210A;
+  --cat-mcp-servers: #00ABAB;
+  --cat-mcp-servers-bg: #06201F;
+  --cat-mcp-tools: #6FC2B4;
+  --cat-mcp-tools-bg: #0C1F1C;
+  --cat-models: #0076A8;
+  --cat-models-bg: #08192099;
+  --cat-workflows: #43B02A;
+  --cat-workflows-bg: #112108;
+  --cat-skills: #26890D;
+  --cat-skills-bg: #0E1C08;
+
+  /* Motion — Emil custom easing (built-in easings lack punch) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Light theme overrides */
+/* Light theme — Deloitte's dominant mode: white/gray surfaces, black text,
+   green as accent. Green TEXT on white uses dark emerald for AA contrast;
+   green FILLS keep #86BC25 with black text. */
 .light {
   --background: #FFFFFF;
-  --foreground: #0C0C0C;
-  --card: #F8F8F8;
-  --card-foreground: #0C0C0C;
+  --foreground: #000000;
+  --card: #FFFFFF;
+  --card-foreground: #000000;
   --popover: #FFFFFF;
-  --popover-foreground: #0C0C0C;
-  --primary: #5A8C16;
-  --primary-foreground: #FFFFFF;
-  --secondary: #EFEFEF;
-  --secondary-foreground: #0C0C0C;
-  --muted: #F0F0F0;
-  --muted-foreground: #525252;
-  --accent: #5A8C16;
+  --popover-foreground: #000000;
+
+  --primary: #86BC25;                /* fill: signature green, black text */
+  --primary-foreground: #000000;
+  --accent: #046A38;                 /* accent TEXT/icon: dark emerald (AA on white) */
   --accent-foreground: #FFFFFF;
+
+  --secondary: #F5F5F5;              /* Deloitte near-white */
+  --secondary-foreground: #000000;
+  --muted: #F5F5F5;
+  --muted-foreground: #53565A;       /* Deloitte charcoal */
+  --border: #E7E9E8;                 /* Deloitte off-white gray */
+  --input: #E7E9E8;
+  --ring: #86BC25;
+
   --destructive: #C62828;
   --destructive-foreground: #FFFFFF;
-  --border: #DEDEDE;
-  --input: #DEDEDE;
-  --ring: #5A8C16;
-  --chart-1: #5A8C16;
-  --chart-2: #2563EB;
-  --chart-3: #D97706;
-  --chart-4: #7C3AED;
-  --chart-5: #0D9488;
+  --success: #26890D;
+  --warning: #7A8600;                /* darkened lime for contrast */
+  --info: #0076A8;
+
+  --chart-1: #26890D;
+  --chart-2: #43B02A;
+  --chart-3: #86BC25;
+  --chart-4: #009A44;
+  --chart-5: #046A38;
+  --chart-neutral: #A7A8AA;
+
   --sidebar: #F5F5F5;
-  --sidebar-foreground: #0C0C0C;
-  --sidebar-primary: #5A8C16;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8E8E8;
-  --sidebar-accent-foreground: #0C0C0C;
-  --sidebar-border: #DEDEDE;
-  --sidebar-ring: #5A8C16;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #86BC25;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #E7E9E8;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #E7E9E8;
+  --sidebar-ring: #86BC25;
 
-  /* Enterprise Brand Tokens - adjusted for light bg */
-  --accent: #5A8C16;
   --accent-light: #86BC25;
-  --brand-primary: #4A7314;
-  --brand-secondary-light: #86BC25;
-  --brand-teal: #0D9488;
-  --success: #5A8C16;
-  --warning: #D97706;
-  --info: #2563EB;
+  --accent-strong: #6B961E;
+  --brand-primary: #046A38;
+  --brand-secondary-light: #26890D;
+  --brand-teal: #007680;             /* darkened teal for AA on white */
+  --brand-blue: #0076A8;
+  --warm-gray: #75787B;
 
-  /* Category colors - lighter backgrounds for light mode */
-  --cat-agents: #5A8C16;
+  --cat-agents: #3E6B12;
   --cat-agents-bg: #EAF4D8;
-  --cat-mcp-servers: #0D9488;
-  --cat-mcp-servers-bg: #D6F2EE;
-  --cat-mcp-tools: #2563EB;
-  --cat-mcp-tools-bg: #DCE8FD;
-  --cat-models: #7C3AED;
-  --cat-models-bg: #EBDEFB;
-  --cat-workflows: #D97706;
-  --cat-workflows-bg: #FBEAD2;
-  --cat-claims: #2563EB;
-  --cat-claims-bg: #DCE8FD;
-  --cat-denials: #C62828;
-  --cat-denials-bg: #F8D7D7;
-  --cat-collections: #5A8C16;
-  --cat-collections-bg: #EAF4D8;
-  --cat-eligibility: #7C3AED;
-  --cat-eligibility-bg: #EBDEFB;
-  --cat-coding: #D97706;
-  --cat-coding-bg: #FBEAD2;
-  --cat-payments: #0D9488;
-  --cat-payments-bg: #D6F2EE;
+  --cat-mcp-servers: #007680;
+  --cat-mcp-servers-bg: #D8EBED;
+  --cat-mcp-tools: #0D8390;
+  --cat-mcp-tools-bg: #D8EBED;
+  --cat-models: #0076A8;
+  --cat-models-bg: #EAF7FF;
+  --cat-workflows: #26890D;
+  --cat-workflows-bg: #EAF4D8;
+  --cat-skills: #046A38;
+  --cat-skills-bg: #E7F2D3;
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  --font-sans: var(--font-open-sans), 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
-  /* Category colors */
+  /* Asset category colors (brand-only hues) */
   --color-cat-agents: var(--cat-agents);
   --color-cat-agents-bg: var(--cat-agents-bg);
   --color-cat-mcp-servers: var(--cat-mcp-servers);
@@ -160,18 +175,8 @@
   --color-cat-models-bg: var(--cat-models-bg);
   --color-cat-workflows: var(--cat-workflows);
   --color-cat-workflows-bg: var(--cat-workflows-bg);
-  --color-cat-claims: var(--cat-claims);
-  --color-cat-claims-bg: var(--cat-claims-bg);
-  --color-cat-denials: var(--cat-denials);
-  --color-cat-denials-bg: var(--cat-denials-bg);
-  --color-cat-collections: var(--cat-collections);
-  --color-cat-collections-bg: var(--cat-collections-bg);
-  --color-cat-eligibility: var(--cat-eligibility);
-  --color-cat-eligibility-bg: var(--cat-eligibility-bg);
-  --color-cat-coding: var(--cat-coding);
-  --color-cat-coding-bg: var(--cat-coding-bg);
-  --color-cat-payments: var(--cat-payments);
-  --color-cat-payments-bg: var(--cat-payments-bg);
+  --color-cat-skills: var(--cat-skills);
+  --color-cat-skills-bg: var(--cat-skills-bg);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -196,6 +201,9 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-neutral: var(--chart-neutral);
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -216,18 +224,52 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Metrics and tabular data read straight with lining, tabular figures */
+  .tabular-nums,
+  [data-slot='metric'] {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  /* Respect user motion preferences — disable non-essential motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
   .app-shell-offset {
     margin-left: var(--app-sidebar-width);
-    transition: margin-left 200ms ease-out;
+    transition: margin-left 200ms var(--ease-out);
   }
 
   @media (max-width: 767px) {
     .app-shell-offset {
       margin-left: 0;
     }
+  }
+
+  /* Deloitte accent stripe — how the brand "marks" a section without
+     flooding it with green (4–7px green rule on a dark/light surface). */
+  .brand-stripe {
+    border-top: 3px solid var(--primary);
+  }
+
+  /* Standard interactive press feedback (Emil): pressable elements should
+     visibly respond. Subtle scale, custom ease, fast. */
+  .press {
+    transition: transform 160ms var(--ease-out);
+  }
+  .press:active {
+    transform: scale(0.97);
   }
 }

@@ -79,9 +79,9 @@ const CATEGORIES: {
     icon: Server,
     description: "Backends, compute, Storage, IaC, network topology",
     href: "/settings/infrastructure",
-    color: "text-sky-400",
-    bgColor: "bg-sky-500/10",
-    borderColor: "border-sky-500/40",
+    color: "text-muted-foreground",
+    bgColor: "bg-secondary",
+    borderColor: "border-border",
   },
   {
     id: "performance",
@@ -90,9 +90,9 @@ const CATEGORIES: {
     icon: Zap,
     description: "Scaling, throughput, caching, latency tuning",
     href: "/settings/performance",
-    color: "text-amber-400",
-    bgColor: "bg-amber-500/10",
-    borderColor: "border-amber-500/40",
+    color: "text-[var(--warning)]",
+    bgColor: "bg-[var(--warning)]/10",
+    borderColor: "border-[var(--warning)]/30",
   },
   {
     id: "reliability",
@@ -101,9 +101,9 @@ const CATEGORIES: {
     icon: ShieldCheck,
     description: "SLOs, error budgets, failover, backup, alerting",
     href: "/settings/reliability",
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-500/10",
-    borderColor: "border-emerald-500/40",
+    color: "text-[var(--primary)]",
+    bgColor: "bg-[var(--primary)]/10",
+    borderColor: "border-[var(--primary)]/30",
   },
 ]
 
@@ -111,23 +111,23 @@ const CATEGORIES: {
 
 function tierBorderClass(tier: PersonaTier): string {
   if (tier.tier === 1) return "border-[var(--accent)]/40"
-  if (tier.tier === 2) return "border-blue-500/40"
-  return "border-violet-500/40"
+  if (tier.tier === 2) return "border-border"
+  return "border-border"
 }
 function tierBgClass(tier: PersonaTier): string {
   if (tier.tier === 1) return "bg-[var(--accent)]/10"
-  if (tier.tier === 2) return "bg-blue-500/10"
-  return "bg-violet-500/10"
+  if (tier.tier === 2) return "bg-secondary"
+  return "bg-secondary"
 }
 function tierTextClass(tier: PersonaTier): string {
   if (tier.tier === 1) return "text-[var(--accent)]"
-  if (tier.tier === 2) return "text-blue-400"
-  return "text-violet-400"
+  if (tier.tier === 2) return "text-muted-foreground"
+  return "text-muted-foreground"
 }
 function tierActiveBg(tier: PersonaTier): string {
   if (tier.tier === 1) return "bg-[var(--accent)]/20"
-  if (tier.tier === 2) return "bg-blue-500/20"
-  return "bg-violet-500/20"
+  if (tier.tier === 2) return "bg-secondary"
+  return "bg-secondary"
 }
 
 // ── Setting field renderer ────────────────────────────────────────────────────
@@ -541,7 +541,7 @@ export function SettingsPageContent({ category }: SettingsPageContentProps) {
                       className={cn(
                         "h-8 gap-1.5 text-xs transition-all",
                         justSaved
-                          ? "bg-emerald-600 hover:bg-emerald-600 text-white"
+                          ? "bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
                           : "bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white"
                       )}
                     >

@@ -162,19 +162,19 @@ const workspaces: FabricWorkspace[] = [
 ]
 
 const itemTypeConfig: Record<FabricItem["type"], { icon: React.ElementType; color: string; bg: string; label: string }> = {
-  lakehouse:       { icon: Database,  color: "text-violet-400", bg: "bg-violet-500/15", label: "Lakehouse" },
-  warehouse:       { icon: Table2,    color: "text-emerald-400", bg: "bg-emerald-500/15", label: "Warehouse" },
-  pipeline:        { icon: Workflow,  color: "text-orange-400", bg: "bg-orange-500/15", label: "Pipeline" },
-  notebook:        { icon: FileText,  color: "text-sky-400",    bg: "bg-sky-500/15",    label: "Notebook" },
-  report:          { icon: BarChart3, color: "text-pink-400",   bg: "bg-pink-500/15",   label: "Report" },
-  "semantic-model":{ icon: GitBranch, color: "text-amber-400",  bg: "bg-amber-500/15",  label: "Semantic Model" },
+  lakehouse:       { icon: Database,  color: "text-muted-foreground", bg: "bg-secondary", label: "Lakehouse" },
+  warehouse:       { icon: Table2,    color: "text-[var(--primary)]", bg: "bg-[var(--primary)]/15", label: "Warehouse" },
+  pipeline:        { icon: Workflow,  color: "text-[var(--warning)]", bg: "bg-[var(--warning)]/15", label: "Pipeline" },
+  notebook:        { icon: FileText,  color: "text-muted-foreground", bg: "bg-secondary", label: "Notebook" },
+  report:          { icon: BarChart3, color: "text-muted-foreground", bg: "bg-secondary", label: "Report" },
+  "semantic-model":{ icon: GitBranch, color: "text-[var(--warning)]", bg: "bg-[var(--warning)]/15", label: "Semantic Model" },
 }
 
 function StatusBadge({ status }: { status: ItemStatus }) {
   const cfg = {
-    active:  { cls: "bg-emerald-500/15 text-emerald-400", label: "Active" },
-    paused:  { cls: "bg-amber-500/15 text-amber-400",     label: "Paused" },
-    failed:  { cls: "bg-red-500/15 text-red-400",         label: "Failed" },
+    active:  { cls: "bg-[var(--primary)]/15 text-[var(--primary)]", label: "Active" },
+    paused:  { cls: "bg-[var(--warning)]/15 text-[var(--warning)]", label: "Paused" },
+    failed:  { cls: "bg-destructive/15 text-destructive",           label: "Failed" },
     draft:   { cls: "bg-secondary text-muted-foreground", label: "Draft" },
   }[status]
   return <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium", cfg.cls)}>{cfg.label}</span>
@@ -205,9 +205,9 @@ export default function FabricPage() {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Layers className="h-5 w-5 text-violet-400" />
+              <Layers className="h-5 w-5 text-muted-foreground" />
               <h1 className="text-2xl font-bold text-foreground">Microsoft Fabric</h1>
-              <Badge className="bg-violet-500/15 text-violet-400">2 Workspaces</Badge>
+              <Badge className="bg-secondary text-muted-foreground">2 Workspaces</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
               Browse Fabric workspaces — lakehouses, warehouses, pipelines, notebooks, and reports.
@@ -215,7 +215,7 @@ export default function FabricPage() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="gap-2"><RefreshCw className="h-3.5 w-3.5" /> Refresh</Button>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
               <Link2 className="h-3.5 w-3.5" /> Connect Workspace
             </Button>
           </div>
@@ -230,18 +230,18 @@ export default function FabricPage() {
               className={cn(
                 "flex flex-col rounded-lg border px-4 py-3 text-left transition-all",
                 selectedWorkspace === ws.id
-                  ? "border-violet-500/50 bg-violet-500/10"
-                  : "border-border bg-card hover:border-violet-500/30"
+                  ? "border-[var(--primary)]/30 bg-[var(--primary)]/10"
+                  : "border-border bg-card hover:border-[var(--primary)]/30"
               )}
             >
               <div className="flex items-center gap-2">
-                <Layers className={cn("h-4 w-4", selectedWorkspace === ws.id ? "text-violet-400" : "text-muted-foreground")} />
+                <Layers className={cn("h-4 w-4", selectedWorkspace === ws.id ? "text-[var(--primary)]" : "text-muted-foreground")} />
                 <span className="text-sm font-medium text-foreground">{ws.name}</span>
               </div>
               <p className="mt-0.5 text-xs text-muted-foreground">{ws.capacity} · {ws.region} · {ws.items.length} items</p>
             </button>
           ))}
-          <button className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-4 py-3 text-muted-foreground hover:border-violet-500/30 hover:text-violet-400 transition-all">
+          <button className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-4 py-3 text-muted-foreground hover:border-[var(--primary)]/30 hover:text-[var(--primary)] transition-all">
             <Plus className="h-4 w-4" />
             <span className="mt-0.5 text-xs">Add</span>
           </button>
@@ -255,7 +255,7 @@ export default function FabricPage() {
             </div>
             <div className="p-2 space-y-0.5">
               {(["all", "lakehouse", "warehouse", "pipeline", "notebook", "report", "semantic-model"] as const).map((t) => {
-                const cfg = t === "all" ? { icon: Layers, color: "text-violet-400", label: "All Items" } : { ...itemTypeConfig[t], label: itemTypeConfig[t].label }
+                const cfg = t === "all" ? { icon: Layers, color: "text-muted-foreground", label: "All Items" } : { ...itemTypeConfig[t], label: itemTypeConfig[t].label }
                 const Icon = cfg.icon
                 const count = typeCounts[t]
                 if (count === 0 && t !== "all") return null
@@ -266,11 +266,11 @@ export default function FabricPage() {
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors",
                       typeFilter === t
-                        ? "bg-violet-500/15 text-violet-300 font-medium"
+                        ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium"
                         : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                     )}
                   >
-                    <Icon className={cn("h-3.5 w-3.5 shrink-0", typeFilter === t ? "text-violet-400" : "text-muted-foreground")} />
+                    <Icon className={cn("h-3.5 w-3.5 shrink-0", typeFilter === t ? "text-[var(--primary)]" : "text-muted-foreground")} />
                     <span className="flex-1 text-left">{cfg.label}</span>
                     <span className="text-[10px] text-muted-foreground/50">{count}</span>
                   </button>
@@ -292,8 +292,8 @@ export default function FabricPage() {
                     key={item.id}
                     onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}
                     className={cn(
-                      "cursor-pointer border-border bg-card transition-all hover:border-violet-500/40",
-                      selectedItem?.id === item.id && "border-violet-500/50 bg-violet-500/5"
+                      "cursor-pointer border-border bg-card transition-all hover:border-[var(--primary)]/30",
+                      selectedItem?.id === item.id && "border-[var(--primary)]/30 bg-[var(--primary)]/5"
                     )}
                   >
                     <CardHeader className="pb-2">

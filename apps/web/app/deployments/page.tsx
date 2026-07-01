@@ -85,16 +85,16 @@ const deployments: Deployment[] = [
 ]
 
 const statusConfig = {
-  running: { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10" },
+  running: { icon: CheckCircle2, color: "text-[var(--primary)]", bg: "bg-[var(--primary)]/10" },
   stopped: { icon: XCircle, color: "text-muted-foreground", bg: "bg-muted" },
   failed: { icon: AlertCircle, color: "text-destructive", bg: "bg-destructive/10" },
   deploying: { icon: Activity, color: "text-accent", bg: "bg-accent/10" },
 }
 
 const envColors = {
-  production: "bg-green-500/10 text-green-500 border-green-500/20",
-  staging: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-  development: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  production: "bg-[var(--primary)]/10 text-[var(--primary)] border-[var(--primary)]/30",
+  staging: "bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30",
+  development: "bg-secondary text-muted-foreground border-border",
 }
 
 export default function DeploymentsPage() {
@@ -136,7 +136,7 @@ export default function DeploymentsPage() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="gap-1">
-              <span className="h-2 w-2 rounded-full bg-green-500" />
+              <span className="h-2 w-2 rounded-full bg-[var(--primary)]" />
               {deployments.filter((d) => d.status === "running").length} Running
             </Badge>
             <Badge variant="outline" className="gap-1">

@@ -182,8 +182,8 @@ const templates = [
 
 function StatusBadge({ status }: { status: Notebook["status"] }) {
   const map: Record<Notebook["status"], string> = {
-    active: "bg-emerald-500/20 text-emerald-400",
-    review: "bg-amber-500/20 text-amber-400",
+    active: "bg-[var(--primary)]/20 text-[var(--primary)]",
+    review: "bg-[var(--warning)]/20 text-[var(--warning)]",
     archived: "bg-secondary text-muted-foreground",
   }
   return <Badge className={cn("text-xs", map[status])}>{status}</Badge>
@@ -211,8 +211,8 @@ export default function IMDENotebooksPage() {
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/20">
-              <BookOpen className="h-5 w-5 text-violet-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+              <BookOpen className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Notebooks</h1>
@@ -224,23 +224,23 @@ export default function IMDENotebooksPage() {
               <Download className="h-4 w-4" />
               Import
             </Button>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
               <Plus className="h-4 w-4" />
               New Notebook
             </Button>
           </div>
         </div>
 
-        <div className="mb-6 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
+        <div className="mb-6 rounded-lg border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <Badge className="mb-2 bg-emerald-500/20 text-emerald-300">Sandbox scoped</Badge>
+              <Badge className="mb-2 bg-[var(--primary)]/20 text-[var(--primary)]">Sandbox scoped</Badge>
               <p className="text-sm font-semibold text-foreground">{imdeDemoScenario.title}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {imdeDemoScenario.dataPackages.map((pkg) => `${pkg.displayName} v${pkg.version}`).join(" + ")} · {imdeDemoScenario.baseModelId}
               </p>
             </div>
-            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white" onClick={() => window.open('/imde/notebooks/starter', '_blank')}>
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white" onClick={() => window.open('/imde/notebooks/starter', '_blank')}>
               <ExternalLink className="h-4 w-4" />
               Open starter notebook
             </Button>
@@ -274,12 +274,12 @@ export default function IMDENotebooksPage() {
           <TabsContent value="my-notebooks" className="mt-0">
             <div className="space-y-3">
               {filtered.map((nb) => (
-                <Card key={nb.id} className="border-border hover:border-violet-500/40 transition-all">
+                <Card key={nb.id} className="border-border hover:border-[var(--primary)]/30 transition-all">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10">
-                          <FileCode className="h-4 w-4 text-violet-400" />
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                          <FileCode className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -299,7 +299,7 @@ export default function IMDENotebooksPage() {
                             <span className="flex items-center gap-1"><GitCommit className="h-3.5 w-3.5" />{nb.commits} commits</span>
                             <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5" />{nb.stars}</span>
                             <span className="flex items-center gap-1"><Copy className="h-3.5 w-3.5" />{nb.forks} forks</span>
-                            {nb.runTime && <span className="flex items-center gap-1 text-amber-400/80">⏱ {nb.runTime}</span>}
+                            {nb.runTime && <span className="flex items-center gap-1 text-[var(--warning)]/80">⏱ {nb.runTime}</span>}
                           </div>
                         </div>
                       </div>
@@ -319,7 +319,7 @@ export default function IMDENotebooksPage() {
                     {/* Sandbox Tag */}
                     <div className="mt-3 pt-3 border-t border-border flex items-center gap-2 text-xs text-muted-foreground">
                       <span className="text-muted-foreground/60">Sandbox:</span>
-                      <span className="rounded bg-violet-500/10 px-2 py-0.5 text-violet-400 text-[10px] font-mono">{nb.sandbox}</span>
+                      <span className="rounded bg-secondary px-2 py-0.5 text-muted-foreground text-[10px] font-mono">{nb.sandbox}</span>
                       <span className="ml-auto text-muted-foreground/60">by {nb.author} · {nb.team}</span>
                     </div>
                   </CardContent>
@@ -331,12 +331,12 @@ export default function IMDENotebooksPage() {
           <TabsContent value="shared" className="mt-0">
             <div className="space-y-3">
               {notebooks.filter(n => n.visibility === "org" || n.visibility === "team").map((nb) => (
-                <Card key={nb.id} className="border-border hover:border-violet-500/40 transition-all">
+                <Card key={nb.id} className="border-border hover:border-[var(--primary)]/30 transition-all">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
-                          <BookOpen className="h-4 w-4 text-blue-400" />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+                          <BookOpen className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-0.5">
@@ -365,14 +365,14 @@ export default function IMDENotebooksPage() {
           </TabsContent>
 
           <TabsContent value="templates" className="mt-0">
-            <div className="mb-4 rounded-lg border border-violet-500/30 bg-violet-500/5 p-4">
-              <p className="text-sm text-violet-300">
+            <div className="mb-4 rounded-lg border border-border bg-secondary p-4">
+              <p className="text-sm text-muted-foreground">
                 <strong>Pre-built templates</strong> for common Engagement Delivery AI/ML tasks — fork any template to start a new notebook in your sandbox instantly.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-4">
               {templates.map((tpl) => (
-                <Card key={tpl.id} className="border-border hover:border-violet-500/40 transition-all cursor-pointer group">
+                <Card key={tpl.id} className="border-border hover:border-[var(--primary)]/30 transition-all cursor-pointer group">
                   <CardContent className="p-4 space-y-3">
                     <div className="text-3xl">{tpl.icon}</div>
                     <div>
@@ -386,7 +386,7 @@ export default function IMDENotebooksPage() {
                         </span>
                       ))}
                     </div>
-                    <Button variant="outline" size="sm" className="w-full gap-2 group-hover:border-violet-500/50" onClick={() => window.open(`/notebook/fork/${tpl.id}`, '_blank')}>
+                    <Button variant="outline" size="sm" className="w-full gap-2 group-hover:border-[var(--primary)]/30" onClick={() => window.open(`/notebook/fork/${tpl.id}`, '_blank')}>
                       <Copy className="h-3.5 w-3.5" />
                       Use Template
                     </Button>

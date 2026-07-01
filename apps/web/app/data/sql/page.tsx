@@ -234,9 +234,9 @@ export default function AzureSqlPage() {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Table2 className="h-5 w-5 text-emerald-400" />
+              <Table2 className="h-5 w-5 text-[var(--primary)]" />
               <h1 className="text-2xl font-bold text-foreground">Azure SQL</h1>
-              <Badge className="bg-emerald-500/15 text-emerald-400">Connected</Badge>
+              <Badge className="bg-[var(--primary)]/15 text-[var(--primary)]">Connected</Badge>
             </div>
             <p className="text-sm text-muted-foreground">Browse schemas and run ad-hoc queries against managed SQL databases.</p>
           </div>
@@ -259,9 +259,9 @@ export default function AzureSqlPage() {
                       className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 font-medium text-foreground hover:bg-secondary/50"
                     >
                       {sExpanded ? <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
-                      <Server className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                      <Server className="h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                       <span className="truncate text-[11px]">{server.name.split(".")[0]}</span>
-                      <span className={cn("ml-auto h-2 w-2 shrink-0 rounded-full", server.status === "online" ? "bg-emerald-400" : "bg-red-400")} />
+                      <span className={cn("ml-auto h-2 w-2 shrink-0 rounded-full", server.status === "online" ? "bg-[var(--primary)]" : "bg-destructive")} />
                     </button>
                     {sExpanded && server.databases.map((db) => {
                       const dbKey = `${server.name}/${db.name}`
@@ -273,7 +273,7 @@ export default function AzureSqlPage() {
                             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                           >
                             {dbExpanded ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
-                            <Database className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                            <Database className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                             <span className="truncate">{db.name}</span>
                           </button>
                           {dbExpanded && db.tables.map((table) => {
@@ -284,10 +284,10 @@ export default function AzureSqlPage() {
                                 onClick={() => setSelectedTable({ server: server.name, db: db.name, table: table.name })}
                                 className={cn(
                                   "ml-4 flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors",
-                                  isSelected ? "bg-emerald-500/15 text-emerald-300 font-medium" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                                  isSelected ? "bg-[var(--primary)]/15 text-[var(--primary)] font-medium" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                                 )}
                               >
-                                <Table2 className="h-3 w-3 shrink-0 text-emerald-400/70" />
+                                <Table2 className="h-3 w-3 shrink-0 text-[var(--primary)]/70" />
                                 <span className="truncate text-[11px]">{table.name}</span>
                                 <span className="ml-auto text-[10px] text-muted-foreground/50">{formatRows(table.rows)}</span>
                               </button>
@@ -313,7 +313,7 @@ export default function AzureSqlPage() {
                   className={cn(
                     "px-4 py-2.5 text-xs font-medium capitalize transition-colors",
                     activeTab === tab
-                      ? "border-b-2 border-emerald-400 text-foreground"
+                      ? "border-b-2 border-[var(--primary)] text-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
@@ -327,7 +327,7 @@ export default function AzureSqlPage() {
                 {selectedTableData ? (
                   <>
                     <div className="mb-4 flex items-center gap-3">
-                      <Table2 className="h-5 w-5 text-emerald-400" />
+                      <Table2 className="h-5 w-5 text-[var(--primary)]" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">{selectedTable?.db}.{selectedTableData.schema}.{selectedTableData.name}</p>
                         <p className="text-xs text-muted-foreground">{formatRows(selectedTableData.rows)} · {selectedTableData.columns.length} columns</p>
@@ -357,7 +357,7 @@ export default function AzureSqlPage() {
                             <td className="py-2">
                               {col.key && (
                                 <span className={cn("rounded px-1.5 py-0.5 text-[10px] font-medium",
-                                  col.key === "PK" ? "bg-amber-500/15 text-amber-400" : "bg-blue-500/15 text-blue-400"
+                                  col.key === "PK" ? "bg-[var(--warning)]/15 text-[var(--warning)]" : "bg-secondary text-muted-foreground"
                                 )}>{col.key}</span>
                               )}
                             </td>
@@ -398,14 +398,14 @@ export default function AzureSqlPage() {
 
                 {/* Run button */}
                 <div className="flex items-center gap-2 border-t border-border px-4 py-2">
-                  <Button size="sm" onClick={runQuery} disabled={running} className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Button size="sm" onClick={runQuery} disabled={running} className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
                     {running ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
                     {running ? "Running…" : "Run Query"}
                   </Button>
                   <span className="text-xs text-muted-foreground">Ctrl+Enter</span>
                   {results && (
                     <>
-                      <span className="ml-auto flex items-center gap-1 text-xs text-emerald-400">
+                      <span className="ml-auto flex items-center gap-1 text-xs text-[var(--primary)]">
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         {results.rowCount} rows · {results.elapsed}ms
                       </span>

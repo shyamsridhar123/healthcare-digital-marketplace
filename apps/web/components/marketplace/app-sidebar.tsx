@@ -118,7 +118,7 @@ export const imdeSubItems: NavItem[] = [
     href: "/imde/improvement",
     icon: RefreshCw,
     badge: "Live",
-    badgeColor: "bg-emerald-500/20 text-emerald-400",
+    badgeColor: "bg-[var(--primary)]/15 text-[var(--primary)]",
     description: "Retrain from production",
   },
 ]
@@ -160,7 +160,7 @@ export const dataSubItems: NavItem[] = [
     href: "/data/datasets",
     icon: Sparkles,
     badge: "Hub",
-    badgeColor: "bg-sky-500/20 text-sky-400",
+    badgeColor: "bg-[var(--primary)]/15 text-[var(--primary)]",
     description: "Curated professional-services datasets",
   },
 ]
@@ -194,7 +194,7 @@ const developmentItems: NavItem[] = [
     href: "/onboarding/new",
     icon: ClipboardCheck,
     badge: "Skill",
-    badgeColor: "bg-emerald-500/20 text-emerald-400",
+    badgeColor: "bg-[var(--primary)]/15 text-[var(--primary)]",
     description: "Publish via VS Code, CLI, or UI",
   },
   {
@@ -202,7 +202,7 @@ const developmentItems: NavItem[] = [
     href: "/imde",
     icon: Code2,
     badge: "New",
-    badgeColor: "bg-violet-500/20 text-violet-400",
+    badgeColor: "bg-[var(--primary)]/15 text-[var(--primary)]",
     description: "Integrated Model Dev Environment",
   },
   {
@@ -226,7 +226,7 @@ const governanceItems: NavItem[] = [
     href: "/observability",
     icon: Activity,
     badge: "Live",
-    badgeColor: "bg-emerald-500/20 text-emerald-400",
+    badgeColor: "bg-[var(--primary)]/15 text-[var(--primary)]",
     description: "Run status: models, agents & tools",
   },
   {
@@ -252,25 +252,25 @@ const settingsSubItems = [
     label: "Infrastructure",
     href: "/settings/infrastructure",
     icon: Server,
-    color: "text-sky-400",
-    activeBg: "bg-sky-500/10",
-    activeBorder: "border-sky-500/30",
+    color: "text-[var(--primary)]",
+    activeBg: "bg-[var(--primary)]/10",
+    activeBorder: "border-[var(--primary)]/30",
   },
   {
     label: "Performance",
     href: "/settings/performance",
     icon: Zap,
-    color: "text-amber-400",
-    activeBg: "bg-amber-500/10",
-    activeBorder: "border-amber-500/30",
+    color: "text-[var(--primary)]",
+    activeBg: "bg-[var(--primary)]/10",
+    activeBorder: "border-[var(--primary)]/30",
   },
   {
     label: "Reliability",
     href: "/settings/reliability",
     icon: ShieldCheck,
-    color: "text-emerald-400",
-    activeBg: "bg-emerald-500/10",
-    activeBorder: "border-emerald-500/30",
+    color: "text-[var(--primary)]",
+    activeBg: "bg-[var(--primary)]/10",
+    activeBorder: "border-[var(--primary)]/30",
   },
 ]
 
@@ -393,7 +393,7 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
           <span className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
             isImde
-              ? "bg-violet-500/20 text-violet-400"
+              ? "bg-[var(--primary)]/15 text-[var(--primary)]"
               : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
           )}>
             <Icon className="h-4 w-4" />
@@ -401,7 +401,7 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
           <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
             <div className="flex items-center gap-2">
               <span className="truncate">IMDE</span>
-              <span className="rounded bg-violet-500/20 px-1.5 py-0.5 text-xs font-medium text-violet-400">New</span>
+              <span className="rounded bg-[var(--primary)]/15 px-1.5 py-0.5 text-xs font-medium text-[var(--primary)]">New</span>
             </div>
             <p className="truncate text-xs text-muted-foreground/70">Integrated Model Dev Environment</p>
           </div>
@@ -413,7 +413,7 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
             onClick={() => setIsOpen((current) => !current)}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
           >
-            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-violet-400" : "text-muted-foreground/40")} />
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-[var(--primary)]" : "text-muted-foreground/40")} />
           </button>
         )}
       </div>
@@ -430,13 +430,13 @@ function ImdeSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
-                      ? "bg-violet-500/10 text-violet-300"
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)]"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
                 >
                   <span className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors",
-                    isActive ? "text-violet-400" : "text-muted-foreground group-hover:text-foreground"
+                    isActive ? "text-[var(--primary)]" : "text-muted-foreground group-hover:text-foreground"
                   )}>
                     <SubIcon className="h-3.5 w-3.5" />
                   </span>
@@ -486,7 +486,7 @@ function SandboxSection({ collapsed = false, onNavigate }: { collapsed?: boolean
           <span className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
             isSandbox
-              ? "bg-teal-500/20 text-teal-400"
+              ? "bg-[var(--primary)]/15 text-[var(--primary)]"
               : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
           )}>
             <FlaskRound className="h-4 w-4" />
@@ -494,7 +494,7 @@ function SandboxSection({ collapsed = false, onNavigate }: { collapsed?: boolean
           <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
             <div className="flex items-center gap-2">
               <span className="truncate">Sandboxes</span>
-              <span className="rounded bg-teal-500/20 px-1.5 py-0.5 text-xs font-medium text-teal-400">AML</span>
+              <span className="rounded bg-[var(--primary)]/15 px-1.5 py-0.5 text-xs font-medium text-[var(--primary)]">AML</span>
             </div>
             <p className="truncate text-xs text-muted-foreground/70">Governed ML workspaces</p>
           </div>
@@ -506,7 +506,7 @@ function SandboxSection({ collapsed = false, onNavigate }: { collapsed?: boolean
             onClick={() => setIsOpen((c) => !c)}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
           >
-            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-teal-400" : "text-muted-foreground/40")} />
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-[var(--primary)]" : "text-muted-foreground/40")} />
           </button>
         )}
       </div>
@@ -525,13 +525,13 @@ function SandboxSection({ collapsed = false, onNavigate }: { collapsed?: boolean
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
-                      ? "bg-teal-500/10 text-teal-300"
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)]"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
                 >
                   <span className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors",
-                    isActive ? "text-teal-400" : "text-muted-foreground group-hover:text-foreground"
+                    isActive ? "text-[var(--primary)]" : "text-muted-foreground group-hover:text-foreground"
                   )}>
                     <SubIcon className="h-3.5 w-3.5" />
                   </span>
@@ -579,7 +579,7 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
           <span className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
             isData
-              ? "bg-sky-500/20 text-sky-400"
+              ? "bg-[var(--primary)]/15 text-[var(--primary)]"
               : "bg-secondary/50 text-muted-foreground group-hover:text-foreground"
           )}>
             <Icon className="h-4 w-4" />
@@ -587,7 +587,7 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
           <div className={cn("min-w-0 flex-1", collapsed && "hidden")}>
             <div className="flex items-center gap-2">
               <span className="truncate">Data</span>
-              <span className="rounded bg-sky-500/20 px-1.5 py-0.5 text-xs font-medium text-sky-400">New</span>
+              <span className="rounded bg-[var(--primary)]/15 px-1.5 py-0.5 text-xs font-medium text-[var(--primary)]">New</span>
             </div>
             <p className="truncate text-xs text-muted-foreground/70">Storage, SQL, Cosmos & Fabric</p>
           </div>
@@ -599,7 +599,7 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
             onClick={() => setIsOpen((current) => !current)}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
           >
-            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-sky-400" : "text-muted-foreground/40")} />
+            <ChevronRight className={cn("h-4 w-4 transition-transform", isOpen ? "rotate-90 text-[var(--primary)]" : "text-muted-foreground/40")} />
           </button>
         )}
       </div>
@@ -618,13 +618,13 @@ function DataSection({ collapsed = false, onNavigate }: { collapsed?: boolean; o
                   className={cn(
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
                     isActive
-                      ? "bg-sky-500/10 text-sky-300"
+                      ? "bg-[var(--primary)]/10 text-[var(--primary)]"
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   )}
                 >
                   <span className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors",
-                    isActive ? "text-sky-400" : "text-muted-foreground group-hover:text-foreground"
+                    isActive ? "text-[var(--primary)]" : "text-muted-foreground group-hover:text-foreground"
                   )}>
                     <SubIcon className="h-3.5 w-3.5" />
                   </span>

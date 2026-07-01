@@ -67,8 +67,8 @@ const dataSources: DataSource[] = [
     type: "Blob & File Storage",
     href: "/data/storage",
     icon: HardDrive,
-    color: "text-blue-400",
-    bgColor: "bg-blue-500/15",
+    color: "text-muted-foreground",
+    bgColor: "bg-secondary",
     status: "connected",
     statusLabel: "Connected",
     description: "Browse containers, blobs, and file shares for your AI training data.",
@@ -84,8 +84,8 @@ const dataSources: DataSource[] = [
     type: "Relational Database",
     href: "/data/sql",
     icon: Table2,
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-500/15",
+    color: "text-[var(--primary)]",
+    bgColor: "bg-[var(--primary)]/15",
     status: "connected",
     statusLabel: "Connected",
     description: "Query structured professional-services data across managed SQL databases.",
@@ -101,8 +101,8 @@ const dataSources: DataSource[] = [
     type: "NoSQL Document DB",
     href: "/data/cosmos",
     icon: Database,
-    color: "text-orange-400",
-    bgColor: "bg-orange-500/15",
+    color: "text-[var(--warning)]",
+    bgColor: "bg-[var(--warning)]/15",
     status: "warning",
     statusLabel: "Provisioning",
     description: "Explore NoSQL containers powering the marketplace runtime data.",
@@ -118,8 +118,8 @@ const dataSources: DataSource[] = [
     type: "Unified Analytics",
     href: "/data/fabric",
     icon: Layers,
-    color: "text-violet-400",
-    bgColor: "bg-violet-500/15",
+    color: "text-muted-foreground",
+    bgColor: "bg-secondary",
     status: "not-configured",
     statusLabel: "Not configured",
     description: "Connect Fabric workspaces, lakehouses, and warehouses for large-scale ML.",
@@ -135,8 +135,8 @@ const dataSources: DataSource[] = [
     type: "Curated Dataset Hub",
     href: "/data/datasets",
     icon: Sparkles,
-    color: "text-sky-400",
-    bgColor: "bg-sky-500/15",
+    color: "text-muted-foreground",
+    bgColor: "bg-secondary",
     status: "connected",
     statusLabel: "48 datasets",
     description: "Curated professional-services, NLP, and tabular datasets ready for training and evaluation.",
@@ -149,37 +149,37 @@ const dataSources: DataSource[] = [
 ]
 
 const recentActivity: RecentActivity[] = [
-  { id: "1", action: "Downloaded", target: "gl-entries-training-v3.parquet", source: "Azure Storage", time: "2 min ago", icon: Download, color: "text-blue-400" },
-  { id: "2", action: "Queried", target: "control_tests table — 12,400 rows", source: "Azure SQL", time: "18 min ago", icon: Table2, color: "text-emerald-400" },
-  { id: "3", action: "Used dataset", target: "Professional Services NLP Corpus v2", source: "Built-in Datasets", time: "1 hr ago", icon: Sparkles, color: "text-sky-400" },
-  { id: "4", action: "Uploaded", target: "model-outputs/batch-20260302.json", source: "Azure Storage", time: "3 hr ago", icon: Upload, color: "text-blue-400" },
-  { id: "5", action: "Executed", target: "SELECT * FROM engagement_compliance_verifications LIMIT 500", source: "Azure SQL", time: "5 hr ago", icon: Table2, color: "text-emerald-400" },
-  { id: "6", action: "Browsed", target: "COSMOS assets container (24 items)", source: "Cosmos DB", time: "Yesterday", icon: Database, color: "text-orange-400" },
+  { id: "1", action: "Downloaded", target: "gl-entries-training-v3.parquet", source: "Azure Storage", time: "2 min ago", icon: Download, color: "text-muted-foreground" },
+  { id: "2", action: "Queried", target: "control_tests table — 12,400 rows", source: "Azure SQL", time: "18 min ago", icon: Table2, color: "text-[var(--primary)]" },
+  { id: "3", action: "Used dataset", target: "Professional Services NLP Corpus v2", source: "Built-in Datasets", time: "1 hr ago", icon: Sparkles, color: "text-muted-foreground" },
+  { id: "4", action: "Uploaded", target: "model-outputs/batch-20260302.json", source: "Azure Storage", time: "3 hr ago", icon: Upload, color: "text-muted-foreground" },
+  { id: "5", action: "Executed", target: "SELECT * FROM engagement_compliance_verifications LIMIT 500", source: "Azure SQL", time: "5 hr ago", icon: Table2, color: "text-[var(--primary)]" },
+  { id: "6", action: "Browsed", target: "COSMOS assets container (24 items)", source: "Cosmos DB", time: "Yesterday", icon: Database, color: "text-[var(--warning)]" },
 ]
 
 const quickStats = [
-  { label: "Sources Connected", value: "3 / 5", delta: null, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  { label: "Total Datasets", value: "48", delta: "+3 this week", icon: Sparkles, color: "text-sky-400", bg: "bg-sky-500/10" },
-  { label: "Storage Used", value: "2.4 TB", delta: "+120 GB today", icon: HardDrive, color: "text-blue-400", bg: "bg-blue-500/10" },
-  { label: "Queries Today", value: "142", delta: "↑ 18% vs yesterday", icon: Activity, color: "text-violet-400", bg: "bg-violet-500/10" },
+  { label: "Sources Connected", value: "3 / 5", delta: null, icon: CheckCircle2, color: "text-[var(--primary)]", bg: "bg-[var(--primary)]/10" },
+  { label: "Total Datasets", value: "48", delta: "+3 this week", icon: Sparkles, color: "text-muted-foreground", bg: "bg-secondary" },
+  { label: "Storage Used", value: "2.4 TB", delta: "+120 GB today", icon: HardDrive, color: "text-muted-foreground", bg: "bg-secondary" },
+  { label: "Queries Today", value: "142", delta: "↑ 18% vs yesterday", icon: Activity, color: "text-muted-foreground", bg: "bg-secondary" },
 ]
 
 // ── Status helpers ─────────────────────────────────────────────────────────
 
 function StatusIcon({ status }: { status: ConnectionStatus }) {
   if (status === "connected")
-    return <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+    return <CheckCircle2 className="h-4 w-4 text-[var(--primary)]" />
   if (status === "warning")
-    return <AlertCircle className="h-4 w-4 text-amber-400" />
+    return <AlertCircle className="h-4 w-4 text-[var(--warning)]" />
   if (status === "disconnected")
-    return <XCircle className="h-4 w-4 text-red-400" />
+    return <XCircle className="h-4 w-4 text-destructive" />
   return <XCircle className="h-4 w-4 text-muted-foreground" />
 }
 
 function statusBadgeVariant(status: ConnectionStatus) {
-  if (status === "connected") return "bg-emerald-500/15 text-emerald-400"
-  if (status === "warning") return "bg-amber-500/15 text-amber-400"
-  if (status === "disconnected") return "bg-red-500/15 text-red-400"
+  if (status === "connected") return "bg-[var(--primary)]/15 text-[var(--primary)]"
+  if (status === "warning") return "bg-[var(--warning)]/15 text-[var(--warning)]"
+  if (status === "disconnected") return "bg-destructive/15 text-destructive"
   return "bg-secondary text-muted-foreground"
 }
 
@@ -201,7 +201,7 @@ export default function DataHubPage() {
         <div className="mb-6 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Database className="h-5 w-5 text-sky-400" />
+              <Database className="h-5 w-5 text-[var(--primary)]" />
               <h1 className="text-2xl font-bold text-foreground">Data Hub</h1>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -213,7 +213,7 @@ export default function DataHubPage() {
               <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
               Refresh
             </Button>
-            <Button size="sm" className="gap-2 bg-sky-600 hover:bg-sky-700 text-white">
+            <Button size="sm" className="gap-2 bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
               <Plus className="h-4 w-4" />
               Add Connection
             </Button>
@@ -252,7 +252,7 @@ export default function DataHubPage() {
                 const Icon = source.icon
                 return (
                   <Link href={source.href} key={source.id}>
-                    <Card className="group cursor-pointer border-border bg-card transition-all hover:border-sky-500/40 hover:shadow-lg hover:shadow-sky-500/5">
+                    <Card className="group cursor-pointer border-border bg-card transition-all hover:border-[var(--primary)]/30 hover:shadow-lg hover:shadow-[var(--primary)]/5">
                       <CardHeader className="pb-2">
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
@@ -282,7 +282,7 @@ export default function DataHubPage() {
                             </div>
                           ))}
                         </div>
-                        <div className="mt-3 flex items-center gap-1 text-xs font-medium text-sky-400 opacity-0 transition-all group-hover:opacity-100">
+                        <div className="mt-3 flex items-center gap-1 text-xs font-medium text-[var(--primary)] opacity-0 transition-all group-hover:opacity-100">
                           Browse {source.name}
                           <ArrowRight className="h-3 w-3" />
                         </div>
@@ -332,7 +332,7 @@ export default function DataHubPage() {
             <Card className="border-border bg-card">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <Shield className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+                  <Shield className="mt-0.5 h-5 w-5 shrink-0 text-[var(--primary)]" />
                   <div>
                     <p className="text-xs font-semibold text-foreground">Secure by default</p>
                     <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">

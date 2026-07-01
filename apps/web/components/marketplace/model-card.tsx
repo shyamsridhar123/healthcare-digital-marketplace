@@ -29,22 +29,22 @@ const SEVERITY_CONFIG: Record<
 > = {
   none: {
     label: "None",
-    color: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
+    color: "text-[var(--primary)] border-[var(--primary)]/30 bg-[var(--primary)]/10",
     icon: CheckCircle2,
   },
   low: {
     label: "Low",
-    color: "text-yellow-400 border-yellow-400/30 bg-yellow-400/10",
+    color: "text-[var(--warning)] border-[var(--warning)]/30 bg-[var(--warning)]/10",
     icon: ShieldCheck,
   },
   medium: {
     label: "Medium",
-    color: "text-orange-400 border-orange-400/30 bg-orange-400/10",
+    color: "text-[#E0A82E] border-[#E0A82E]/30 bg-[#E0A82E]/10",
     icon: AlertCircle,
   },
   high: {
     label: "High",
-    color: "text-red-400 border-red-400/30 bg-red-400/10",
+    color: "text-destructive border-destructive/30 bg-destructive/10",
     icon: AlertCircle,
   },
 }
@@ -186,25 +186,25 @@ export function ModelCard({ assetId }: ModelCardProps) {
             <SectionHeading>Quality Metrics Overview</SectionHeading>
             <ResponsiveContainer width="100%" height={220}>
               <RadarChart data={radarData} margin={{ top: 0, right: 20, bottom: 0, left: 20 }}>
-                <PolarGrid stroke="hsl(var(--border))" />
+                <PolarGrid stroke="var(--border)" />
                 <PolarAngleAxis
                   dataKey="metric"
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: "6px",
                     fontSize: "12px",
-                    color: "hsl(var(--foreground))",
+                    color: "var(--foreground)",
                   }}
                   formatter={(value: number) => [`${value}/100`, "Score"]}
                 />
                 <Radar
                   dataKey="score"
-                  stroke="hsl(var(--accent))"
-                  fill="hsl(var(--accent))"
+                  stroke="var(--primary)"
+                  fill="var(--primary)"
                   fillOpacity={0.18}
                   strokeWidth={2}
                 />
@@ -333,7 +333,7 @@ export function ModelCard({ assetId }: ModelCardProps) {
             <ul className="space-y-1.5 text-sm text-muted-foreground">
               {data.intendedUse.map((u) => (
                 <li key={u} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--primary)]" />
                   {u}
                 </li>
               ))}
@@ -348,7 +348,7 @@ export function ModelCard({ assetId }: ModelCardProps) {
             <ul className="space-y-1.5 text-sm text-muted-foreground">
               {data.outOfScope.map((u) => (
                 <li key={u} className="flex items-start gap-2">
-                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-400" />
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   {u}
                 </li>
               ))}
@@ -384,12 +384,12 @@ export function ModelCard({ assetId }: ModelCardProps) {
 
       {/* ── limitations ── */}
       {data.limitations && data.limitations.length > 0 && (
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--warning)]/20 bg-[var(--warning)]/5 p-4">
           <SectionHeading>Known Limitations</SectionHeading>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
             {data.limitations.map((l) => (
               <li key={l} className="flex items-start gap-2">
-                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--warning)]" />
                 {l}
               </li>
             ))}
