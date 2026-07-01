@@ -56,32 +56,32 @@ interface RecentPush {
 const recentPushes: RecentPush[] = [
   {
     id: "push-001",
-    modelName: "Denial Predictor v2.1",
+    modelName: "LedgerSentinel v2.1",
     version: "v2.1.0",
     pushedBy: "Sarah Chen",
     pushedAt: "Feb 25, 2026",
     status: "published",
-    marketplaceUrl: "/models/denial-predictor",
+    marketplaceUrl: "/models/going-concern-risk",
     evals: { accuracy: "92.3%", f1: "91.8%", latency: "48ms" },
   },
   {
     id: "push-002",
-    modelName: "ICD-10 AutoCoder v1.4",
+    modelName: "IFRS/GAAP AutoCoder v1.4",
     version: "v1.4.2",
     pushedBy: "James Rivera",
     pushedAt: "Feb 18, 2026",
     status: "under-review",
-    marketplaceUrl: "/models/icd10-autocoder",
+    marketplaceUrl: "/models/tax-classifier",
     evals: { accuracy: "89.1%", f1: "88.7%", latency: "210ms" },
   },
   {
     id: "push-003",
-    modelName: "Auth Approval Scorer v3.0",
+    modelName: "Approval Approval Scorer v3.0",
     version: "v3.0.0",
     pushedBy: "Amy Kowalski",
     pushedAt: "Jan 30, 2026",
     status: "published",
-    marketplaceUrl: "/models/auth-scorer",
+    marketplaceUrl: "/models/approval-scorer",
     evals: { accuracy: "88.4%", f1: "88.3%", latency: "3ms" },
   },
 ]
@@ -92,10 +92,10 @@ export default function IMDEPushPage() {
   const [formData, setFormData] = useState({
     modelName: imdeDemoScenario.publishedExperience.modelRouteId,
     version: "1.0.0",
-    description: "Published Model Experience for RCM denial prediction, trained from a governed sandbox using synthetic, de-identified demo data.",
+    description: "Published Model Experience for Engagement Delivery going concern risk, trained from a governed sandbox using synthetic, de-identified demo data.",
     sourceRun: searchParams.get("runId") ?? imdeDemoScenario.selectedRunId,
-    category: "denial-management",
-    tags: "denials, pubmedbert, governed, synthetic-data",
+    category: "finding-management",
+    tags: "findings, deloitte-audit-lm, governed, synthetic-data",
     owner: imdeDemoScenario.actors.teamName,
     environment: "evaluation",
   })
@@ -216,8 +216,8 @@ export default function IMDEPushPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {[
-                    { id: imdeDemoScenario.selectedRunId, name: "pubmedbert-denial-v3-governed", model: "PubMedBERT denial classifier", f1: "87.0%", accuracy: "91.0%", latency: "142ms", highlighted: true },
-                    { id: "run-005", name: "denial-llama31-lora-r16", model: "Llama 3.1 8B (LoRA)", f1: "93.1%", accuracy: "93.4%", latency: "210ms", highlighted: false },
+                    { id: imdeDemoScenario.selectedRunId, name: "deloitte-audit-lm-risk-v3-governed", model: "Deloitte Audit LM risk classifier", f1: "87.0%", accuracy: "91.0%", latency: "142ms", highlighted: true },
+                    { id: "run-005", name: "audit-lm-lora-r16", model: "Llama 3.1 8B (LoRA)", f1: "93.1%", accuracy: "93.4%", latency: "210ms", highlighted: false },
                     { id: "run-003", name: "xgboost-depth6-est500", model: "XGBoost", f1: "87.6%", accuracy: "88.4%", latency: "3ms", highlighted: false },
                     { id: "run-004", name: "lgbm-leaves64", model: "LightGBM", f1: "88.3%", accuracy: "89.1%", latency: "2ms", highlighted: false },
                   ].map((run) => (
@@ -267,7 +267,7 @@ export default function IMDEPushPage() {
                     <div className="space-y-1.5">
                       <Label className="text-xs">Model Name</Label>
                       <Input
-                        placeholder="e.g. Denial Predictor"
+                        placeholder="e.g. LedgerSentinel"
                         value={formData.modelName}
                         onChange={(e) => setFormData((f) => ({ ...f, modelName: e.target.value }))}
                         className="h-9"
@@ -300,10 +300,10 @@ export default function IMDEPushPage() {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="denial-management">Denial Management</SelectItem>
-                          <SelectItem value="coding">Medical Coding</SelectItem>
-                          <SelectItem value="auth">Prior Authorization</SelectItem>
-                          <SelectItem value="billing">Billing & Claims</SelectItem>
+                          <SelectItem value="finding-management">Finding Management</SelectItem>
+                          <SelectItem value="coding">Tax Classification</SelectItem>
+                          <SelectItem value="approval">Approval Workflow</SelectItem>
+                          <SelectItem value="engagement billing">Engagement Billing & Transactions</SelectItem>
                           <SelectItem value="forecasting">Forecasting & Analytics</SelectItem>
                         </SelectContent>
                       </Select>
@@ -325,7 +325,7 @@ export default function IMDEPushPage() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Tags (comma-separated)</Label>
                     <Input
-                      placeholder="denials, transformer, bert, RCM"
+                      placeholder="findings, transformer, bert, Engagement Delivery"
                       value={formData.tags}
                       onChange={(e) => setFormData((f) => ({ ...f, tags: e.target.value }))}
                       className="h-9"
@@ -353,12 +353,12 @@ export default function IMDEPushPage() {
                 <CardContent className="space-y-3">
                   {[
                     { check: "Holdout test set (10% stratified)", result: "F1: 91.8%, Acc: 92.3%", status: "pass" },
-                    { check: "Fairness audit (payer / specialty / region)", result: "No significant disparity detected", status: "pass" },
+                    { check: "Fairness audit (counterparty / specialty / region)", result: "No significant disparity detected", status: "pass" },
                     { check: "Robustness (noisy input perturbations)", result: "±1.2% variance on noise=0.15", status: "pass" },
                     { check: "Latency SLA (p99 < 200ms)", result: "p99 = 48ms", status: "pass" },
                     { check: "Memory footprint < 2 GB", result: "Model size: 438 MB", status: "pass" },
                     { check: "SHAP explainability report", result: "Top 10 features documented", status: "pass" },
-                    { check: "Data leakage scan", result: "No PHI in training artifacts", status: "pass" },
+                    { check: "Data leakage scan", result: "No engagement-confidential data in training artifacts", status: "pass" },
                     { check: "Adversarial input test", result: "Reviewed — 2 edge cases flagged (non-blocking)", status: "warn" },
                   ].map((item) => (
                     <div key={item.check} className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/20 p-3">
@@ -397,9 +397,9 @@ export default function IMDEPushPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {[
-                    { role: "Model Owner", person: "Dr. Sarah Chen", status: "approved", note: "Approved Feb 28, 2026" },
-                    { role: "Data Privacy Officer", person: "Linda Park", status: "approved", note: "PHI review passed, HIPAA compliant" },
-                    { role: "Clinical Domain Expert", person: "Dr. Raj Gupta (RCM)", status: "approved", note: "Feature set aligns with denial patterns" },
+                    { role: "Model Owner", person: "Sarah Chen", status: "approved", note: "Approved Feb 28, 2026" },
+                    { role: "Data Privacy Officer", person: "Linda Park", status: "approved", note: "engagement-confidential data review passed, independence compliant" },
+                    { role: "Financial Domain Expert", person: "Raj Gupta (Engagement Delivery)", status: "approved", note: "Feature set aligns with finding patterns" },
                     { role: "MLOps Engineer", person: "Kevin Wu", status: "pending", note: "Awaiting infra review (ETA: today)" },
                   ].map((item) => (
                     <div key={item.role} className="flex items-center gap-3 rounded-lg border border-border p-3">
@@ -447,7 +447,7 @@ export default function IMDEPushPage() {
                         <div>
                           <div className="font-semibold text-emerald-300">Model published successfully!</div>
                           <div className="text-xs text-muted-foreground mt-0.5">
-                            {formData.modelName || "Denial Predictor"} {formData.version || "v2.1.0"} is now live on the Model Marketplace
+                            {formData.modelName || "LedgerSentinel"} {formData.version || "v2.1.0"} is now live on the Model Marketplace
                           </div>
                         </div>
                       </div>
@@ -556,7 +556,7 @@ export default function IMDEPushPage() {
                   <div className="text-violet-300">imde push --auto --to marketplace</div>
                   <div className="mt-2"># Push specific run</div>
                   <div className="text-violet-300">imde push run-001 \</div>
-                  <div className="text-violet-300 pl-4">--name "Denial Predictor" \</div>
+                  <div className="text-violet-300 pl-4">--name "LedgerSentinel" \</div>
                   <div className="text-violet-300 pl-4">--version v2.1.0 \</div>
                   <div className="text-violet-300 pl-4">--to marketplace</div>
                 </div>

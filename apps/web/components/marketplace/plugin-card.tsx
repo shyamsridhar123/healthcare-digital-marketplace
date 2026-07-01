@@ -23,10 +23,10 @@ function getCategoryStyle(category: string): string {
     "Developer Tools": "bg-[var(--brand-primary)]/20 text-[var(--brand-secondary-light)]",
     "Productivity": "bg-[var(--brand-teal)]/20 text-[var(--brand-teal)]",
     "Devops": "bg-[var(--accent)]/20 text-[var(--accent)]",
-    "Healthcare": "bg-[var(--success)]/20 text-[var(--success)]",
-    "RCM": "bg-[var(--accent)]/20 text-[var(--accent)]",
-    "Claims": "bg-[var(--brand-primary)]/20 text-[var(--brand-secondary-light)]",
-    "Denials": "bg-[var(--warning)]/20 text-[var(--warning)]",
+    "Professional Services": "bg-[var(--success)]/20 text-[var(--success)]",
+    "Engagement Delivery": "bg-[var(--accent)]/20 text-[var(--accent)]",
+    "Transaction Testing": "bg-[var(--brand-primary)]/20 text-[var(--brand-secondary-light)]",
+    "Findings": "bg-[var(--warning)]/20 text-[var(--warning)]",
     "Coding": "bg-[var(--brand-teal)]/20 text-[var(--brand-teal)]",
   }
   return styles[category] || "bg-secondary text-muted-foreground"
@@ -79,9 +79,9 @@ export function AssetCard({ asset }: AssetCardProps) {
           <div className="flex items-center gap-2">
             <span className={cn(
               "rounded px-2 py-0.5 text-xs font-medium",
-              getCategoryStyle(asset.tags[0] || "Healthcare")
+              getCategoryStyle(asset.tags[0] || "Professional Services")
             )}>
-              {asset.tags[0] || "Healthcare"}
+              {asset.tags[0] || "Professional Services"}
             </span>
             <button 
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -134,7 +134,7 @@ export function ContributeCard() {
       <h3 className="mb-2 text-lg font-medium text-foreground">+ Contribute</h3>
       <p className="text-sm text-muted-foreground">
         Share <span className="text-[var(--accent)]">agents</span>, <span className="text-[var(--brand-teal)]">skills</span>, and <span className="text-[var(--brand-secondary-light)]">models</span>
-        <br />within Healthcare RCM.
+        <br />within professional services.
       </p>
     </div>
   )

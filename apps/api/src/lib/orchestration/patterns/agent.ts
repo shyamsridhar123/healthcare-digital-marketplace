@@ -19,7 +19,7 @@ export class AgentHandler implements PatternHandler {
     await new Promise((res) => setTimeout(res, 100 + Math.random() * 300));
 
     const systemPrompt = config.systemPrompt as string | undefined;
-    const modelId = (config.modelId as string | undefined) ?? "gpt-4o";
+    const modelId = (config.modelId as string | undefined) ?? "gpt-5.5";
     const maxTokens = (config.maxTokens as number | undefined) ?? 4096;
 
     // Mock output — in production: call LLM/agent with systemPrompt + upstreamOutput

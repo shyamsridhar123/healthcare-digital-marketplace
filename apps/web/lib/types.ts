@@ -2,17 +2,18 @@ export type AssetType = "agent" | "mcp-server" | "mcp-tool" | "model" | "workflo
 
 export type AssetCategory = 
   | "All Categories"
-  | "AI Agents"
+  | "Audit & Assurance"
+  | "Tax & Compliance"
+  | "Risk & Regulatory"
+  | "Deal Advisory & M&A"
+  | "Financial Advisory"
+  | "Strategy & Consulting"
+  | "Cyber & Privacy"
+  | "ESG & Sustainability"
+  | "Industry Solutions"
   | "MCP Servers"
-  | "MCP Tools"
-  | "Models"
   | "Workflow Templates"
-  | "Analytics"
-  | "Authentication"
-  | "Data Processing"
-  | "DevTools"
-  | "Security"
-  | "Storage"
+  | "Models"
 
 export interface Asset {
   id: string

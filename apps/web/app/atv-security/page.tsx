@@ -61,9 +61,9 @@ type SecurityCase = {
 }
 
 const assetPacket = {
-  name: "Claims Triage Agent Bundle",
-  publisher: "Contoso Health AI Studio",
-  requestedAction: "Publish to enterprise AI Asset Marketplace",
+  name: "AuditScribe Controls Agent Bundle",
+  publisher: "Deloitte Audit AI Studio",
+  requestedAction: "Publish to Nebula-X",
   submittedVersion: "1.4.0-submitted",
   remediatedVersion: "1.4.1-remediated",
   decision: "Needs remediation; submitted version is blocked",
@@ -154,14 +154,14 @@ const findings: SecurityFinding[] = [
   {
     id: "ATV-A01-003",
     rule: "OWASP-A01",
-    title: "Broken authorization exposes member case data",
+    title: "Broken authorization exposes engagement case data",
     category: "Broken Access Control",
     severity: "critical",
     surface: "Application Code",
     path: "demos/atv-security-target/src/routes/cases.js",
-    evidence: "Synthetic claims payloads can be read or approved without durable reviewer identity and ownership checks.",
-    businessRisk: "Claims payloads can be read or approved without durable reviewer identity and ownership checks.",
-    remediation: "Resolve reviewer identity from authenticated claims, enforce case ownership/role checks, and add authorization tests.",
+    evidence: "Synthetic engagement packets can be read or approved without durable reviewer identity and ownership checks.",
+    businessRisk: "Engagement packets can be read or approved without durable reviewer identity and ownership checks.",
+    remediation: "Resolve reviewer identity from authenticated engagement assertions, enforce case ownership/role checks, and add authorization tests.",
     status: "open",
     owner: "Asset Publisher",
     provenance: "Seeded fallback",
@@ -175,8 +175,8 @@ const findings: SecurityFinding[] = [
     severity: "high",
     surface: "Application Code",
     path: "demos/atv-security-target/src/mcp/tools.js",
-    evidence: "Agent tools can fetch attacker-chosen or internal URLs while carrying claims context.",
-    businessRisk: "An agent tool can fetch attacker-chosen or internal URLs while handling claims context.",
+    evidence: "Agent tools can fetch attacker-chosen or internal URLs while carrying engagement context.",
+    businessRisk: "An agent tool can fetch attacker-chosen or internal URLs while handling engagement context.",
     remediation: "Add URL allowlists, block internal address ranges, cap response size, and log tool provenance.",
     status: "needs_remediation",
     owner: "Asset Publisher",
@@ -191,7 +191,7 @@ const findings: SecurityFinding[] = [
     severity: "medium",
     surface: "Threat Model",
     path: "demos/atv-security-target",
-    evidence: "Spoofing, tampering, repudiation, information disclosure, denial of service, and privilege escalation risks combine into one publication decision.",
+    evidence: "Spoofing, tampering, repudiation, information disclosure, service disruption, and privilege escalation risks combine into one publication decision.",
     businessRisk: "Spoofing, tampering, repudiation, disclosure, DoS, and privilege escalation risks combine into a publication decision.",
     remediation: "Keep the asset in needs_remediation unless a reviewer records accepted risk or a remediated version passes review.",
     status: "waived_by_reviewer",
@@ -272,7 +272,7 @@ export default function AtvSecurityPage() {
             </div>
             <h1 className="text-2xl font-semibold text-foreground">ATV Security Workbench</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              Mock marketplace governance surface for the Claims Triage Agent Bundle from Contoso Health AI Studio.
+              Mock marketplace governance surface for the AuditScribe Controls Agent Bundle from Deloitte Audit AI Studio.
             </p>
           </div>
           <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-lg border border-border bg-card/60 p-2">

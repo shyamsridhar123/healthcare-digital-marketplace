@@ -6,7 +6,7 @@ import {
   isSupportedGitHubWebhook,
   verifyGitHubWebhookSignature,
 } from '../../lib/onboarding/github-webhook.js';
-import { trackOnboardingEvent } from '../../lib/telemetry/phi-scrubber.js';
+import { trackOnboardingEvent } from '../../lib/telemetry/sensitive-scrubber.js';
 
 app.http('onboardingGitHubWebhook', {
   methods: ['POST'],
@@ -37,7 +37,7 @@ app.http('onboardingGitHubWebhook', {
 
     const action = typeof payload.action === 'string' ? payload.action : undefined;
     if (!isSupportedGitHubWebhook(eventName, action)) {
-      trackOnboardingEvent('uap.onboarding.github_webhook.ignored', { eventName, action: action ?? 'none' });
+      trackOnboardingEvent('nebula-x.onboarding.github_webhook.ignored', { eventName, action: action ?? 'none' });
       return { status: 202, jsonBody: { status: 'ignored' } };
     }
 
@@ -48,7 +48,7 @@ app.http('onboardingGitHubWebhook', {
     const { resource: existingDelivery } = await deliveries.item(deliveryId, repositoryPartition).read<any>();
     const { resource: existingBody } = await deliveries.item(bodyHashId, repositoryPartition).read<any>();
     if (existingDelivery || existingBody) {
-      trackOnboardingEvent('uap.onboarding.github_webhook.duplicate', { eventName, deliveryId });
+      trackOnboardingEvent('nebula-x.onboarding.github_webhook.duplicate', { eventName, deliveryId });
       return { status: 202, jsonBody: { status: 'duplicate' } };
     }
 
@@ -70,7 +70,7 @@ app.http('onboardingGitHubWebhook', {
       receivedAt: new Date().toISOString(),
     });
 
-    trackOnboardingEvent('uap.onboarding.github_webhook.received', {
+    trackOnboardingEvent('nebula-x.onboarding.github_webhook.received', {
       eventName,
       action: action ?? 'none',
       deliveryId,

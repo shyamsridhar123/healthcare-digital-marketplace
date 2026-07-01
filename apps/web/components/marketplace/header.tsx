@@ -30,7 +30,7 @@ export function Header() {
               </svg>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Agency Marketplace</span>
+              <span className="text-sm font-semibold text-foreground">Nebula-X by Deloitte</span>
               <span className="rounded-md bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-400">
                 Playground
               </span>
@@ -40,7 +40,7 @@ export function Header() {
           <div className="h-4 w-px bg-border" />
           
           <button className="flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-            <span>Healthcare RCM</span>
+            <span>Professional Services</span>
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
         </div>

@@ -110,7 +110,7 @@ export default function RequestSandboxPage() {
     if (form.dataPackages.length === 0) { setError("Select at least one data package."); return; }
     if (!form.businessJustification.trim()) { setError("Business justification is required."); return; }
     if (containsPhiLikeText([form.name, form.description, form.businessJustification])) {
-      setError("Use synthetic or de-identified demo language only. Remove patient identifiers, MRNs, SSNs, or raw clinical details.");
+      setError("Use synthetic or engagement-confidential demo language only. Remove client identifiers, engagement IDs, SSNs, or raw regulatory details.");
       return;
     }
 
@@ -240,7 +240,7 @@ export default function RequestSandboxPage() {
             <Label htmlFor="name">Sandbox Name *</Label>
             <Input
               id="name"
-              placeholder="e.g. Claims Denial Prediction Q2"
+              placeholder="e.g. Going Concern Analyzer Q2"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             />
@@ -261,7 +261,7 @@ export default function RequestSandboxPage() {
             <Label htmlFor="costCenter">Cost Center</Label>
             <Input
               id="costCenter"
-              placeholder="e.g. RCM-AI"
+              placeholder="e.g. AUDIT-AI"
               value={form.costCenter}
               onChange={(e) => setForm((f) => ({ ...f, costCenter: e.target.value }))}
             />
@@ -363,5 +363,5 @@ export default function RequestSandboxPage() {
 }
 
 function containsPhiLikeText(values: string[]): boolean {
-  return values.some((value) => /\b(mrn|ssn|patient name|dob|date of birth|raw clinical note)\b/i.test(value));
+  return values.some((value) => /\b(mrn|ssn|client name|dob|date of birth|raw regulatory memo)\b/i.test(value));
 }

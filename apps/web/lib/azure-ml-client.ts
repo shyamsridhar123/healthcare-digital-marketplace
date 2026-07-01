@@ -80,11 +80,11 @@ export interface RegisterModelInput {
   framework: ModelFramework
   taskType: ModelTaskType
   tags?: Record<string, string>
-  /** e.g. HIPAA, SOC2 */
+  /** e.g. SOC 2, ISO 27001 */
   compliance?: string[]
   /** Internal | Partner */
   type?: string
-  /** Category for AI Asset Marketplace */
+  /** Category for Nebula-X */
   category?: string
 }
 
@@ -260,13 +260,13 @@ export async function getAmlModelVersion(
 export async function registerAmlModel(input: RegisterModelInput): Promise<AmlModelVersion> {
   const { name, version, description, modelUri, framework, taskType, tags = {}, compliance = [], type = "custom", category } = input
 
-  // Build tags bag — store marketplace metadata in AML tags
+  // Build tags bag — store Nebula-X metadata in AML tags
   const allTags: Record<string, string> = {
     ...tags,
     "marketplace.framework": framework,
     "marketplace.taskType": taskType,
     "marketplace.type": type,
-    "marketplace.registeredBy": "ai-asset-marketplace",
+    "marketplace.registeredBy": "nebula-x",
     ...(category ? { "marketplace.category": category } : {}),
     ...(compliance.length ? { "marketplace.compliance": compliance.join(",") } : {}),
   }
@@ -334,13 +334,13 @@ export async function registerAmlModel(input: RegisterModelInput): Promise<AmlMo
   }
 }
 
-// ── Sync helper — convert AML model versions to marketplace ModelData ─────────
+// ── Sync helper — convert AML model versions to Nebula-X ModelData ─────────
 
 import type { ModelData } from "./models-data"
 
 /**
- * Convert a raw AML model version into the AI Asset Marketplace ModelData shape.
- * Used when syncing from AML into the marketplace catalog.
+ * Convert a raw AML model version into the Nebula-X ModelData shape.
+ * Used when syncing from AML into the Nebula-X catalog.
  */
 export function amlModelToMarketplace(v: AmlModelVersion): ModelData {
   const tags = v.tags ?? {}

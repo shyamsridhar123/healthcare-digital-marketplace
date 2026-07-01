@@ -33,11 +33,11 @@ const JUPYTERLITE_NOTEBOOK_URL =
 const mockNotebooks = [
   {
     id: "starter",
-    name: "RCM Denial Prediction Starter",
-    description: "Get started with denial prediction using Revenue Cycle data",
+    name: "Engagement Delivery Going Concern Risk Starter",
+    description: "Get started with going concern risk using Engagement Delivery data",
     author: "Priya Shah",
-    team: "Revenue Cycle AI Lab",
-    tags: ["rcm", "denial", "classification"],
+    team: "Engagement Delivery AI Lab",
+    tags: ["engagement-delivery", "finding", "classification"],
     lastModified: "2024-12-15",
     version: "1.0.0",
     status: "active" as const,
@@ -47,15 +47,15 @@ const mockNotebooks = [
     commits: 23,
     sandbox: imdeDemoScenario.id,
     runTime: "5 min",
-    content: `# Revenue Cycle Denial Prediction
+    content: `# Engagement Delivery Going Concern Risk
 
 ## Objective
-Build a classifier to predict claim denials based on historical patterns.
+Build a classifier to predict transaction findings based on historical patterns.
 
 ## Data Overview
-- **Training Set**: 10K+ claims with outcomes
-- **Features**: Claim details, provider info, patient demographics
-- **Target**: Binary (Approved/Denied)
+- **Training Set**: 10K+ transactions with outcomes
+- **Features**: Transaction details, engagement info, client segment attributes
+- **Target**: Binary (Approved/Exposed)
 
 ## Quick Start
 1. Load the training data
@@ -70,11 +70,11 @@ Build a classifier to predict claim denials based on historical patterns.
   },
   {
     id: "advanced-feature-engineering",
-    name: "Advanced Feature Engineering for RCM",
-    description: "Deep dive into feature engineering techniques for denial prediction",
+    name: "Advanced Feature Engineering for Engagement Delivery",
+    description: "Deep dive into feature engineering techniques for going concern risk",
     author: "Morgan Lee",
-    team: "Revenue Cycle AI Lab",
-    tags: ["rcm", "features", "engineering"],
+    team: "Engagement Delivery AI Lab",
+    tags: ["engagement-delivery", "features", "engineering"],
     lastModified: "2024-12-10",
     version: "2.1.0",
     status: "active" as const,
@@ -84,16 +84,16 @@ Build a classifier to predict claim denials based on historical patterns.
     commits: 15,
     sandbox: imdeDemoScenario.id,
     runTime: "12 min",
-    content: `# Advanced Feature Engineering for RCM
+    content: `# Advanced Feature Engineering for Engagement Delivery
 
 ## Feature Categories
-1. **Temporal Features**: Claim timing, seasonal patterns
-2. **Provider Features**: Historical rejection rates, specialty
-3. **Patient Features**: Demographics, risk profiles
-4. **Clinical Features**: Diagnosis codes, procedure types
+1. **Temporal Features**: Transaction timing, seasonal patterns
+2. **Engagement Features**: Historical rejection rates, specialty
+3. **Client Features**: Segment Attributes, risk profiles
+4. **Financial Features**: Financial assertion codes, control types
 
 ## Engineering Techniques
-- Aggregations by provider
+- Aggregations by engagement
 - Rolling window statistics
 - Interaction terms
 - Encoding categorical variables

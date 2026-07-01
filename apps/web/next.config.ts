@@ -8,6 +8,7 @@ const workspaceRoot = path.resolve(configDir, "..", "..");
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  outputFileTracingRoot: configDir,
   typescript: { ignoreBuildErrors: true },
   turbopack: {
     root: workspaceRoot,

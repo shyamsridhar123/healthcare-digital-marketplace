@@ -48,7 +48,7 @@ const TASK_TYPES = [
 
 const CATEGORIES = ["NLP", "Vision", "Prediction", "Analytics", "Generative AI", "Other"] as const
 
-const COMPLIANCE_OPTIONS = ["HIPAA", "SOC2", "ISO27001", "FedRAMP", "PCI-DSS"] as const
+const COMPLIANCE_OPTIONS = ["SOC2", "ISO27001", "Independence", "Model Risk", "Trustworthy AI"] as const
 
 type Step = 1 | 2 | 3
 
@@ -328,7 +328,7 @@ export default function RegisterModelPage() {
                     type="text"
                     value={form.name}
                     onChange={(e) => update("name", e.target.value)}
-                    placeholder="e.g. DenialPrediction-BERT"
+                    placeholder="e.g. DeloitteAuditLM-Benchmark"
                     className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--accent)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/30"
                   />
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -549,7 +549,7 @@ export default function RegisterModelPage() {
                   type="text"
                   value={form.tags}
                   onChange={(e) => update("tags", e.target.value)}
-                  placeholder="team:rcm, usecase:denial, env:production"
+                  placeholder="team:audit, usecase:exceptions, env:production"
                   className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--accent)]/50 focus:outline-none"
                 />
                 <p className="mt-1 text-xs text-muted-foreground">

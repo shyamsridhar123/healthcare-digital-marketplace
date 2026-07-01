@@ -6,7 +6,7 @@
       "value": "${EXISTING_COSMOS_ACCOUNT_NAME}"
     },
     "deployCosmos": {
-      "value": false
+      "value": true
     },
     "environment": {
       "value": "dev"

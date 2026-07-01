@@ -58,13 +58,13 @@ export default function MarketplacePage() {
 
   const getTabDescription = () => {
     switch (selectedTab) {
-      case "agents": return "AI agents for healthcare RCM automation and intelligent workflows."
+      case "agents": return "AI agents engineered for audit, tax, risk, and advisory work — built on Deloitte's Trustworthy AI™ framework."
       case "spaces": return "Runnable internal demos published from IMDE sandboxes. Try chat-only agent snapshots, then seed your own sandbox."
       case "tools":  return "MCP servers and tools to extend agent capabilities."
       case "models": return `${counts.models} foundation models deployed on Azure AI Foundry — click any card to view the live Model Card with benchmarks and safety metrics.`
       case "skills": return "Reusable skills that power agent actions and integrations."
       case "stats":  return "Live counts and trends across the marketplace."
-      default:       return "AI agents for healthcare RCM automation and intelligent workflows."
+      default:       return "AI agents engineered for audit, tax, risk, and advisory work — built on Deloitte's Trustworthy AI™ framework."
     }
   }
 
@@ -102,7 +102,7 @@ export default function MarketplacePage() {
           <span className="text-sm text-muted-foreground">Install any agent in one command:</span>
           <code className="text-sm">
             <span className="text-[var(--accent)]">/agent install</span>
-            <span className="text-[var(--success)]"> {'<name>'}@uap-marketplace</span>
+            <span className="text-[var(--success)]"> {'<name>'}@nebula-x</span>
           </code>
           <button className="text-muted-foreground hover:text-foreground transition-colors">
             <Copy className="h-4 w-4" />

@@ -16,25 +16,25 @@ export const AML_CONFIG = {
     process.env.AZURE_SUBSCRIPTION_ID ??
     "a7fecb91-4553-4aca-976e-274add998c8d",
   resourceGroup:
-    process.env.AZURE_RESOURCE_GROUP ?? "rg-ai-marketplace-dev",
+    process.env.AZURE_RESOURCE_GROUP ?? "rg-nebula-x-dev",
   location: process.env.AZURE_LOCATION ?? "eastus",
   storageAccountId:
     process.env.AML_STORAGE_ACCOUNT_ID ??
-    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/Microsoft.Storage/storageAccounts/aimarketstorp7a65r22uhdx",
+    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-nebula-x-dev/providers/Microsoft.Storage/storageAccounts/nebulaxstorp7a65r22uhdx",
   keyVaultId:
     process.env.AML_KEY_VAULT_ID ??
-    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/Microsoft.KeyVault/vaults/aimarket-kv-p7a65r22uhdx",
+    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-nebula-x-dev/providers/Microsoft.KeyVault/vaults/nebulax-kv-p7a65r22uhdx",
   appInsightsId:
     process.env.AML_APP_INSIGHTS_ID ??
-    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-ai-marketplace-dev/providers/microsoft.insights/components/aimarket-appins",
+    "/subscriptions/a7fecb91-4553-4aca-976e-274add998c8d/resourceGroups/rg-nebula-x-dev/providers/microsoft.insights/components/nebulax-appins",
 };
 
 // ─── Data package → AML data asset mapping ───────────────────────────────────
 
 const DATA_PACKAGE_MAP: Record<string, { name: string; version: string }> = {
-  claims_training: { name: "claims_training", version: "12" },
-  denials_gold: { name: "denials_gold", version: "4" },
-  clinical_notes_phi: { name: "clinical_notes_phi", version: "3" },
+  transaction_testing_training: { name: "transaction_testing_training", version: "12" },
+  control_exceptions_gold: { name: "control_exceptions_gold", version: "4" },
+  engagement_workpapers_confidential: { name: "engagement_workpapers_confidential", version: "3" },
 };
 
 // ─── Client factory ───────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ export async function provisionSandboxWorkspace(opts: {
         "sandbox-type": opts.sandboxType,
         "tenant-id": opts.tenantId,
         "owner-id": opts.ownerId,
-        "managed-by": "ai-marketplace-platform",
+        "managed-by": "nebula-x-platform",
       },
     }
   );
@@ -117,7 +117,7 @@ export async function provisionSandboxWorkspace(opts: {
             description: `Data package: ${pkgId} v${assetDef.version}`,
             tags: {
               "data-package-id": pkgId,
-              "managed-by": "ai-marketplace-platform",
+              "managed-by": "nebula-x-platform",
             },
           },
         }

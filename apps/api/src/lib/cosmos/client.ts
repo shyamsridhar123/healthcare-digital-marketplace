@@ -223,11 +223,11 @@ export async function getContainer(
     return new InMemoryContainer(containerName);
   }
 
-  throw new Error("Cosmos configuration missing. Set COSMOS_ENDPOINT and COSMOS_KEY, or set UAP_USE_IN_MEMORY_COSMOS=true for local development.");
+  throw new Error("Cosmos configuration missing. Set COSMOS_ENDPOINT and COSMOS_KEY, or set NEBULA_X_USE_IN_MEMORY_COSMOS=true for local development.");
 }
 
 function allowsInMemoryCosmos(): boolean {
-  return process.env.UAP_USE_IN_MEMORY_COSMOS === "true"
+  return process.env.NEBULA_X_USE_IN_MEMORY_COSMOS === "true"
     || process.env.AZURE_FUNCTIONS_ENVIRONMENT === "Development"
     || process.env.NODE_ENV === "test";
 }

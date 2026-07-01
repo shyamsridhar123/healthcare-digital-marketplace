@@ -71,18 +71,18 @@ const accounts: StorageAccount[] = [
         name: "training-data",
         access: "Private",
         blobs: [
-          { name: "claims-training-v3.parquet", type: "parquet", size: "4.2 GB", modified: "Mar 2, 2026", tags: ["healthcare", "claims"] },
-          { name: "member-eligibility-2025.parquet", type: "parquet", size: "1.8 GB", modified: "Feb 28, 2026", tags: ["eligibility"] },
-          { name: "denial-reasons-annotated.csv", type: "csv", size: "234 MB", modified: "Feb 20, 2026", tags: ["denials", "labeled"] },
-          { name: "auth-requests-q4.json", type: "json", size: "512 MB", modified: "Jan 31, 2026" },
-          { name: "icd10-codes-2026.csv", type: "csv", size: "18 MB", modified: "Jan 2, 2026" },
+          { name: "gl-entries-training-v3.parquet", type: "parquet", size: "4.2 GB", modified: "Mar 2, 2026", tags: ["professional-services", "transactions"] },
+          { name: "engagement-compliance-verification-2025.parquet", type: "parquet", size: "1.8 GB", modified: "Feb 28, 2026", tags: ["compliance verification"] },
+          { name: "finding-reasons-annotated.csv", type: "csv", size: "234 MB", modified: "Feb 20, 2026", tags: ["findings", "labeled"] },
+          { name: "approval-requests-q4.json", type: "json", size: "512 MB", modified: "Jan 31, 2026" },
+          { name: "gaap-control-codes-2026.csv", type: "csv", size: "18 MB", modified: "Jan 2, 2026" },
         ],
       },
       {
         name: "model-artifacts",
         access: "Private",
         blobs: [
-          { name: "rcm-classifier-v2.pkl", type: "pkl", size: "2.1 GB", modified: "Mar 1, 2026", tags: ["model", "v2"] },
+          { name: "engagement-delivery-classifier-v2.pkl", type: "pkl", size: "2.1 GB", modified: "Mar 1, 2026", tags: ["model", "v2"] },
           { name: "tokenizer-config.json", type: "json", size: "24 KB", modified: "Mar 1, 2026" },
           { name: "fine-tune-checkpoints.archive", type: "archive", size: "8.4 GB", modified: "Feb 25, 2026" },
         ],
@@ -91,7 +91,7 @@ const accounts: StorageAccount[] = [
         name: "raw-exports",
         access: "Private",
         blobs: [
-          { name: "ehr-export-20260228.parquet", type: "parquet", size: "14 GB", modified: "Feb 28, 2026" },
+          { name: "erp-export-20260228.parquet", type: "parquet", size: "14 GB", modified: "Feb 28, 2026" },
           { name: "lab-results-jan26.csv", type: "csv", size: "880 MB", modified: "Jan 31, 2026" },
         ],
       },

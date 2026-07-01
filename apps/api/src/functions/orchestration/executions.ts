@@ -12,7 +12,7 @@ import { getHandler } from "../../lib/orchestration/patterns/index.js";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type ExecutionStatus = "pending" | "running" | "completed" | "failed" | "cancelled" | "paused";
-type NodeExecutionStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "pending-approval" | "approved" | "rejected" | "policy-denied";
+type NodeExecutionStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "pending-approval" | "approved" | "rejected" | "policy-flagged";
 
 interface NodeExecution {
   nodeId: string;
@@ -189,7 +189,7 @@ async function runExecution(
         };
 
         if (preDecision.decision === "deny") {
-          ne.status = "policy-denied";
+          ne.status = "policy-flagged";
           ne.error = preDecision.reason ?? "Denied by policy";
           ne.completedAt = new Date().toISOString();
           policyViolations++;
@@ -234,8 +234,8 @@ async function runExecution(
         };
 
         if (postDecision.decision === "deny") {
-          ne.status = "policy-denied";
-          ne.error = postDecision.reason ?? "Output denied by policy";
+          ne.status = "policy-flagged";
+          ne.error = postDecision.reason ?? "Output flagged by policy";
           ne.completedAt = new Date().toISOString();
           ne.durationMs = Date.now() - startMs;
           policyViolations++;

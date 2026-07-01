@@ -31,11 +31,11 @@ import { cn } from "@/lib/utils"
 
 interface FailureCase {
   id: string
-  claimId: string
+  transactionId: string
   failureType: string
   category: string
-  payer: string
-  denialCode: string
+  counterparty: string
+  findingCode: string
   modelPrediction: string
   actualOutcome: string
   confidence: number
@@ -60,13 +60,13 @@ interface RetrainJob {
 const failureCases: FailureCase[] = [
   {
     id: "fc-001",
-    claimId: "CLM-2026-84512",
+    transactionId: "CLM-2026-84512",
     failureType: "False Negative",
-    category: "Payer Policy Change",
-    payer: "UHC Commercial",
-    denialCode: "CO-4",
-    modelPrediction: "PAID",
-    actualOutcome: "DENIED",
+    category: "Counterparty Policy Change",
+    counterparty: "Northwind Advisors",
+    findingCode: "FND-04",
+    modelPrediction: "CLEARED",
+    actualOutcome: "EXCEPTION",
     confidence: 0.91,
     impactDollars: 12400,
     identifiedAt: "Mar 2, 2026",
@@ -74,13 +74,13 @@ const failureCases: FailureCase[] = [
   },
   {
     id: "fc-002",
-    claimId: "CLM-2026-91073",
+    transactionId: "CLM-2026-91073",
     failureType: "False Negative",
-    category: "New Denial Pattern",
-    payer: "BCBS Federal",
-    denialCode: "PR-96",
-    modelPrediction: "PAID",
-    actualOutcome: "DENIED",
+    category: "New Finding Pattern",
+    counterparty: "GlobalBank Regulatory",
+    findingCode: "REG-96",
+    modelPrediction: "CLEARED",
+    actualOutcome: "EXCEPTION",
     confidence: 0.78,
     impactDollars: 8900,
     identifiedAt: "Mar 1, 2026",
@@ -88,13 +88,13 @@ const failureCases: FailureCase[] = [
   },
   {
     id: "fc-003",
-    claimId: "CLM-2026-67241",
+    transactionId: "CLM-2026-67241",
     failureType: "Low Confidence",
-    category: "Rare CPT Code Combo",
-    payer: "Aetna",
-    denialCode: "CO-97",
-    modelPrediction: "DENIED (51%)",
-    actualOutcome: "PAID",
+    category: "Rare control objective Code Combo",
+    counterparty: "Contoso Capital",
+    findingCode: "CTL-97",
+    modelPrediction: "EXCEPTION (51%)",
+    actualOutcome: "CLEARED",
     confidence: 0.51,
     impactDollars: 3200,
     identifiedAt: "Feb 28, 2026",
@@ -102,13 +102,13 @@ const failureCases: FailureCase[] = [
   },
   {
     id: "fc-004",
-    claimId: "CLM-2026-55830",
+    transactionId: "CLM-2026-55830",
     failureType: "False Negative",
     category: "Multimodal Required",
-    payer: "Medicare FFS",
-    denialCode: "CO-16",
-    modelPrediction: "PAID",
-    actualOutcome: "DENIED",
+    counterparty: "SEC Reporting",
+    findingCode: "EVD-16",
+    modelPrediction: "CLEARED",
+    actualOutcome: "EXCEPTION",
     confidence: 0.84,
     impactDollars: 6700,
     identifiedAt: "Feb 27, 2026",
@@ -119,46 +119,46 @@ const failureCases: FailureCase[] = [
 const retrainJobs: RetrainJob[] = [
   {
     id: "rt-001",
-    name: "denial-predictor-v2.2-patch",
-    trigger: "UHC CO-4 policy change (847 new cases)",
+    name: "going-concern-risk-v2.2-patch",
+    trigger: "Northwind Advisors FND-04 policy change (847 new cases)",
     status: "running",
     progress: 62,
     startedAt: "Mar 2, 2026 12:00",
     eta: "~38 min remaining",
     newCases: 847,
-    baseModel: "Denial Predictor v2.1",
-    expectedImprovement: "+2.1% F1 on UHC segment",
+    baseModel: "LedgerSentinel v2.1",
+    expectedImprovement: "+2.1% F1 on Northwind Advisors segment",
   },
   {
     id: "rt-002",
-    name: "denial-predictor-v2.1.1-bcbs",
-    trigger: "BCBS Federal PR-96 pattern (312 cases)",
+    name: "going-concern-risk-v2.1.1-globalbank",
+    trigger: "GlobalBank Regulatory REG-96 pattern (312 cases)",
     status: "queued",
     progress: 0,
     startedAt: "—",
     newCases: 312,
-    baseModel: "Denial Predictor v2.1",
-    expectedImprovement: "+0.8% recall on BCBS",
+    baseModel: "LedgerSentinel v2.1",
+    expectedImprovement: "+0.8% recall on GlobalBank",
   },
   {
     id: "rt-003",
-    name: "denial-predictor-v2.1-hotfix",
+    name: "going-concern-risk-v2.1-hotfix",
     trigger: "Weekly drift monitor — 0.04 feature drift",
     status: "completed",
     progress: 100,
     startedAt: "Feb 28, 2026 09:00",
     newCases: 2341,
-    baseModel: "Denial Predictor v2.1",
+    baseModel: "LedgerSentinel v2.1",
     expectedImprovement: "+0.6% overall F1",
   },
 ]
 
 const driftMetrics = [
-  { feature: "denial_code", drift: 0.041, threshold: 0.05, status: "warning" },
-  { feature: "payer_id", drift: 0.018, threshold: 0.05, status: "ok" },
-  { feature: "cpt_code_group", drift: 0.012, threshold: 0.05, status: "ok" },
-  { feature: "claim_amount_bucket", drift: 0.056, threshold: 0.05, status: "alert" },
-  { feature: "provider_specialty", drift: 0.009, threshold: 0.05, status: "ok" },
+  { feature: "finding_code", drift: 0.041, threshold: 0.05, status: "warning" },
+  { feature: "counterparty_id", drift: 0.018, threshold: 0.05, status: "ok" },
+  { feature: "control_objective_group", drift: 0.012, threshold: 0.05, status: "ok" },
+  { feature: "transaction_amount_bucket", drift: 0.056, threshold: 0.05, status: "alert" },
+  { feature: "engagement_specialty", drift: 0.009, threshold: 0.05, status: "ok" },
 ]
 
 export default function IMDEImprovementPage() {
@@ -187,7 +187,7 @@ export default function IMDEImprovementPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Continuous Improvement Loop</h1>
-              <p className="text-sm text-muted-foreground">Pull production failures → retrain → push back — turning every payer change into a learning opportunity</p>
+              <p className="text-sm text-muted-foreground">Pull production failures → retrain → push back — turning every counterparty change into a learning opportunity</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -239,7 +239,7 @@ export default function IMDEImprovementPage() {
             <div className="grid grid-cols-3 gap-4">
               {[
                 { label: "Failure Cases Identified", value: totalCases.toLocaleString(), sub: "last 7 days", icon: AlertTriangle, color: "text-red-400" },
-                { label: "Revenue at Risk", value: `$${(totalImpact / 1000).toFixed(0)}K`, sub: "recoverable with fix", icon: TrendingDown, color: "text-amber-400" },
+                { label: "Engagement Value at Risk", value: `$${(totalImpact / 1000).toFixed(0)}K`, sub: "addressable with remediation", icon: TrendingDown, color: "text-amber-400" },
                 { label: "Retrain Jobs Active", value: "2", sub: "1 running, 1 queued", icon: RefreshCw, color: "text-violet-400" },
               ].map((s) => (
                 <Card key={s.label} className="border-border">
@@ -289,11 +289,11 @@ export default function IMDEImprovementPage() {
                               {fc.failureType}
                             </Badge>
                             <span className="text-xs font-medium">{fc.category}</span>
-                            <span className="text-xs text-muted-foreground font-mono">{fc.claimId}</span>
+                            <span className="text-xs text-muted-foreground font-mono">{fc.transactionId}</span>
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span>Payer: <strong className="text-foreground">{fc.payer}</strong></span>
-                            <span>Code: <strong className="font-mono text-foreground">{fc.denialCode}</strong></span>
+                            <span>Counterparty: <strong className="text-foreground">{fc.counterparty}</strong></span>
+                            <span>Code: <strong className="font-mono text-foreground">{fc.findingCode}</strong></span>
                             <span>Model said: <strong className="text-amber-400">{fc.modelPrediction}</strong></span>
                             <span>Actual: <strong className="text-red-400">{fc.actualOutcome}</strong></span>
                             <span>Confidence: <strong>{(fc.confidence * 100).toFixed(0)}%</strong></span>
@@ -301,7 +301,7 @@ export default function IMDEImprovementPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-sm font-bold text-red-400">${fc.impactDollars.toLocaleString()}</div>
-                          <div className="text-xs text-muted-foreground">{fc.volume} claims</div>
+                          <div className="text-xs text-muted-foreground">{fc.volume} transactions</div>
                           <Button variant="outline" size="sm" className="mt-2 h-6 text-[10px] gap-1">
                             <Play className="h-3 w-3" /> Add to Retrain
                           </Button>
@@ -416,7 +416,7 @@ export default function IMDEImprovementPage() {
                   </div>
                 ))}
                 <div className="pt-2 border-t border-border text-xs text-muted-foreground">
-                  Threshold: 0.05 PSI · <span className="text-amber-400">claim_amount_bucket</span> alert triggered
+                  Threshold: 0.05 PSI · <span className="text-amber-400">transaction_amount_bucket</span> alert triggered
                 </div>
               </CardContent>
             </Card>
@@ -434,7 +434,7 @@ export default function IMDEImprovementPage() {
                   { label: "Retrain cycles completed", value: "7" },
                   { label: "Cases used for retraining", value: "14,280" },
                   { label: "F1 improvement (cumulative)", value: "+4.2%" },
-                  { label: "Revenue protected", value: "$1.2M" },
+                  { label: "Engagement value protected", value: "$1.2M" },
                   { label: "Avg. loop cycle time", value: "2.4 days" },
                   { label: "Models updated in prod", value: "3 models" },
                 ].map((item) => (
@@ -455,12 +455,12 @@ export default function IMDEImprovementPage() {
                 </div>
                 {[
                   "Production model flags low-confidence predictions",
-                  "Outcome tracker records actual claim resolution",
+                  "Outcome tracker records actual transaction resolution",
                   "Failure cases auto-labeled and segmented by root cause",
                   "Pull to IMDE with one click — or auto-pull on schedule",
                   "Incremental fine-tuning on failure set (keeps base model knowledge)",
                   "Auto-eval + governance gate before push",
-                  "Every payer rule change becomes a training signal",
+                  "Every counterparty rule change becomes a training signal",
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
                     <span className="shrink-0 rounded-full bg-violet-500/20 text-violet-400 h-4 w-4 flex items-center justify-center text-[9px] mt-0.5">{i + 1}</span>

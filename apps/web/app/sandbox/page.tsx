@@ -154,7 +154,7 @@ export default function SandboxPage() {
             </Badge>
             <h2 className="text-lg font-semibold text-foreground">{imdeDemoScenario.title}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Request a governed GPU sandbox with synthetic, de-identified RCM data, route it through approval, and publish the winning model into Models.
+              Request a governed GPU sandbox with synthetic, engagement-confidential professional-services data, route it through approval, and publish the winning model into Models.
             </p>
           </div>
           <Link href={`/sandbox/request?demo=${imdeDemoScenario.demoScenarioId}`}>

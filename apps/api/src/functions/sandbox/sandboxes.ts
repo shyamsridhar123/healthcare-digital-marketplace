@@ -55,7 +55,7 @@ function addDays(days: number): string {
 }
 
 function isAuthorizedDemoAdmin(req: HttpRequest, body: Record<string, unknown>): boolean {
-  const configuredToken = process.env.UAP_IMDE_DEMO_ADMIN_TOKEN;
+  const configuredToken = process.env.NEBULA_X_IMDE_DEMO_ADMIN_TOKEN;
   if (configuredToken) {
     return req.headers.get("x-imde-demo-admin-token") === configuredToken;
   }
@@ -65,7 +65,7 @@ function isAuthorizedDemoAdmin(req: HttpRequest, body: Record<string, unknown>):
 }
 
 function isAuthorizedDemoPublisher(req: HttpRequest, body: Record<string, unknown>, sandbox: Record<string, unknown>): boolean {
-  const configuredToken = process.env.UAP_IMDE_DEMO_ADMIN_TOKEN;
+  const configuredToken = process.env.NEBULA_X_IMDE_DEMO_ADMIN_TOKEN;
   if (configuredToken && req.headers.get("x-imde-demo-admin-token") === configuredToken) {
     return true;
   }

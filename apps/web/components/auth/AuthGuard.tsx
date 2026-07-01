@@ -4,7 +4,7 @@ import { type ReactNode } from "react"
 import { useIsAuthenticated, useMsal } from "@azure/msal-react"
 import { InteractionStatus } from "@azure/msal-browser"
 import { loginRequest } from "@/lib/auth/msal-config"
-import { Building2, LogIn } from "lucide-react"
+import { NebulaLogo } from "@/components/ui/nebula-logo"
 
 /**
  * Wraps protected routes — redirects unauthenticated users to Microsoft sign-in.
@@ -35,17 +35,17 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center gap-8 bg-background">
         {/* Logo */}
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)] shadow-lg shadow-[var(--accent)]/20">
-          <Building2 className="h-10 w-10 text-white" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent-light)] shadow-lg shadow-[var(--primary)]/20">
+          <NebulaLogo className="h-11 w-11 text-[#0C0C0C]" />
         </div>
 
         {/* Heading */}
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            AI Asset Marketplace
+            Nebula-X <span className="text-[var(--primary)]">by Deloitte</span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            AI Marketplace Platform — sign in with your Microsoft account to continue
+            The governed AI marketplace for professional services — sign in with your Microsoft account to continue
           </p>
         </div>
 

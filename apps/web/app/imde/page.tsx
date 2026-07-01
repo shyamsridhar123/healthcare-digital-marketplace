@@ -160,9 +160,9 @@ const toolPresets = [
 const STATIC_SANDBOXES: Sandbox[] = [
   {
     id: "sb-001",
-    name: "RCM-Denial-Prediction-v3",
+    name: "Going-Concern-Risk-Model-v3",
     status: "running",
-    owner: "Dr. Sarah Chen",
+    owner: "Sarah Chen",
     team: ["Sarah Chen", "Mike Johnson", "Priya Patel"],
     computeType: "GPU-Accelerated",
     cpu: 32,
@@ -171,18 +171,18 @@ const STATIC_SANDBOXES: Sandbox[] = [
     storageGb: 2048,
     cpuUsage: 67,
     memUsage: 54,
-    dataSources: ["Claims DB (prod-mirror)", "ERA/835 Feed", "Payer Rules Engine"],
+    dataSources: ["GL Entries DB (prod-mirror)", "GL Extract Feed", "Regulatory Rules Engine"],
     preloadedTools: ["PyTorch 2.3", "HuggingFace Transformers", "MLflow", "Jupyter Lab"],
     createdAt: "Feb 12, 2026",
     lastActive: "2 min ago",
-    description: "Fine-tuning transformer model on denial reasons using 18 months of payer data",
+    description: "Fine-tuning transformer model on finding reasons using 18 months of counterparty data",
     studioUrl: "https://ml.azure.com/demo/studio",
     notebookUrl: "https://ml.azure.com/demo/notebook",
-    dataPackages: ["claims_training", "denials_gold"],
+    dataPackages: ["gl_entries_training", "findings_gold"],
   },
   {
     id: "sb-002",
-    name: "ICD10-AutoCode-LLM",
+    name: "FinancialDisclosure-AutoCode-LLM",
     status: "running",
     owner: "James Rivera",
     team: ["James Rivera", "Linda Park"],
@@ -193,18 +193,18 @@ const STATIC_SANDBOXES: Sandbox[] = [
     storageGb: 512,
     cpuUsage: 88,
     memUsage: 72,
-    dataSources: ["Clinical Notes DB", "ICD-10-CM Reference", "Provider Encounter Feed"],
+    dataSources: ["Financial Memos DB", "IFRS/GAAP Reference", "Engagement Evidence Feed"],
     preloadedTools: ["LangChain", "OpenAI SDK", "vLLM", "Jupyter Lab", "DVC"],
     createdAt: "Jan 28, 2026",
     lastActive: "15 min ago",
-    description: "LLM-based ICD-10 auto-coding from clinical notes — multimodal extension in progress",
+    description: "LLM-based IFRS/GAAP auto-classification from financial memos — multimodal extension in progress",
     studioUrl: "https://ml.azure.com/demo/studio",
     notebookUrl: "https://ml.azure.com/demo/notebook",
-    dataPackages: ["clinical_notes_phi"],
+    dataPackages: ["engagement_memos_confidential"],
   },
   {
     id: "sb-003",
-    name: "Auth-Approval-Predictor",
+    name: "Approval-Approval-Predictor",
     status: "idle",
     owner: "Amy Kowalski",
     team: ["Amy Kowalski", "Tom Richards", "Sarah Chen"],
@@ -214,16 +214,16 @@ const STATIC_SANDBOXES: Sandbox[] = [
     storageGb: 256,
     cpuUsage: 4,
     memUsage: 18,
-    dataSources: ["Authorization DB", "Payer Coverage Rules"],
+    dataSources: ["Approvals DB", "Regulatory Requirements"],
     preloadedTools: ["scikit-learn", "XGBoost", "SHAP", "Jupyter Lab"],
     createdAt: "Feb 20, 2026",
     lastActive: "3 hours ago",
-    description: "XGBoost ensemble for prior authorization approval likelihood scoring",
-    dataPackages: ["claims_training"],
+    description: "XGBoost ensemble for approval workflow approval likelihood scoring",
+    dataPackages: ["gl_entries_training"],
   },
   {
     id: "sb-004",
-    name: "Billing-Anomaly-Detector",
+    name: "Engagement Billing-Anomaly-Detector",
     status: "stopped",
     owner: "Kevin Wu",
     team: ["Kevin Wu"],
@@ -233,11 +233,11 @@ const STATIC_SANDBOXES: Sandbox[] = [
     storageGb: 128,
     cpuUsage: 0,
     memUsage: 0,
-    dataSources: ["Billing Transactions DB"],
+    dataSources: ["Engagement Billing Transactions DB"],
     preloadedTools: ["TensorFlow", "Pandas", "Jupyter Lab"],
     createdAt: "Feb 1, 2026",
     lastActive: "2 days ago",
-    description: "Anomaly detection on billing codes — paused for domain expert review",
+    description: "Anomaly detection on engagement billing codes — paused for domain expert review",
   },
 ]
 
@@ -267,14 +267,14 @@ function timeAgo(iso: string): string {
 function amlComputeToSandbox(c: AmlComputeInstance, index: number): Sandbox {
   const status = amlStateToSandboxStatus(c.state, c.provisioningState)
   const isRunning = status === "running"
-  const defaultTeams = [["Dr. Sarah Chen", "Mike Johnson"], ["James Rivera", "Linda Park"], ["Amy Kowalski"], ["Kevin Wu"]]
-  const defaultDs = [["Claims DB", "ERA/835 Feed"], ["Clinical Notes DB", "ICD-10-CM Ref"], ["Auth DB", "Payer Rules"], ["Billing Transactions DB"]]
+  const defaultTeams = [["Sarah Chen", "Mike Johnson"], ["James Rivera", "Linda Park"], ["Amy Kowalski"], ["Kevin Wu"]]
+  const defaultDs = [["GL Entries DB", "GL Extract Feed"], ["Financial Memos DB", "IFRS/GAAP Ref"], ["Approvals DB", "Regulatory Rules"], ["Engagement Billing Transactions DB"]]
   const defaultTools = [["PyTorch", "MLflow", "Jupyter Lab"], ["LangChain", "vLLM", "Jupyter Lab"], ["scikit-learn", "XGBoost", "Jupyter Lab"], ["TensorFlow", "Pandas"]]
   return {
     id: `aml-${c.name}`,
     name: c.name,
     status,
-    owner: c.createdBy ?? "Team Member",
+    owner: c.createdBy ?? "Team Engagement",
     team: defaultTeams[index % defaultTeams.length],
     computeType: c.isGpu ? "GPU-Accelerated" : (c.memoryGb ?? 0) >= 64 ? "Memory-Optimized" : "CPU-Optimized",
     cpu: c.cpuCores ?? 4,
@@ -460,9 +460,9 @@ export default function IMDEWorkspacePage() {
         cpuUsage: 0,
         memUsage: 0,
         dataSources: provisionDataPkgs.map((p) =>
-          p === "claims_training" ? "Claims Training Dataset" :
-          p === "denials_gold" ? "Denials Gold Dataset" :
-          "Clinical Notes (PHI)"
+          p === "gl_entries_training" ? "GL Entries Training Dataset" :
+          p === "findings_gold" ? "Findings Gold Dataset" :
+          "Financial Memos (engagement-confidential data)"
         ),
         preloadedTools: ["JupyterLab", "PyTorch", "MLflow"],
         createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -594,7 +594,7 @@ export default function IMDEWorkspacePage() {
             { label: "Active Sandboxes", value: `${running}`, sub: `of ${total} total`, icon: Code2, color: "text-violet-400" },
             { label: "GPU Instances", value: `${amlComputes.filter((c) => c.isGpu).length || sandboxes.filter((s) => s.gpu).length}`, sub: "GPU compute", icon: Zap, color: "text-amber-400" },
             { label: "Compute Types", value: `${[...new Set(amlComputes.map((c) => c.computeType))].length || 2}`, sub: "in workspace", icon: Server, color: "text-blue-400" },
-            { label: "Team Members", value: "12", sub: "collaborators", icon: Users, color: "text-emerald-400" },
+            { label: "Team Engagements", value: "12", sub: "collaborators", icon: Users, color: "text-emerald-400" },
           ].map((stat) => (
             <Card key={stat.label} className="border-border">
               <CardContent className="p-4">
@@ -783,14 +783,14 @@ export default function IMDEWorkspacePage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {[
-                  { name: "Claims Database", type: "SQL", status: "connected", freshness: "15 min lag" },
-                  { name: "ERA/835 Feed", type: "Streaming", status: "connected", freshness: "Real-time" },
-                  { name: "Clinical Notes", type: "Blob", status: "connected", freshness: "Daily" },
-                  { name: "ICD-10-CM Ref", type: "Static", status: "connected", freshness: "Quarterly" },
-                  { name: "Payer Rules Engine", type: "API", status: "connected", freshness: "On-demand" },
-                  { name: "Auth DB (prod)", type: "SQL", status: "connected", freshness: "1 hr lag" },
-                  { name: "Billing Transactions", type: "SQL", status: "connected", freshness: "Daily" },
-                  { name: "Provider Encounters", type: "SQL", status: "pending", freshness: "Setup needed" },
+                  { name: "GL Entries Database", type: "SQL", status: "connected", freshness: "15 min lag" },
+                  { name: "GL Extract Feed", type: "Streaming", status: "connected", freshness: "Real-time" },
+                  { name: "Financial Memos", type: "Blob", status: "connected", freshness: "Daily" },
+                  { name: "IFRS/GAAP Ref", type: "Static", status: "connected", freshness: "Quarterly" },
+                  { name: "Regulatory Rules Engine", type: "API", status: "connected", freshness: "On-demand" },
+                  { name: "Approvals DB (prod)", type: "SQL", status: "connected", freshness: "1 hr lag" },
+                  { name: "Engagement Billing Transactions", type: "SQL", status: "connected", freshness: "Daily" },
+                  { name: "Engagement Evidence", type: "SQL", status: "pending", freshness: "Setup needed" },
                 ].map((ds) => (
                   <div key={ds.name} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
@@ -861,7 +861,7 @@ export default function IMDEWorkspacePage() {
               Publish IMDE sandbox as Space
             </DialogTitle>
             <DialogDescription>
-              Demo flow: review a chat-only agent snapshot, run eligibility checks, and publish a tenant-visible Space.
+              Demo flow: review a chat-only agent snapshot, run compliance verification checks, and publish a tenant-visible Space.
             </DialogDescription>
           </DialogHeader>
 
@@ -870,7 +870,7 @@ export default function IMDEWorkspacePage() {
               <div className="rounded-lg border border-border bg-card p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-foreground">Denial Risk Copilot Space</div>
+                    <div className="text-sm font-semibold text-foreground">Revenue Recognition Anomaly Space</div>
                     <div className="mt-1 text-xs text-muted-foreground">
                       Source sandbox: {publishSandbox.name} · Snapshot: snapshot-v1.2.0
                     </div>
@@ -882,7 +882,7 @@ export default function IMDEWorkspacePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   ["Chat-only definition", "No files or notebooks exposed to visitors"],
-                  ["PHI/secret scan", "Instructions and metadata pass demo checks"],
+                  ["engagement-confidential data/secret scan", "Instructions and metadata pass demo checks"],
                   ["Snapshot boundary", "Data, credentials, and runtime threads excluded"],
                   ["Budget guardrail", "250k daily token cap with 80% publisher alert"],
                 ].map(([label, description]) => (
@@ -924,7 +924,7 @@ export default function IMDEWorkspacePage() {
 
           <DialogFooter>
             {publishStage === "published" ? (
-              <a href="/marketplace/spaces/denial-risk-copilot">
+              <a href="/marketplace/spaces/revenue-recognition-anomaly">
                 <Button className="gap-2 bg-violet-600 hover:bg-violet-700 text-white">
                   <ExternalLink className="h-4 w-4" />
                   Open Space
@@ -1069,7 +1069,7 @@ export default function IMDEWorkspacePage() {
                 </Label>
                 <Input
                   id="compute-name"
-                  placeholder="e.g. denial-pred-gpu-01"
+                  placeholder="e.g. finding-pred-gpu-01"
                   value={provisionName}
                   onChange={(e) => setProvisionName(e.target.value)}
                   className="font-mono text-sm h-8"
@@ -1092,10 +1092,10 @@ export default function IMDEWorkspacePage() {
                         <span className="text-xs text-muted-foreground">PyTorch · scikit-learn · JupyterLab · auto-approve</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="restricted-clinical">
+                    <SelectItem value="restricted-financial">
                       <div className="flex flex-col text-left">
-                        <span className="font-medium">Restricted Clinical</span>
-                        <span className="text-xs text-muted-foreground">PHI-capable · VNet-isolated · requires manager approval</span>
+                        <span className="font-medium">Restricted Financial</span>
+                        <span className="text-xs text-muted-foreground">engagement-confidential-data capable · VNet-isolated · requires manager approval</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="team-collaboration">
@@ -1114,9 +1114,9 @@ export default function IMDEWorkspacePage() {
                 </Label>
                 <div className="rounded-lg border border-border p-3 space-y-2">
                   {[
-                    { id: "claims_training", name: "Claims Training Dataset", classification: "internal", policy: "auto-approve" },
-                    { id: "denials_gold", name: "Denials Gold Dataset", classification: "internal", policy: "standard-review" },
-                    { id: "clinical_notes_phi", name: "Clinical Notes (PHI)", classification: "phi", policy: "restricted-review" },
+                    { id: "gl_entries_training", name: "GL Entries Training Dataset", classification: "internal", policy: "auto-approve" },
+                    { id: "findings_gold", name: "Findings Gold Dataset", classification: "internal", policy: "standard-review" },
+                    { id: "engagement_memos_confidential", name: "Financial Memos (engagement-confidential data)", classification: "restricted", policy: "restricted-review" },
                   ].map((pkg) => (
                     <label key={pkg.id} className="flex items-center gap-3 cursor-pointer group">
                       <input
@@ -1134,7 +1134,7 @@ export default function IMDEWorkspacePage() {
                         <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
                           <span className={cn(
                             "rounded-full px-1.5 py-0.5",
-                            pkg.classification === "phi" ? "bg-red-500/10 text-red-400" : "bg-blue-500/10 text-blue-400"
+                            pkg.classification === "restricted" ? "bg-red-500/10 text-red-400" : "bg-blue-500/10 text-blue-400"
                           )}>{pkg.classification}</span>
                           <span>·</span>
                           <span>{pkg.policy}</span>
@@ -1184,7 +1184,7 @@ export default function IMDEWorkspacePage() {
                 <Label htmlFor="cost-center" className="text-xs font-medium">Cost Center</Label>
                 <Input
                   id="cost-center"
-                  placeholder="e.g. CC-RCM-RESEARCH"
+                  placeholder="e.g. CC-ASSURANCE-RESEARCH"
                   value={provisionCostCenter}
                   onChange={(e) => setProvisionCostCenter(e.target.value)}
                   className="font-mono text-sm h-8"
@@ -1195,7 +1195,7 @@ export default function IMDEWorkspacePage() {
                 <Label htmlFor="justification" className="text-xs font-medium">Business Justification</Label>
                 <Input
                   id="justification"
-                  placeholder="e.g. Train denial prediction model for Q3 release"
+                  placeholder="e.g. Train going concern risk model for Q3 release"
                   value={provisionJustification}
                   onChange={(e) => setProvisionJustification(e.target.value)}
                   className="text-sm h-8"
@@ -1208,10 +1208,10 @@ export default function IMDEWorkspacePage() {
                   GPU profile requires manager approval before provisioning starts.
                 </div>
               )}
-              {provisionDataPkgs.includes("clinical_notes_phi") && (
+              {provisionDataPkgs.includes("engagement_memos_confidential") && (
                 <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-400">
                   <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                  PHI data requires restricted template and privacy officer review.
+                  engagement-confidential data requires restricted template and privacy officer review.
                 </div>
               )}
               {provisionError && (

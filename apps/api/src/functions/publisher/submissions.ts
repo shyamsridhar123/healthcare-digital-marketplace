@@ -33,7 +33,7 @@ app.http("createSubmission", {
         ...parsed.data,
         status: "submitted",
         submittedAt: new Date().toISOString(),
-        publisherId: "TODO-from-auth", // populate from JWT claims
+        publisherId: "TODO-from-auth", // populate from JWT transactions
         tenantId: "TODO-from-auth",
       };
 

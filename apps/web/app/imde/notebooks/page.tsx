@@ -51,11 +51,11 @@ interface Notebook {
 const notebooks: Notebook[] = [
   {
     id: "nb-001",
-    name: "denials_prediction_finetune.ipynb",
-    description: "Fine-tune the denial prediction base model using synthetic, de-identified claims and denial outcomes from the governed sandbox.",
+    name: "findings_prediction_finetune.ipynb",
+    description: "Fine-tune the going concern risk base model using synthetic, de-identified transactions and finding outcomes from the governed sandbox.",
     author: imdeDemoScenario.actors.ownerName,
     team: imdeDemoScenario.actors.teamName,
-    tags: ["denials", "fine-tuning", "synthetic-data", "governed"],
+    tags: ["findings", "fine-tuning", "synthetic-data", "governed"],
     lastModified: "12 min ago",
     version: "v3.0",
     status: "active",
@@ -68,11 +68,11 @@ const notebooks: Notebook[] = [
   },
   {
     id: "nb-002",
-    name: "ICD10_LLM_FineTune.ipynb",
-    description: "Fine-tuning Llama 3.1 on ICD-10 coding task with LoRA adapters and PEFT",
+    name: "FinancialDisclosure_LLM_FineTune.ipynb",
+    description: "Fine-tuning Llama 3.1 on IFRS/GAAP classification task with LoRA adapters and PEFT",
     author: "James Rivera",
-    team: "RCM AI Core",
-    tags: ["LLM", "LoRA", "ICD-10", "fine-tuning"],
+    team: "Deloitte Audit AI Studio",
+    tags: ["LLM", "LoRA", "IFRS/GAAP", "fine-tuning"],
     lastModified: "1 day ago",
     version: "v1.8",
     status: "review",
@@ -80,16 +80,16 @@ const notebooks: Notebook[] = [
     stars: 14,
     forks: 6,
     commits: 89,
-    sandbox: "ICD10-AutoCode-LLM",
+    sandbox: "FinancialDisclosure-AutoCode-LLM",
     runTime: "2h 15m",
   },
   {
     id: "nb-003",
-    name: "Payer_Rules_Analysis.ipynb",
-    description: "Correlation analysis between payer coverage rules and prior auth approval rates by CPT code",
+    name: "Counterparty_Rules_Analysis.ipynb",
+    description: "Correlation analysis between counterparty coverage rules and approval workflow approval rates by control objective",
     author: "Amy Kowalski",
-    team: "Billing Analytics",
-    tags: ["auth", "payer", "CPT", "correlation"],
+    team: "Engagement Billing Analytics",
+    tags: ["approval", "counterparty", "control objective", "correlation"],
     lastModified: "3 days ago",
     version: "v3.1",
     status: "active",
@@ -97,15 +97,15 @@ const notebooks: Notebook[] = [
     stars: 22,
     forks: 9,
     commits: 134,
-    sandbox: "Auth-Approval-Predictor",
+    sandbox: "Approval-Approval-Predictor",
     runTime: "5m 02s",
   },
   {
     id: "nb-004",
     name: "Model_Comparison_Benchmark.ipynb",
-    description: "Side-by-side benchmark: XGBoost vs LightGBM vs Transformer on denial classification task",
+    description: "Side-by-side benchmark: XGBoost vs LightGBM vs Transformer on finding classification task",
     author: "Mike Johnson",
-    team: "RCM AI Core",
+    team: "Deloitte Audit AI Studio",
     tags: ["benchmark", "comparison", "XGBoost", "LightGBM"],
     lastModified: "5 days ago",
     version: "v1.2",
@@ -114,15 +114,15 @@ const notebooks: Notebook[] = [
     stars: 31,
     forks: 12,
     commits: 28,
-    sandbox: "RCM-Denial-Prediction-v3",
+    sandbox: "Going-Concern-Risk-Model-v3",
     runTime: "45m 18s",
   },
   {
     id: "nb-005",
     name: "SHAP_Explainability.ipynb",
-    description: "SHAP value analysis for prior auth model — explaining decisions to billing domain experts",
+    description: "SHAP value analysis for approval workflow model — explaining decisions to engagement billing domain experts",
     author: "Priya Patel",
-    team: "Billing Analytics",
+    team: "Engagement Billing Analytics",
     tags: ["explainability", "SHAP", "XAI", "compliance"],
     lastModified: "1 week ago",
     version: "v2.0",
@@ -131,7 +131,7 @@ const notebooks: Notebook[] = [
     stars: 19,
     forks: 4,
     commits: 61,
-    sandbox: "Auth-Approval-Predictor",
+    sandbox: "Approval-Approval-Predictor",
   },
 ]
 
@@ -139,28 +139,28 @@ const templates = [
   {
     id: "tpl-001",
     name: "LLM Fine-Tuning (LoRA/PEFT)",
-    description: "End-to-end fine-tuning pipeline for healthcare domain using parameter-efficient techniques",
+    description: "End-to-end fine-tuning pipeline for professional-services domain using parameter-efficient techniques",
     tags: ["LLM", "LoRA", "HuggingFace"],
     icon: "🤖",
   },
   {
     id: "tpl-002",
     name: "Multi-Class Classification",
-    description: "Standard template for denial/auth classification tasks with evaluation harness",
+    description: "Standard template for finding/approval classification tasks with evaluation harness",
     tags: ["classification", "sklearn", "XGBoost"],
     icon: "📊",
   },
   {
     id: "tpl-003",
-    name: "Clinical NLP Pipeline",
-    description: "NER + relation extraction from clinical notes using BioBERT/ClinicalBERT",
-    tags: ["NLP", "BioBERT", "NER"],
+    name: "Financial NLP Pipeline",
+    description: "NER + relation extraction from financial memos using Deloitte Audit LM/FinancialBERT",
+    tags: ["NLP", "Deloitte Audit LM", "NER"],
     icon: "🏥",
   },
   {
     id: "tpl-004",
     name: "Time-Series Forecasting",
-    description: "Payer trend forecasting using Prophet + LSTM hybrid approach",
+    description: "Counterparty trend forecasting using Prophet + LSTM hybrid approach",
     tags: ["time-series", "Prophet", "LSTM"],
     icon: "📈",
   },
@@ -174,7 +174,7 @@ const templates = [
   {
     id: "tpl-006",
     name: "Multimodal (Image + Text)",
-    description: "Process EOB images + claim text together using Florence-2 + LLM fusion",
+    description: "Process engagement artifact images + transaction text together using Florence-2 + LLM fusion",
     tags: ["multimodal", "Florence-2", "OCR"],
     icon: "🖼️",
   },
@@ -367,7 +367,7 @@ export default function IMDENotebooksPage() {
           <TabsContent value="templates" className="mt-0">
             <div className="mb-4 rounded-lg border border-violet-500/30 bg-violet-500/5 p-4">
               <p className="text-sm text-violet-300">
-                <strong>Pre-built templates</strong> for common RCM AI/ML tasks — fork any template to start a new notebook in your sandbox instantly.
+                <strong>Pre-built templates</strong> for common Engagement Delivery AI/ML tasks — fork any template to start a new notebook in your sandbox instantly.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-4">

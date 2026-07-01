@@ -114,13 +114,13 @@ const apiCallsTrend = [
 
 // Top assets by unique teams using them
 const topAssetsData = [
-  { name: "DenialPrediction-BERT", teams: 48, type: "Model" },
-  { name: "RCM Denial Agent", teams: 41, type: "Agent" },
-  { name: "ICD-10 Validator", teams: 39, type: "Tool" },
-  { name: "MedicalCodingLLM", teams: 36, type: "Model" },
-  { name: "Prior Auth Orchestrator", teams: 30, type: "Agent" },
-  { name: "EHR Data MCP Server", teams: 27, type: "MCP" },
-  { name: "FHIR Converter", teams: 24, type: "Tool" },
+  { name: "LedgerSentinel", teams: 48, type: "Model" },
+  { name: "Engagement Delivery Finding Agent", teams: 41, type: "Agent" },
+  { name: "IFRS/GAAP Validator", teams: 39, type: "Tool" },
+  { name: "TaxArchitect", teams: 36, type: "Model" },
+  { name: "Prior Approval Orchestrator", teams: 30, type: "Agent" },
+  { name: "ERP Data MCP Server", teams: 27, type: "MCP" },
+  { name: "XBRL Converter", teams: 24, type: "Tool" },
   { name: "FraudScoringXGB", teams: 19, type: "Model" },
 ]
 
@@ -158,10 +158,10 @@ const errorTrend = [
 
 // Human review backlog by asset type
 const backlogData = [
-  { type: "Denial Claims", pending: 214, resolved: 1821, slaBreached: 38 },
-  { type: "Prior Auth", pending: 187, resolved: 1402, slaBreached: 29 },
-  { type: "Medical Coding", pending: 143, resolved: 988, slaBreached: 14 },
-  { type: "Eligibility", pending: 76, resolved: 1104, slaBreached: 8 },
+  { type: "Finding Transactions", pending: 214, resolved: 1821, slaBreached: 38 },
+  { type: "Prior Approval", pending: 187, resolved: 1402, slaBreached: 29 },
+  { type: "Tax Classification", pending: 143, resolved: 988, slaBreached: 14 },
+  { type: "Compliance Verification", pending: 76, resolved: 1104, slaBreached: 8 },
   { type: "Audit Reviews", pending: 41, resolved: 671, slaBreached: 4 },
 ]
 
@@ -278,7 +278,7 @@ export default function AnalyticsPage() {
               Analytics
             </h1>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Workflow timing, human-in-loop performance, usage &amp; adoption across the AI Asset Marketplace
+              Workflow timing, human-in-loop performance, usage &amp; adoption across Nebula-X by Deloitte
             </p>
           </div>
           <div className="flex items-center gap-2">

@@ -39,7 +39,7 @@ export interface OutputTransform {
 export interface PolicyDecision {
   decision: PolicyDecisionType;
   appliedPolicies: string[];  // policy IDs that matched
-  violatedPolicies: string[]; // policy IDs that denied/flagged
+  violatedPolicies: string[]; // policy IDs that flagged/flagged
   reason?: string;
   transforms?: OutputTransform[];
 }

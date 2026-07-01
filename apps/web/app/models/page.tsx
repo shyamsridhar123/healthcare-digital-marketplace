@@ -174,7 +174,7 @@ export default function ModelMarketplacePage() {
 
     async function loadPublishedDemoModels() {
       try {
-        const response = await fetch("/api/models?demoScenarioId=imde-rcm-denial-demo&tenantId=default", { cache: "no-store" })
+        const response = await fetch("/api/models?demoScenarioId=imde-engagement-exception-demo&tenantId=default", { cache: "no-store" })
         if (!response.ok) return
         const payload = await response.json() as { models?: ModelData[] }
         const demoModels = (payload.models ?? []).filter((model) => model.id === demoPublishedModelExperience.id)
@@ -294,7 +294,7 @@ export default function ModelMarketplacePage() {
           </div>
         </div>
         
-        {/* Value Proposition - UAP PRD Aligned */}
+        {/* Value Proposition - Nebula-X PRD Aligned */}
         <div className="mb-8 rounded-xl border border-[var(--accent)]/30 bg-gradient-to-r from-[var(--accent)]/5 to-[var(--brand-primary)]/5 p-6">
           <div className="flex items-start gap-6">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)]/20">
@@ -305,7 +305,7 @@ export default function ModelMarketplacePage() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Every model (internal or from partners) is registered with metadata, documented with Model Report Cards, 
                 and monitored centrally. Models move through <span className="text-[var(--accent)]">Draft → Review → Approved</span> before 
-                production use. Share innovations so one team's model benefits others, while enforcing HIPAA/SOC2 standards 
+                production use. Share innovations so one team's model benefits others, while enforcing SOC2/ISO27001 standards
                 and avoiding duplicate development. MCP-Server integration ensures all models are exposed for agentic workflows.
               </p>
             </div>

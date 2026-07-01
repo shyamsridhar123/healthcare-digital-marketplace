@@ -22,16 +22,27 @@ import { cn } from "@/lib/utils"
 const agentOptions = assets.filter((a) => a.type === "agent")
 const toolOptions = assets.filter((a) => a.type === "mcp-tool" || a.type === "mcp-server")
 const modelOptions = [
-  { id: "gpt-4o", label: "GPT-4o" },
-  { id: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { id: "o3", label: "OpenAI o3" },
-  { id: "azure-openai-gpt4o", label: "Azure OpenAI GPT-4o" },
-  { id: "claude-3-7-sonnet", label: "Claude 3.7 Sonnet" },
-  { id: "claude-3-5-haiku", label: "Claude 3.5 Haiku" },
-  { id: "phi-4", label: "Phi-4 (Azure AI)" },
-  { id: "llama-3.3-70b", label: "Llama 3.3 70B" },
+  { id: "gpt-5-5", label: "GPT-5.5" },
+  { id: "gpt-5-5-codex", label: "GPT-5.5 Codex" },
+  { id: "gpt-5-mini", label: "GPT-5 mini" },
+  { id: "openai-o4", label: "OpenAI o4" },
+  { id: "claude-opus-4-8", label: "Claude Opus 4.8" },
+  { id: "claude-sonnet-4-5", label: "Claude Sonnet 4.5" },
+  { id: "claude-haiku-4-5", label: "Claude Haiku 4.5" },
+  { id: "gemini-3-1-pro", label: "Gemini 3.1 Pro" },
+  { id: "gemini-3-5-flash", label: "Gemini 3.5 Flash" },
+  { id: "llama-4-maverick", label: "Llama 4 Maverick" },
+  { id: "deepseek-r1", label: "DeepSeek R1" },
+  { id: "mistral-large-3", label: "Mistral Large 3" },
+  { id: "grok-4", label: "Grok 4" },
+  { id: "deloitte-audit-lm", label: "Deloitte Audit LM" },
+  { id: "deloitte-tax-globe", label: "Deloitte Tax GloBE Model" },
+  { id: "deloitte-risk-regulatory-lm", label: "Deloitte Risk Regulatory LM" },
+  { id: "deloitte-legal-doc-embeddings", label: "Deloitte Legal-Doc Embeddings" },
+  { id: "financial-statement-vision", label: "Financial Statement Vision" },
+  { id: "strategy-knowledge-embeddings", label: "Strategy Knowledge Embeddings" },
+  { id: "esg-disclosure-lm", label: "ESG Disclosure LM" },
 ]
-
 /* ── helpers ──────────────────────────────────────────────────────────────── */
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -193,7 +204,7 @@ export function PropertiesPanel({
               <Textarea
                 value={(cfg.inputSchema as string) || ""}
                 onChange={(e) => setConfig({ inputSchema: e.target.value })}
-                placeholder='{ "claimId": "string", "priority": "string" }'
+                placeholder='{ "engagementId": "string", "priority": "string" }'
                 rows={3}
                 className="font-mono text-xs resize-none"
               />
@@ -239,7 +250,7 @@ export function PropertiesPanel({
               <Textarea
                 value={(cfg.systemPrompt as string) || ""}
                 onChange={(e) => setConfig({ systemPrompt: e.target.value })}
-                placeholder="You are an expert medical coding agent. Given a clinical note, extract and validate ICD-10 and CPT codes…"
+                placeholder="You are TaxArchitect. Given an engagement workpaper, extract and validate tax and cost classifications…"
                 rows={5}
                 className="text-xs resize-none"
               />
@@ -329,7 +340,7 @@ export function PropertiesPanel({
               <Textarea
                 value={(cfg.conditionExpression as string) || ""}
                 onChange={(e) => setConfig({ conditionExpression: e.target.value })}
-                placeholder="output.claimStatus === 'clean' && output.confidence > 0.9"
+                placeholder="output.testingStatus === 'ready' && output.confidence > 0.9"
                 rows={3}
                 className="font-mono text-xs resize-none"
               />
@@ -459,7 +470,7 @@ export function PropertiesPanel({
               <Textarea
                 value={(cfg.approvalMessage as string) || ""}
                 onChange={(e) => setConfig({ approvalMessage: e.target.value })}
-                placeholder="Please review the generated claim before submission to the clearinghouse."
+                placeholder="Please review the generated engagement memo before submission to the regulator portal."
                 rows={3}
                 className="text-xs resize-none"
               />
@@ -469,7 +480,7 @@ export function PropertiesPanel({
                 <Input
                   value={(cfg.approverRole as string) || ""}
                   onChange={(e) => setConfig({ approverRole: e.target.value })}
-                  placeholder="billing-admin"
+                  placeholder="engagement-admin"
                   className="h-8 text-sm"
                 />
               </Field>
@@ -538,7 +549,7 @@ export function PropertiesPanel({
               <Textarea
                 value={(cfg.transformExpression as string) || ""}
                 onChange={(e) => setConfig({ transformExpression: e.target.value })}
-                placeholder=".claims[] | { id: .claimId, amount: .totalCharge, status: .status }"
+                placeholder=".transactions[] | { id: .transactionId, amount: .amount, status: .status }"
                 rows={4}
                 className="font-mono text-xs resize-none"
               />
@@ -567,7 +578,7 @@ export function PropertiesPanel({
               <Input
                 value={(cfg.successMessage as string) || ""}
                 onChange={(e) => setConfig({ successMessage: e.target.value })}
-                placeholder="Claim successfully processed"
+                placeholder="Transaction testing successfully processed"
                 className="h-8 text-sm"
               />
             </Field>

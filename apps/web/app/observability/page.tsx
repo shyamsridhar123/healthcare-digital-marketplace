@@ -47,7 +47,7 @@ interface Run {
 const modelRuns: Run[] = [
   {
     id: "mdl-001",
-    name: "DenialPrediction-BERT",
+    name: "LedgerSentinel",
     version: "v3.2",
     status: "running",
     startedAt: "2 min ago",
@@ -59,7 +59,7 @@ const modelRuns: Run[] = [
   },
   {
     id: "mdl-002",
-    name: "MedicalCodingLLM",
+    name: "TaxArchitect",
     version: "v1.8",
     status: "running",
     startedAt: "11 min ago",
@@ -71,7 +71,7 @@ const modelRuns: Run[] = [
   },
   {
     id: "mdl-003",
-    name: "ClaimRoutingTransformer",
+    name: "EngagementRoutingTransformer",
     version: "v2.1",
     status: "completed",
     startedAt: "34 min ago",
@@ -83,7 +83,7 @@ const modelRuns: Run[] = [
   },
   {
     id: "mdl-004",
-    name: "PayerInsightGPT",
+    name: "RegulatorInsightGPT",
     version: "v0.9",
     status: "failed",
     startedAt: "1 hr ago",
@@ -105,7 +105,7 @@ const modelRuns: Run[] = [
   },
   {
     id: "mdl-006",
-    name: "AuthorizationPredictor",
+    name: "ApprovalWorkflowPredictor",
     version: "v2.7",
     status: "idle",
     startedAt: "last run 6 hr ago",
@@ -120,7 +120,7 @@ const modelRuns: Run[] = [
 const agentRuns: Run[] = [
   {
     id: "agt-001",
-    name: "RCM Denial Agent",
+    name: "Engagement Delivery Finding Agent",
     version: "v1.4",
     status: "running",
     startedAt: "5 min ago",
@@ -132,7 +132,7 @@ const agentRuns: Run[] = [
   },
   {
     id: "agt-002",
-    name: "Prior Auth Orchestrator",
+    name: "Prior Approval Orchestrator",
     version: "v2.0",
     status: "running",
     startedAt: "22 min ago",
@@ -140,11 +140,11 @@ const agentRuns: Run[] = [
     requestsPerMin: 9,
     errorRate: 1.1,
     latencyMs: 3400,
-    tags: ["production", "authorization"],
+    tags: ["production", "approverization"],
   },
   {
     id: "agt-003",
-    name: "Claims Coding Assistant",
+    name: "AuditScribe Assistant",
     version: "v1.1",
     status: "completed",
     startedAt: "1 hr 10 min ago",
@@ -156,14 +156,14 @@ const agentRuns: Run[] = [
   },
   {
     id: "agt-004",
-    name: "Eligibility Verification Bot",
+    name: "Compliance Verification Bot",
     version: "v3.2",
     status: "failed",
     startedAt: "2 hr ago",
     duration: "1m 45s",
     requestsPerMin: 0,
     errorRate: 100,
-    lastError: "Upstream payer API returned 503 — connection timeout after 3 retries",
+    lastError: "Upstream counterparty API returned 503 — connection timeout after 3 retries",
     tags: ["production"],
   },
   {
@@ -180,29 +180,29 @@ const agentRuns: Run[] = [
 const mcpRuns: Run[] = [
   {
     id: "mcp-001",
-    name: "EHR Data MCP Server",
+    name: "ERP Data MCP Server",
     status: "running",
     startedAt: "3 hr 14 min ago",
     duration: "3h 14m",
     requestsPerMin: 204,
     errorRate: 0.3,
     latencyMs: 18,
-    tags: ["core", "ehr"],
+    tags: ["core", "erp"],
   },
   {
     id: "mcp-002",
-    name: "Claims DB MCP Server",
+    name: "GL DB MCP Server",
     status: "running",
     startedAt: "3 hr 14 min ago",
     duration: "3h 14m",
     requestsPerMin: 88,
     errorRate: 0.0,
     latencyMs: 12,
-    tags: ["core", "claims"],
+    tags: ["core", "transactions"],
   },
   {
     id: "mcp-003",
-    name: "Payer File MCP Gateway",
+    name: "Regulator File MCP Gateway",
     status: "running",
     startedAt: "47 min ago",
     duration: "47m 02s",
@@ -224,7 +224,7 @@ const mcpRuns: Run[] = [
   },
   {
     id: "mcp-005",
-    name: "Billing Code Lookup MCP",
+    name: "Engagement Billing Code Lookup MCP",
     status: "idle",
     startedAt: "last run 30 min ago",
     duration: "12m 40s",
@@ -238,7 +238,7 @@ const mcpRuns: Run[] = [
 const toolRuns: Run[] = [
   {
     id: "tl-001",
-    name: "ICD-10 Code Validator",
+    name: "IFRS/GAAP Code Validator",
     status: "running",
     startedAt: "ongoing",
     duration: "continuous",
@@ -260,7 +260,7 @@ const toolRuns: Run[] = [
   },
   {
     id: "tl-003",
-    name: "FHIR Converter",
+    name: "XBRL Converter",
     status: "completed",
     startedAt: "1 hr ago",
     duration: "32m 18s",
@@ -271,7 +271,7 @@ const toolRuns: Run[] = [
   },
   {
     id: "tl-004",
-    name: "Eligibility EDI Parser",
+    name: "Compliance Evidence Parser",
     status: "completed",
     startedAt: "2 hr ago",
     duration: "8m 44s",
@@ -282,7 +282,7 @@ const toolRuns: Run[] = [
   },
   {
     id: "tl-005",
-    name: "Duplicate Claim Detector",
+    name: "Duplicate Transaction Detector",
     status: "queued",
     startedAt: "queued 4 min ago",
     duration: null,
@@ -290,7 +290,7 @@ const toolRuns: Run[] = [
   },
   {
     id: "tl-006",
-    name: "NPI Registry Lookup",
+    name: "Engagement ID Registry Lookup",
     status: "idle",
     startedAt: "last run 45 min ago",
     duration: "0m 02s",

@@ -1,34 +1,20 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { AuthGuard } from '@/components/auth/AuthGuard'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: 'HealthCare RCM Marketplace | Enterprise',
-  description: 'HealthCare RCM Marketplace - Agent Marketplace, Model Registry, Workflow Orchestration, and One-Click Deployment',
-  generator: 'v0.app',
+  title: 'Nebula-X by Deloitte | AI Marketplace for Professional Services',
+  description: 'Nebula-X by Deloitte — a governed AI marketplace and orchestration platform for professional services. Audit-grade agents, tax-certified models, and governance-first workflows. Intelligence, governed.',
+  generator: 'Nebula-X',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: { url: '/icon.svg', type: 'image/svg+xml' },
+    apple: '/icon.svg',
   },
 }
 
@@ -38,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange storageKey="theme-preference">
           <AuthProvider>

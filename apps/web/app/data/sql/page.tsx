@@ -66,21 +66,21 @@ interface QueryResult {
 
 const servers: SqlServer[] = [
   {
-    name: "rcm-sql-prod.database.windows.net",
+    name: "engagement-delivery-sql-prod.database.windows.net",
     tier: "General Purpose — 4 vCores",
     region: "East US",
     status: "online",
     databases: [
       {
-        name: "rcm_core",
+        name: "engagement-delivery_core",
         tables: [
           {
-            name: "member_eligibility",
+            name: "engagement_compliance_verifications",
             schema: "dbo",
             rows: 2_840_000,
             columns: [
-              { name: "member_id", type: "nvarchar(36)", nullable: false, key: "PK" },
-              { name: "payer_id", type: "nvarchar(20)", nullable: false },
+              { name: "engagement_id", type: "nvarchar(36)", nullable: false, key: "PK" },
+              { name: "counterparty_id", type: "nvarchar(20)", nullable: false },
               { name: "plan_name", type: "nvarchar(100)", nullable: true },
               { name: "effective_date", type: "date", nullable: false },
               { name: "termination_date", type: "date", nullable: true },
@@ -89,39 +89,39 @@ const servers: SqlServer[] = [
             ],
           },
           {
-            name: "claims",
+            name: "gl_entries",
             schema: "dbo",
             rows: 4_100_000,
             columns: [
-              { name: "claim_id", type: "nvarchar(36)", nullable: false, key: "PK" },
-              { name: "member_id", type: "nvarchar(36)", nullable: false, key: "FK" },
-              { name: "provider_npi", type: "nvarchar(10)", nullable: false },
+              { name: "transaction_id", type: "nvarchar(36)", nullable: false, key: "PK" },
+              { name: "engagement_id", type: "nvarchar(36)", nullable: false, key: "FK" },
+              { name: "counterparty_id", type: "nvarchar(10)", nullable: false },
               { name: "service_date", type: "date", nullable: false },
               { name: "total_billed", type: "decimal(10,2)", nullable: false },
               { name: "allowed_amount", type: "decimal(10,2)", nullable: true },
-              { name: "denial_code", type: "nvarchar(8)", nullable: true },
+              { name: "finding_code", type: "nvarchar(8)", nullable: true },
               { name: "status", type: "nvarchar(20)", nullable: false },
             ],
           },
           {
-            name: "denials",
+            name: "findings",
             schema: "dbo",
             rows: 560_000,
             columns: [
-              { name: "denial_id", type: "nvarchar(36)", nullable: false, key: "PK" },
-              { name: "claim_id", type: "nvarchar(36)", nullable: false, key: "FK" },
-              { name: "remark_code", type: "nvarchar(8)", nullable: false },
-              { name: "denial_reason", type: "nvarchar(255)", nullable: true },
-              { name: "denied_amount", type: "decimal(10,2)", nullable: false },
-              { name: "appeal_status", type: "nvarchar(20)", nullable: true },
+              { name: "finding_id", type: "nvarchar(36)", nullable: false, key: "PK" },
+              { name: "transaction_id", type: "nvarchar(36)", nullable: false, key: "FK" },
+              { name: "finding_code", type: "nvarchar(8)", nullable: false },
+              { name: "finding_rationale", type: "nvarchar(255)", nullable: true },
+              { name: "exposure_amount", type: "decimal(10,2)", nullable: false },
+              { name: "remediation_status", type: "nvarchar(20)", nullable: true },
             ],
           },
           {
-            name: "providers",
+            name: "engagements",
             schema: "dbo",
             rows: 48_000,
             columns: [
-              { name: "provider_npi", type: "nvarchar(10)", nullable: false, key: "PK" },
+              { name: "engagement_id", type: "nvarchar(10)", nullable: false, key: "PK" },
               { name: "name", type: "nvarchar(150)", nullable: false },
               { name: "specialty", type: "nvarchar(80)", nullable: true },
               { name: "state", type: "char(2)", nullable: false },
@@ -151,38 +151,38 @@ const servers: SqlServer[] = [
 ]
 
 const sampleQueries: Record<string, string> = {
-  "Top 10 denial patterns":
-    `SELECT remark_code, denial_reason, COUNT(*) AS denial_count,
-       SUM(denied_amount) AS total_denied
-FROM dbo.denials
-GROUP BY remark_code, denial_reason
-ORDER BY denial_count DESC
+  "Top 10 finding patterns":
+    `SELECT finding_code, finding_rationale, COUNT(*) AS finding_count,
+       SUM(exposure_amount) AS total_exposure
+FROM dbo.findings
+GROUP BY finding_code, finding_rationale
+ORDER BY finding_count DESC
 OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY;`,
 
-  "Eligibility check by payer":
-    `SELECT payer_id, COUNT(*) AS checks,
+  "Compliance Verification check by counterparty":
+    `SELECT counterparty_id, COUNT(*) AS checks,
        SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) AS active
-FROM dbo.member_eligibility
-GROUP BY payer_id
+FROM dbo.engagement_compliance_verifications
+GROUP BY counterparty_id
 ORDER BY checks DESC;`,
 
-  "Claims by status":
+  "Transactions by status":
     `SELECT status, COUNT(*) AS count,
        SUM(total_billed) AS billed,
        SUM(allowed_amount) AS allowed
-FROM dbo.claims
+FROM dbo.gl_entries
 GROUP BY status
 ORDER BY count DESC;`,
 }
 
 const mockResults: QueryResult = {
-  columns: ["remark_code", "denial_reason", "denial_count", "total_denied"],
+  columns: ["finding_code", "finding_rationale", "finding_count", "total_exposure"],
   rows: [
-    { remark_code: "CO-4", denial_reason: "Service incompatible with diagnosis", denial_count: 12840, total_denied: 4200000.0 },
-    { remark_code: "PR-96", denial_reason: "Non-covered charge", denial_count: 9210, total_denied: 3100000.0 },
-    { remark_code: "CO-18", denial_reason: "Duplicate claim/service", denial_count: 7880, total_denied: 1850000.0 },
-    { remark_code: "CO-11", denial_reason: "Dx inconsistent with procedure", denial_count: 6120, total_denied: 1700000.0 },
-    { remark_code: "PI-4", denial_reason: "Auth required, not obtained", denial_count: 5400, total_denied: 2800000.0 },
+    { finding_code: "FND-04", finding_rationale: "Policy exception inconsistent with financial assertion", finding_count: 12840, total_exposure: 4200000.0 },
+    { finding_code: "REG-96", finding_rationale: "Unsupported transaction classification", finding_count: 9210, total_exposure: 3100000.0 },
+    { finding_code: "DUP-18", finding_rationale: "Duplicate transaction/service", finding_count: 7880, total_exposure: 1850000.0 },
+    { finding_code: "ASM-11", finding_rationale: "Financial assertion inconsistent with control", finding_count: 6120, total_exposure: 1700000.0 },
+    { finding_code: "PI-4", finding_rationale: "Approval required, not obtained", finding_count: 5400, total_exposure: 2800000.0 },
   ],
   rowCount: 5,
   elapsed: 284,
@@ -199,14 +199,14 @@ function formatRows(n: number) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AzureSqlPage() {
-  const [expandedServers, setExpandedServers] = useState<Set<string>>(new Set(["rcm-sql-prod.database.windows.net"]))
-  const [expandedDbs, setExpandedDbs] = useState<Set<string>>(new Set(["rcm-sql-prod.database.windows.net/rcm_core"]))
+  const [expandedServers, setExpandedServers] = useState<Set<string>>(new Set(["engagement-delivery-sql-prod.database.windows.net"]))
+  const [expandedDbs, setExpandedDbs] = useState<Set<string>>(new Set(["engagement-delivery-sql-prod.database.windows.net/engagement-delivery_core"]))
   const [selectedTable, setSelectedTable] = useState<{ server: string; db: string; table: string } | null>({
-    server: "rcm-sql-prod.database.windows.net",
-    db: "rcm_core",
-    table: "denials",
+    server: "engagement-delivery-sql-prod.database.windows.net",
+    db: "engagement-delivery_core",
+    table: "findings",
   })
-  const [query, setQuery] = useState(sampleQueries["Top 10 denial patterns"])
+  const [query, setQuery] = useState(sampleQueries["Top 10 finding patterns"])
   const [results, setResults] = useState<QueryResult | null>(null)
   const [running, setRunning] = useState(false)
   const [activeTab, setActiveTab] = useState<"schema" | "query">("query")

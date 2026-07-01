@@ -88,7 +88,7 @@ const dataSources: DataSource[] = [
     bgColor: "bg-emerald-500/15",
     status: "connected",
     statusLabel: "Connected",
-    description: "Query structured healthcare data across managed SQL databases.",
+    description: "Query structured professional-services data across managed SQL databases.",
     stats: [
       { label: "Databases", value: "4" },
       { label: "Tables", value: "231" },
@@ -139,7 +139,7 @@ const dataSources: DataSource[] = [
     bgColor: "bg-sky-500/15",
     status: "connected",
     statusLabel: "48 datasets",
-    description: "Curated healthcare, NLP, and tabular datasets ready for training and evaluation.",
+    description: "Curated professional-services, NLP, and tabular datasets ready for training and evaluation.",
     stats: [
       { label: "Datasets", value: "48" },
       { label: "Categories", value: "8" },
@@ -149,11 +149,11 @@ const dataSources: DataSource[] = [
 ]
 
 const recentActivity: RecentActivity[] = [
-  { id: "1", action: "Downloaded", target: "claims-training-v3.parquet", source: "Azure Storage", time: "2 min ago", icon: Download, color: "text-blue-400" },
-  { id: "2", action: "Queried", target: "encounters table — 12,400 rows", source: "Azure SQL", time: "18 min ago", icon: Table2, color: "text-emerald-400" },
-  { id: "3", action: "Used dataset", target: "Healthcare NLP Corpus v2", source: "Built-in Datasets", time: "1 hr ago", icon: Sparkles, color: "text-sky-400" },
+  { id: "1", action: "Downloaded", target: "gl-entries-training-v3.parquet", source: "Azure Storage", time: "2 min ago", icon: Download, color: "text-blue-400" },
+  { id: "2", action: "Queried", target: "control_tests table — 12,400 rows", source: "Azure SQL", time: "18 min ago", icon: Table2, color: "text-emerald-400" },
+  { id: "3", action: "Used dataset", target: "Professional Services NLP Corpus v2", source: "Built-in Datasets", time: "1 hr ago", icon: Sparkles, color: "text-sky-400" },
   { id: "4", action: "Uploaded", target: "model-outputs/batch-20260302.json", source: "Azure Storage", time: "3 hr ago", icon: Upload, color: "text-blue-400" },
-  { id: "5", action: "Executed", target: "SELECT * FROM member_eligibility LIMIT 500", source: "Azure SQL", time: "5 hr ago", icon: Table2, color: "text-emerald-400" },
+  { id: "5", action: "Executed", target: "SELECT * FROM engagement_compliance_verifications LIMIT 500", source: "Azure SQL", time: "5 hr ago", icon: Table2, color: "text-emerald-400" },
   { id: "6", action: "Browsed", target: "COSMOS assets container (24 items)", source: "Cosmos DB", time: "Yesterday", icon: Database, color: "text-orange-400" },
 ]
 

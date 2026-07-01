@@ -43,10 +43,10 @@ const SEED_TEMPLATES = [
     updatedAt: "2026-01-01T00:00:00.000Z",
   },
   {
-    id: "aml-restricted-phi-v1",
-    name: "Restricted PHI Workspace",
+    id: "aml-restricted-engagement_confidential-v1",
+    name: "Restricted engagement-confidential data Workspace",
     description:
-      "Isolated workspace for PHI and sensitive datasets with stricter network controls and mandatory approval.",
+      "Isolated workspace for engagement-confidential data and sensitive datasets with stricter network controls and mandatory approval.",
     sandboxType: "restricted",
     computeProfiles: ["cpu-small", "cpu-medium"],
     defaultComputeProfile: "cpu-medium",

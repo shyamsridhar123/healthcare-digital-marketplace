@@ -72,42 +72,42 @@ const categoryConfig: Record<string, {
     activeColor: "text-cat-workflows",
     activeBg: "bg-cat-workflows-bg",
   },
-  "Claims Processing": {
+  "Transaction Testing": {
     icon: FileText,
-    color: "text-cat-claims",
-    bgColor: "hover:bg-cat-claims-bg",
-    activeColor: "text-cat-claims",
-    activeBg: "bg-cat-claims-bg",
+    color: "text-cat-transactions",
+    bgColor: "hover:bg-cat-transactions-bg",
+    activeColor: "text-cat-transactions",
+    activeBg: "bg-cat-transactions-bg",
   },
-  "Denial Management": {
+  "Findings Management": {
     icon: ShieldAlert,
-    color: "text-cat-denials",
-    bgColor: "hover:bg-cat-denials-bg",
-    activeColor: "text-cat-denials",
-    activeBg: "bg-cat-denials-bg",
+    color: "text-cat-findings",
+    bgColor: "hover:bg-cat-findings-bg",
+    activeColor: "text-cat-findings",
+    activeBg: "bg-cat-findings-bg",
   },
-  "Patient Collections": {
+  "Client Collections": {
     icon: Wallet,
     color: "text-cat-collections",
     bgColor: "hover:bg-cat-collections-bg",
     activeColor: "text-cat-collections",
     activeBg: "bg-cat-collections-bg",
   },
-  "Eligibility & Auth": {
+  "Compliance & Approval": {
     icon: ClipboardCheck,
-    color: "text-cat-eligibility",
-    bgColor: "hover:bg-cat-eligibility-bg",
-    activeColor: "text-cat-eligibility",
-    activeBg: "bg-cat-eligibility-bg",
+    color: "text-cat-compliance",
+    bgColor: "hover:bg-cat-compliance-bg",
+    activeColor: "text-cat-compliance",
+    activeBg: "bg-cat-compliance-bg",
   },
-  "Coding & Charge Capture": {
+  "Tax & Cost Classification": {
     icon: Code2,
     color: "text-cat-coding",
     bgColor: "hover:bg-cat-coding-bg",
     activeColor: "text-cat-coding",
     activeBg: "bg-cat-coding-bg",
   },
-  "Payment Posting": {
+  "Engagement Billing": {
     icon: CreditCard,
     color: "text-cat-payments",
     bgColor: "hover:bg-cat-payments-bg",
@@ -166,9 +166,9 @@ export function Sidebar({ selectedCategory, onCategoryChange }: SidebarProps) {
         
         <div className="mt-6 border-t border-border pt-4">
           <div className="rounded-lg bg-secondary/30 p-3">
-            <p className="text-xs font-medium text-foreground">Healthcare RCM</p>
+            <p className="text-xs font-medium text-foreground">Professional Services</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              AI-powered revenue cycle management for healthcare organizations
+              AI-powered engagement delivery for professional-services teams
             </p>
           </div>
         </div>

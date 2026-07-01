@@ -23,7 +23,7 @@ export type NodeState =
   | "pending-approval"  // paused for human review
   | "approved"          // human-approved, will resume
   | "rejected"          // human-rejected
-  | "policy-denied"     // blocked by policy
+  | "policy-flagged"     // blocked by policy
   | "compensating"      // running compensation logic (saga)
   | "compensated"       // compensation complete
   | "compensation-failed";
@@ -193,7 +193,7 @@ export class StateMachine {
         break;
 
       case "policy-deny":
-        record.state = "policy-denied";
+        record.state = "policy-flagged";
         record.completedAt = now;
         break;
 
@@ -219,7 +219,7 @@ export class StateMachine {
   }
 
   /**
-   * After a node completes (or is skipped/denied), evaluate its outgoing edges
+   * After a node completes (or is skipped/flagged), evaluate its outgoing edges
    * and activate downstream nodes whose conditions are met.
    *
    * Returns the list of newly activated node IDs.
@@ -231,8 +231,8 @@ export class StateMachine {
     const completedRecord = this.nodeStates.get(completedNodeId);
     const actualState = completedRecord?.state ?? "completed";
 
-    // Don't activate downstream of failed/denied/rejected/compensating nodes
-    if (["failed", "policy-denied", "rejected", "compensation-failed"].includes(actualState)) {
+    // Don't activate downstream of failed/flagged/rejected/compensating nodes
+    if (["failed", "policy-flagged", "rejected", "compensation-failed"].includes(actualState)) {
       return [];
     }
 
@@ -443,7 +443,7 @@ export class StateMachine {
 
   private isTerminal(state: NodeState): boolean {
     return [
-      "completed", "failed", "skipped", "policy-denied",
+      "completed", "failed", "skipped", "policy-flagged",
       "rejected", "compensated", "compensation-failed",
     ].includes(state);
   }

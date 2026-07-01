@@ -2,8 +2,8 @@
  * ExecutionContext — structured JSON bag shared across all nodes in a workflow execution.
  *
  * Each node reads inputs and writes outputs using dot-path keys:
- *   ctx.set("node1.output.claimStatus", "clean")
- *   ctx.get("node1.output.claimStatus") // → "clean"
+ *   ctx.set("node1.output.transactionStatus", "clean")
+ *   ctx.get("node1.output.transactionStatus") // → "clean"
  *
  * Replaces the previous plain-text `previousOutput` concatenation approach.
  * The context is serializable to Cosmos DB after each node transition.
@@ -30,7 +30,7 @@ export interface ContextMetadata {
 }
 
 /** Whitelisted operators for safe expression evaluation */
-const SAFE_OPERATORS = new Set(["==", "!=", ">", "<", ">=", "<=", "&&", "||", "!"]);
+const SAFE_OPreconciliationTORS = new Set(["==", "!=", ">", "<", ">=", "<=", "&&", "||", "!"]);
 
 /**
  * Safe expression evaluator — supports:

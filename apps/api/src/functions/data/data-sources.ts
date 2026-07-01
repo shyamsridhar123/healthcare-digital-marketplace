@@ -161,8 +161,8 @@ app.http("listDatasets", {
       status: 200,
       jsonBody: {
         total: 14,
-        categories: ["healthcare", "nlp", "tabular", "vision", "multimodal", "finance", "synthetic", "benchmark"],
-        note: "Full dataset list served from /api/data/datasets endpoint. Use ?category=healthcare to filter.",
+        categories: ["professional-services", "nlp", "tabular", "vision", "multimodal", "finance", "synthetic", "benchmark"],
+        note: "Full dataset list served from /api/data/datasets endpoint. Use ?category=professional-services to filter.",
       },
     };
   },

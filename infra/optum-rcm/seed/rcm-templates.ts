@@ -1,603 +1,679 @@
 /**
- * Optum RCM Real MVP — Production Workflow Templates
+ * Nebula-X by Deloitte — Professional Services Workflow Templates
  *
- * These 4 templates are the minimum deployable set for an Optum-scale RCM
- * operation. Each template uses only patterns already supported by the
- * orchestration engine: sequential, condition, fan-out/fan-in, approval,
- * and the pause/resume state machine.
- *
- * Shape matches OrchestrationTemplate from src/lib/types and the
- * POST /api/orchestration/templates endpoint.
- *
- * Usage:
- *   Import and POST each template to the templates API on first deployment,
- *   or use `cosmos-seed.ts` to load them directly into the templates container.
+ * Loads four professional-services orchestration templates into Cosmos DB via
+ * `cosmos-seed.ts`. The exported objects preserve the OrchestrationTemplate
+ * shape used by the orchestration template API.
  */
 
 import type { OrchestrationTemplate } from "../../../apps/web/src/lib/types.js";
 
-// ─── Shared constants ───────────────────────────────────────────────────────
-
 const TENANT = "optum-rcm-prod";
 const now = new Date().toISOString();
 
-// ─── 1. Eligibility Verification ────────────────────────────────────────────
+// ─── 1. M&A Due Diligence Pipeline ───────────────────────────────────────────
 
-export const eligibilityVerification: Omit<OrchestrationTemplate, "id"> = {
-  name: "Eligibility Verification",
+export const maDueDiligencePipeline: Omit<OrchestrationTemplate, "id"> = {
+  name: "M&A Due Diligence Pipeline",
   description:
-    "Real-time patient eligibility check via 270/271 transaction with AI-generated benefit summary and exception routing.",
-  category: "RCM",
+    "Nebula-X diligence workflow that ingests a data room, runs financial, legal, and tax specialist reviews in parallel, consolidates risk findings, and routes the final report for partner approval.",
+  category: "Deals",
   version: "1.0.0",
-  tags: ["eligibility", "270/271", "patient-access", "payer", "production"],
+  tags: ["m-and-a", "due-diligence", "data-room", "deals", "risk", "nebula-x"],
   visibility: "shared",
   tenantId: TENANT,
   usageCount: 0,
-  defaultPolicyIds: ["policy-phi-safe", "policy-rate-limit"],
+  defaultPolicyIds: ["policy-confidential-client-data", "policy-human-gate", "policy-rate-limit"],
   parameters: [
-    { name: "patientId", type: "string", required: true, description: "Patient MRN or internal ID" },
-    { name: "memberId", type: "string", required: true, description: "Payer member ID" },
-    { name: "payerId", type: "string", required: true, description: "Payer identifier (e.g. BCBS, AETNA)" },
-    { name: "dateOfService", type: "string", required: true, description: "Planned date of service (ISO 8601)" },
-    { name: "providerNpi", type: "string", required: true, description: "Rendering provider NPI" },
+    { name: "engagementId", type: "string", required: true, description: "Deloitte engagement identifier" },
+    { name: "dataRoomId", type: "string", required: true, description: "Virtual data room or document collection identifier" },
+    { name: "targetCompany", type: "string", required: true, description: "Target company legal name" },
+    { name: "dealType", type: "string", required: false, description: "Buy-side, sell-side, carve-out, or merger" },
+    { name: "partnerApprover", type: "string", required: true, description: "Partner or managing director approver" },
   ],
   nodes: [
     {
-      id: "ev-start",
+      id: "ma-start",
       type: "start",
-      position: { x: 60, y: 240 },
+      position: { x: 40, y: 260 },
       data: {
-        label: "Eligibility Request",
-        description: "Patient and payer data received",
+        label: "Diligence Request",
+        description: "Engagement team submits target and data room details",
         config: { triggerType: "http" },
       },
     },
     {
-      id: "ev-elig-agent",
-      type: "agent",
-      position: { x: 280, y: 240 },
-      data: {
-        label: "Eligibility Agent",
-        description: "Calls payer 270/271 gateway and generates benefit summary",
-        config: {
-          agentId: "eligibility-verifier",
-          systemPrompt:
-            "You are an eligibility verification agent. Call the payer eligibility tool, then produce a plain-English benefit summary including copay, deductible status, and coverage flags.",
-          tools: ["verify_eligibility", "lookup_payer_rules"],
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "ev-condition",
-      type: "condition",
-      position: { x: 520, y: 240 },
-      data: {
-        label: "Active Coverage?",
-        description: "Route based on eligibility status",
-        config: {
-          conditionExpression: "output.status === 'active'",
-          trueBranchLabel: "Active",
-          falseBranchLabel: "Exception",
-        },
-      },
-    },
-    {
-      id: "ev-end-active",
-      type: "end",
-      position: { x: 760, y: 140 },
-      data: {
-        label: "Verified",
-        description: "Patient eligible — proceed to scheduling",
-        config: { successMessage: "Eligibility verified successfully." },
-      },
-    },
-    {
-      id: "ev-exception",
-      type: "agent",
-      position: { x: 760, y: 340 },
-      data: {
-        label: "Exception Handler",
-        description: "Routes inactive or partial coverage to manual review queue",
-        config: {
-          agentId: "eligibility-exception",
-          systemPrompt:
-            "Create a work queue item for the patient access team with the eligibility exception details and recommended next steps.",
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "ev-end-exception",
-      type: "end",
-      position: { x: 980, y: 340 },
-      data: {
-        label: "Queued for Review",
-        description: "Exception routed to patient access team",
-        config: { successMessage: "Eligibility exception queued for manual review." },
-      },
-    },
-  ],
-  edges: [
-    { id: "eve1", source: "ev-start", target: "ev-elig-agent" },
-    { id: "eve2", source: "ev-elig-agent", target: "ev-condition" },
-    { id: "eve3", source: "ev-condition", target: "ev-end-active", label: "Active", data: { edgeType: "true" } },
-    { id: "eve4", source: "ev-condition", target: "ev-exception", label: "Exception", data: { edgeType: "false" } },
-    { id: "eve5", source: "ev-exception", target: "ev-end-exception" },
-  ],
-  createdAt: now,
-  updatedAt: now,
-};
-
-// ─── 2. Prior Authorization ─────────────────────────────────────────────────
-
-export const priorAuthorization: Omit<OrchestrationTemplate, "id"> = {
-  name: "Prior Authorization",
-  description:
-    "End-to-end prior auth: clinical evidence gathering, UM review approval gate, payer portal submission, and long-running pause/resume for payer decision.",
-  category: "RCM",
-  version: "1.0.0",
-  tags: ["prior-auth", "utilization-management", "approval", "pause-resume", "production"],
-  visibility: "shared",
-  tenantId: TENANT,
-  usageCount: 0,
-  defaultPolicyIds: ["policy-phi-safe", "policy-human-gate", "policy-compliance"],
-  parameters: [
-    { name: "patientId", type: "string", required: true, description: "Patient identifier" },
-    { name: "procedureCode", type: "string", required: true, description: "CPT code for the requested procedure" },
-    { name: "diagnosisCode", type: "string", required: true, description: "Primary ICD-10 diagnosis code" },
-    { name: "payerId", type: "string", required: true, description: "Payer identifier" },
-    { name: "orderingProviderNpi", type: "string", required: true, description: "Ordering provider NPI" },
-  ],
-  nodes: [
-    {
-      id: "pa-start",
-      type: "start",
-      position: { x: 40, y: 260 },
-      data: { label: "Auth Request", description: "Order received from EHR", config: { triggerType: "http" } },
-    },
-    {
-      id: "pa-clinical-agent",
-      type: "agent",
-      position: { x: 240, y: 260 },
-      data: {
-        label: "Clinical Doc Agent",
-        description: "Retrieves clinical context and builds evidence package",
-        config: {
-          agentId: "clinical-documentation",
-          systemPrompt:
-            "Retrieve patient clinical history, imaging rationale, and diagnosis support from the EHR. Compile a clinical justification package for the requested procedure.",
-          tools: ["get_patient_record", "get_clinical_notes", "get_imaging_history"],
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "pa-approval",
-      type: "approval",
-      position: { x: 480, y: 260 },
-      data: {
-        label: "UM Review",
-        description: "Utilization reviewer validates clinical justification",
-        config: {
-          approvalMessage: "Review the clinical evidence package before payer submission.",
-          approverRole: "utilization-reviewer",
-          timeoutMinutes: 480,
-          onReject: "abort",
-        },
-      },
-    },
-    {
-      id: "pa-submit-agent",
-      type: "agent",
-      position: { x: 720, y: 260 },
-      data: {
-        label: "Prior Auth Agent",
-        description: "Formats and submits auth request to payer portal",
-        config: {
-          agentId: "prior-auth-submitter",
-          systemPrompt:
-            "Format the clinical evidence into the payer-specific prior authorization format and submit via the payer auth portal tool.",
-          tools: ["submit_prior_auth", "get_payer_auth_requirements"],
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "pa-wait",
-      type: "approval",
-      position: { x: 960, y: 260 },
-      data: {
-        label: "Await Payer Decision",
-        description: "Paused — zero compute — until payer responds via webhook or manual entry",
-        config: {
-          approvalMessage: "Waiting for payer determination. Resume when decision is received.",
-          approverRole: "system-or-manual",
-          timeoutMinutes: 43200, // 30 days
-          onReject: "abort",
-        },
-      },
-    },
-    {
-      id: "pa-condition",
-      type: "condition",
-      position: { x: 1200, y: 260 },
-      data: {
-        label: "Auth Decision",
-        description: "Route based on payer determination",
-        config: {
-          conditionExpression: "output.determination === 'approved'",
-          trueBranchLabel: "Approved",
-          falseBranchLabel: "Denied / Pended",
-        },
-      },
-    },
-    {
-      id: "pa-end-approved",
-      type: "end",
-      position: { x: 1440, y: 160 },
-      data: {
-        label: "Authorized",
-        description: "Auth number obtained — proceed with scheduling",
-        config: { successMessage: "Prior authorization approved." },
-      },
-    },
-    {
-      id: "pa-denied-agent",
-      type: "agent",
-      position: { x: 1440, y: 360 },
-      data: {
-        label: "Denial Triage Agent",
-        description: "Analyzes denial reason and drafts appeal or routes for additional documentation",
-        config: {
-          agentId: "denial-triage",
-          systemPrompt:
-            "Analyze the payer denial reason, determine if an appeal is warranted, and draft an appeal letter or request for additional clinical documentation.",
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "pa-end-denied",
-      type: "end",
-      position: { x: 1680, y: 360 },
-      data: {
-        label: "Denial Handled",
-        description: "Appeal drafted or case closed",
-        config: { successMessage: "Denial triage complete." },
-      },
-    },
-  ],
-  edges: [
-    { id: "pae1", source: "pa-start", target: "pa-clinical-agent" },
-    { id: "pae2", source: "pa-clinical-agent", target: "pa-approval" },
-    { id: "pae3", source: "pa-approval", target: "pa-submit-agent", label: "approved" },
-    { id: "pae4", source: "pa-submit-agent", target: "pa-wait" },
-    { id: "pae5", source: "pa-wait", target: "pa-condition", label: "resumed" },
-    { id: "pae6", source: "pa-condition", target: "pa-end-approved", label: "Approved", data: { edgeType: "true" } },
-    { id: "pae7", source: "pa-condition", target: "pa-denied-agent", label: "Denied", data: { edgeType: "false" } },
-    { id: "pae8", source: "pa-denied-agent", target: "pa-end-denied" },
-  ],
-  createdAt: now,
-  updatedAt: now,
-};
-
-// ─── 3. Claims Submission ───────────────────────────────────────────────────
-
-export const claimsSubmission: Omit<OrchestrationTemplate, "id"> = {
-  name: "Claims Submission",
-  description:
-    "End-to-end claim lifecycle: eligibility sub-check, parallel coding + scrubbing, conditional routing for clean vs exception claims, billing review approval, and clearinghouse submission.",
-  category: "RCM",
-  version: "1.0.0",
-  tags: ["claims", "coding", "scrub", "clearinghouse", "approval", "production"],
-  visibility: "shared",
-  tenantId: TENANT,
-  usageCount: 0,
-  defaultPolicyIds: ["policy-phi-safe", "policy-rate-limit", "policy-compliance"],
-  parameters: [
-    { name: "encounterId", type: "string", required: true, description: "Encounter or visit ID" },
-    { name: "patientId", type: "string", required: true, description: "Patient identifier" },
-    { name: "payerId", type: "string", required: true, description: "Primary payer ID" },
-    { name: "providerNpi", type: "string", required: true, description: "Rendering provider NPI" },
-  ],
-  nodes: [
-    {
-      id: "cs-start",
-      type: "start",
-      position: { x: 40, y: 260 },
-      data: { label: "Charge Event", description: "Encounter finalized in EHR", config: { triggerType: "http" } },
-    },
-    {
-      id: "cs-elig-tool",
+      id: "ma-ingest-tool",
       type: "tool",
       position: { x: 240, y: 260 },
       data: {
-        label: "Eligibility Sub-Check",
-        description: "Quick 270/271 verification before claim build",
-        config: { toolId: "verify_eligibility", serverId: "ehr-gateway" },
+        label: "Ingest Data Room",
+        description: "Indexes CIM, financials, contracts, tax workpapers, and management uploads",
+        config: { toolId: "ingest_data_room", serverId: "nebula-document-hub" },
       },
     },
     {
-      id: "cs-fanout",
+      id: "ma-fanout",
       type: "fan-out",
-      position: { x: 440, y: 240 },
+      position: { x: 460, y: 260 },
       data: {
-        label: "Parallel Analysis",
-        description: "Coding and scrubbing run concurrently",
+        label: "Specialist Review",
+        description: "Launch financial, legal, and tax diligence workstreams concurrently",
+        config: { branches: 3, fanOutStrategy: "parallel" },
+      },
+    },
+    {
+      id: "ma-financial-agent",
+      type: "agent",
+      position: { x: 700, y: 80 },
+      data: {
+        label: "DDVault Financial Analyst",
+        description: "Analyzes quality of earnings, revenue trends, debt-like items, and working capital",
+        config: {
+          agentId: "DDVault Analyst",
+          systemPrompt:
+            "Review the ingested data room for financial diligence. Summarize quality of earnings, recurring revenue, debt-like items, normalized EBITDA, working-capital considerations, and open questions with source citations.",
+          tools: ["query_data_room", "analyze_financial_statements", "extract_management_adjustments"],
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "ma-legal-agent",
+      type: "agent",
+      position: { x: 700, y: 260 },
+      data: {
+        label: "DDVault Legal Analyst",
+        description: "Reviews contracts, change-of-control clauses, litigation, and compliance obligations",
+        config: {
+          agentId: "DDVault Analyst",
+          systemPrompt:
+            "Review material legal documents for diligence. Identify consent requirements, change-of-control provisions, termination rights, litigation exposure, regulatory obligations, and unresolved legal risks.",
+          tools: ["query_data_room", "extract_contract_terms", "summarize_legal_risks"],
+          modelId: "gpt-5.5",
+        },
+      },
+    },
+    {
+      id: "ma-tax-agent",
+      type: "agent",
+      position: { x: 700, y: 440 },
+      data: {
+        label: "TaxArchitect Diligence Review",
+        description: "Assesses tax exposures, NOLs, transfer pricing, sales tax, and transaction structuring issues",
+        config: {
+          agentId: "TaxArchitect",
+          systemPrompt:
+            "Assess tax diligence materials for exposure areas, NOL limitations, transfer-pricing risks, sales and use tax issues, transaction structuring considerations, and priority follow-ups.",
+          tools: ["query_data_room", "analyze_tax_workpapers", "lookup_tax_rules"],
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "ma-fanin",
+      type: "fan-in",
+      position: { x: 960, y: 260 },
+      data: {
+        label: "Consolidate Workstreams",
+        description: "Combines specialist outputs into a unified diligence view",
+        config: { joinStrategy: "all", joinTimeout: 600 },
+      },
+    },
+    {
+      id: "ma-risk-summary",
+      type: "transform",
+      position: { x: 1180, y: 260 },
+      data: {
+        label: "Risk Summary",
+        description: "Normalizes findings into executive risk heatmap and report outline",
+        config: {
+          transformType: "llm-summary",
+          outputSchema: "deal_diligence_risk_summary",
+          modelId: "gpt-5.5",
+        },
+      },
+    },
+    {
+      id: "ma-partner-approval",
+      type: "approval",
+      position: { x: 1400, y: 260 },
+      data: {
+        label: "Partner Approval",
+        description: "Engagement partner approves release of the diligence report",
+        config: {
+          approvalMessage: "Review the consolidated diligence risk summary and approve report generation.",
+          approverRole: "deals-partner",
+          timeoutMinutes: 1440,
+          onReject: "abort",
+        },
+      },
+    },
+    {
+      id: "ma-report-agent",
+      type: "agent",
+      position: { x: 1620, y: 260 },
+      data: {
+        label: "DDVault Report Builder",
+        description: "Drafts client-ready diligence report and executive summary",
+        config: {
+          agentId: "DDVault Analyst",
+          systemPrompt:
+            "Draft a client-ready diligence report with executive summary, workstream findings, risk heatmap, financial impacts, recommendations, and appendices from the approved risk summary.",
+          tools: ["generate_report", "create_executive_summary"],
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "ma-end",
+      type: "end",
+      position: { x: 1840, y: 260 },
+      data: {
+        label: "Report Ready",
+        description: "Approved diligence report is ready for engagement team distribution",
+        config: { successMessage: "M&A due diligence report generated and approved." },
+      },
+    },
+  ],
+  edges: [
+    { id: "mae1", source: "ma-start", target: "ma-ingest-tool" },
+    { id: "mae2", source: "ma-ingest-tool", target: "ma-fanout" },
+    { id: "mae3", source: "ma-fanout", target: "ma-financial-agent", label: "Financial", data: { edgeType: "fan" } },
+    { id: "mae4", source: "ma-fanout", target: "ma-legal-agent", label: "Legal", data: { edgeType: "fan" } },
+    { id: "mae5", source: "ma-fanout", target: "ma-tax-agent", label: "Tax", data: { edgeType: "fan" } },
+    { id: "mae6", source: "ma-financial-agent", target: "ma-fanin", data: { edgeType: "fan" } },
+    { id: "mae7", source: "ma-legal-agent", target: "ma-fanin", data: { edgeType: "fan" } },
+    { id: "mae8", source: "ma-tax-agent", target: "ma-fanin", data: { edgeType: "fan" } },
+    { id: "mae9", source: "ma-fanin", target: "ma-risk-summary" },
+    { id: "mae10", source: "ma-risk-summary", target: "ma-partner-approval" },
+    { id: "mae11", source: "ma-partner-approval", target: "ma-report-agent", label: "approved" },
+    { id: "mae12", source: "ma-report-agent", target: "ma-end" },
+  ],
+  createdAt: now,
+  updatedAt: now,
+};
+
+// ─── 2. SOX Controls Testing ─────────────────────────────────────────────────
+
+export const soxControlsTesting: Omit<OrchestrationTemplate, "id"> = {
+  name: "SOX Controls Testing",
+  description:
+    "Nebula-X audit workflow for pulling ERP populations, selecting samples, testing key controls, routing exceptions, and preparing SOX findings for approval.",
+  category: "Audit",
+  version: "1.0.0",
+  tags: ["sox", "controls", "audit", "erp", "sampling", "nebula-x"],
+  visibility: "shared",
+  tenantId: TENANT,
+  usageCount: 0,
+  defaultPolicyIds: ["policy-confidential-client-data", "policy-human-gate", "policy-audit-evidence"],
+  parameters: [
+    { name: "engagementId", type: "string", required: true, description: "SOX engagement identifier" },
+    { name: "controlId", type: "string", required: true, description: "Control or process-level control identifier" },
+    { name: "erpSystem", type: "string", required: true, description: "Source ERP, such as SAP or Oracle" },
+    { name: "periodStart", type: "string", required: true, description: "Population period start date" },
+    { name: "periodEnd", type: "string", required: true, description: "Population period end date" },
+  ],
+  nodes: [
+    {
+      id: "sox-start",
+      type: "start",
+      position: { x: 40, y: 260 },
+      data: {
+        label: "Control Test Request",
+        description: "Audit team initiates testing for a SOX control",
+        config: { triggerType: "http" },
+      },
+    },
+    {
+      id: "sox-population-tool",
+      type: "tool",
+      position: { x: 260, y: 260 },
+      data: {
+        label: "Pull ERP Population",
+        description: "Extracts complete transaction or control-operation population",
+        config: { toolId: "pull_erp_population", serverId: "ledger-gateway" },
+      },
+    },
+    {
+      id: "sox-sampling-tool",
+      type: "tool",
+      position: { x: 500, y: 260 },
+      data: {
+        label: "Select Sample",
+        description: "Applies approved sampling methodology and retains population completeness evidence",
+        config: { toolId: "select_audit_sample", serverId: "audit-workbench" },
+      },
+    },
+    {
+      id: "sox-test-agent",
+      type: "agent",
+      position: { x: 740, y: 260 },
+      data: {
+        label: "ControlTester",
+        description: "Tests control attributes and evidence for selected items",
+        config: {
+          agentId: "ControlTester",
+          systemPrompt:
+            "Test the selected sample against the control attributes. Evaluate evidence sufficiency, prepare pass/fail conclusions, identify exceptions, and cite the underlying ERP and workpaper evidence.",
+          tools: ["retrieve_audit_evidence", "test_control_attribute", "document_workpaper"],
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "sox-condition",
+      type: "condition",
+      position: { x: 980, y: 260 },
+      data: {
+        label: "Exceptions Found?",
+        description: "Routes based on testing results",
+        config: {
+          conditionExpression: "output.exceptionsCount > 0",
+          trueBranchLabel: "Exception Review",
+          falseBranchLabel: "No Exceptions",
+        },
+      },
+    },
+    {
+      id: "sox-exception-agent",
+      type: "agent",
+      position: { x: 1220, y: 380 },
+      data: {
+        label: "LedgerSentinel Exception Review",
+        description: "Assesses severity, root cause, and potential deficiency classification",
+        config: {
+          agentId: "LedgerSentinel",
+          systemPrompt:
+            "Review SOX testing exceptions. Determine root cause, financial statement assertion impact, deficiency severity, remediation recommendations, and whether additional procedures are required.",
+          tools: ["analyze_control_exception", "lookup_materiality", "draft_remediation_plan"],
+          modelId: "gpt-5.5",
+        },
+      },
+    },
+    {
+      id: "sox-findings-transform",
+      type: "transform",
+      position: { x: 1460, y: 260 },
+      data: {
+        label: "Prepare Findings",
+        description: "Formats testing conclusion and exceptions for review",
+        config: {
+          transformType: "workpaper-summary",
+          outputSchema: "sox_control_testing_findings",
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "sox-approval",
+      type: "approval",
+      position: { x: 1700, y: 260 },
+      data: {
+        label: "Manager Approval",
+        description: "SOX manager reviews workpaper and findings",
+        config: {
+          approvalMessage: "Review SOX control testing workpaper, exceptions, and findings before release.",
+          approverRole: "audit-manager",
+          timeoutMinutes: 1440,
+          onReject: "abort",
+        },
+      },
+    },
+    {
+      id: "sox-end",
+      type: "end",
+      position: { x: 1940, y: 260 },
+      data: {
+        label: "Findings Finalized",
+        description: "Approved SOX testing package is ready for sign-off workflow",
+        config: { successMessage: "SOX controls testing findings finalized." },
+      },
+    },
+  ],
+  edges: [
+    { id: "soxe1", source: "sox-start", target: "sox-population-tool" },
+    { id: "soxe2", source: "sox-population-tool", target: "sox-sampling-tool" },
+    { id: "soxe3", source: "sox-sampling-tool", target: "sox-test-agent" },
+    { id: "soxe4", source: "sox-test-agent", target: "sox-condition" },
+    { id: "soxe5", source: "sox-condition", target: "sox-exception-agent", label: "Exception Review", data: { edgeType: "true" } },
+    { id: "soxe6", source: "sox-condition", target: "sox-findings-transform", label: "No Exceptions", data: { edgeType: "false" } },
+    { id: "soxe7", source: "sox-exception-agent", target: "sox-findings-transform" },
+    { id: "soxe8", source: "sox-findings-transform", target: "sox-approval" },
+    { id: "soxe9", source: "sox-approval", target: "sox-end", label: "approved" },
+  ],
+  createdAt: now,
+  updatedAt: now,
+};
+
+// ─── 3. Tax Provision (ASC 740) Workflow ─────────────────────────────────────
+
+export const taxProvisionAsc740Workflow: Omit<OrchestrationTemplate, "id"> = {
+  name: "Tax Provision (ASC 740) Workflow",
+  description:
+    "Nebula-X tax workflow that gathers trial balance data, computes current and deferred tax provision components, validates results, routes reviewer approval, and drafts disclosure language.",
+  category: "Tax",
+  version: "1.0.0",
+  tags: ["asc-740", "tax-provision", "trial-balance", "deferred-tax", "disclosure", "nebula-x"],
+  visibility: "shared",
+  tenantId: TENANT,
+  usageCount: 0,
+  defaultPolicyIds: ["policy-confidential-client-data", "policy-human-gate", "policy-tax-compliance"],
+  parameters: [
+    { name: "engagementId", type: "string", required: true, description: "Tax engagement identifier" },
+    { name: "entityId", type: "string", required: true, description: "Legal entity or consolidated group identifier" },
+    { name: "fiscalYear", type: "string", required: true, description: "Fiscal year under provision" },
+    { name: "jurisdictions", type: "string", required: false, description: "Comma-separated jurisdiction list" },
+  ],
+  nodes: [
+    {
+      id: "tax-start",
+      type: "start",
+      position: { x: 40, y: 260 },
+      data: {
+        label: "Provision Request",
+        description: "Tax team starts ASC 740 provision workflow",
+        config: { triggerType: "http" },
+      },
+    },
+    {
+      id: "tax-tb-tool",
+      type: "tool",
+      position: { x: 260, y: 260 },
+      data: {
+        label: "Gather Trial Balance",
+        description: "Loads trial balance, book income, permanent differences, and rollforward data",
+        config: { toolId: "gather_trial_balance", serverId: "tax-data-hub" },
+      },
+    },
+    {
+      id: "tax-fanout",
+      type: "fan-out",
+      position: { x: 500, y: 260 },
+      data: {
+        label: "Provision Calculations",
+        description: "Computes current and deferred tax components concurrently",
         config: { branches: 2, fanOutStrategy: "parallel" },
       },
     },
     {
-      id: "cs-coding-agent",
+      id: "tax-current-agent",
       type: "agent",
-      position: { x: 660, y: 140 },
+      position: { x: 740, y: 140 },
       data: {
-        label: "Coding Agent",
-        description: "Auto-codes encounter: ICD-10, CPT, modifiers",
+        label: "TaxArchitect Current Tax",
+        description: "Calculates current tax by jurisdiction from taxable income adjustments",
         config: {
-          agentId: "medical-coder",
+          agentId: "TaxArchitect",
           systemPrompt:
-            "Analyze the encounter documentation and produce ICD-10, CPT, and modifier codes with confidence scores. Flag any codes that need coder review.",
-          tools: ["lookup_icd10", "lookup_cpt", "check_ncci_edits"],
-          modelId: "gpt-4o",
+            "Compute current tax provision by jurisdiction. Reconcile book-to-tax adjustments, permanent differences, credits, statutory rates, and payable impacts with supporting calculations.",
+          tools: ["compute_current_tax", "lookup_tax_rates", "reconcile_book_tax_differences"],
+          modelId: "claude-sonnet-4.5",
         },
       },
     },
     {
-      id: "cs-scrub-agent",
+      id: "tax-deferred-agent",
       type: "agent",
-      position: { x: 660, y: 360 },
+      position: { x: 740, y: 380 },
       data: {
-        label: "Scrubber Agent",
-        description: "Claim quality check: NCCI, LCD/NCD, payer-specific rules",
+        label: "TaxArchitect Deferred Tax",
+        description: "Computes DTAs, DTLs, valuation allowance, and rate effects",
         config: {
-          agentId: "claim-scrubber",
+          agentId: "TaxArchitect",
           systemPrompt:
-            "Scrub the coded claim against NCCI edits, LCD/NCD policies, and payer-specific billing rules. Return clean/dirty status with specific edit failures.",
-          tools: ["check_ncci_edits", "check_lcd_ncd", "get_payer_rules"],
-          modelId: "gpt-4o",
+            "Compute deferred tax assets and liabilities under ASC 740. Analyze temporary differences, rate changes, valuation allowance indicators, uncertain tax positions, and rollforward impacts.",
+          tools: ["compute_deferred_tax", "analyze_temporary_differences", "evaluate_valuation_allowance"],
+          modelId: "gpt-5.5",
         },
       },
     },
     {
-      id: "cs-fanin",
+      id: "tax-fanin",
       type: "fan-in",
-      position: { x: 880, y: 240 },
+      position: { x: 980, y: 260 },
       data: {
-        label: "Merge Results",
-        description: "Combine coding and scrub outputs",
-        config: { joinStrategy: "all", joinTimeout: 120 },
+        label: "Merge Provision Components",
+        description: "Combines current and deferred outputs into provision package",
+        config: { joinStrategy: "all", joinTimeout: 300 },
       },
     },
     {
-      id: "cs-condition",
-      type: "condition",
-      position: { x: 1080, y: 240 },
-      data: {
-        label: "Clean Claim?",
-        description: "Route based on scrub result",
-        config: {
-          conditionExpression: "output.coded && output.clean",
-          trueBranchLabel: "Submit",
-          falseBranchLabel: "Review",
-        },
-      },
-    },
-    {
-      id: "cs-submit-agent",
+      id: "tax-validate-agent",
       type: "agent",
-      position: { x: 1300, y: 140 },
+      position: { x: 1220, y: 260 },
       data: {
-        label: "Submit Agent",
-        description: "Submits clean claim to clearinghouse",
+        label: "LedgerSentinel Validation",
+        description: "Validates provision calculations, reconciliations, and audit trail",
         config: {
-          agentId: "claim-submitter",
-          tools: ["submit_837p"],
-          modelId: "gpt-4o",
+          agentId: "LedgerSentinel",
+          systemPrompt:
+            "Validate the ASC 740 provision package. Check tie-outs to trial balance, rate reconciliation, current/deferred math, disclosure consistency, and anomalies requiring reviewer attention.",
+          tools: ["validate_tax_provision", "tie_out_trial_balance", "check_rate_reconciliation"],
+          modelId: "claude-sonnet-4.5",
         },
       },
     },
     {
-      id: "cs-approval",
+      id: "tax-approval",
       type: "approval",
-      position: { x: 1300, y: 360 },
+      position: { x: 1460, y: 260 },
       data: {
-        label: "Billing Review",
-        description: "Manual review for claims with scrub failures",
+        label: "Reviewer Approval",
+        description: "Tax reviewer approves the provision package before disclosure drafting",
         config: {
-          approvalMessage: "Review claim edits and correct before resubmission.",
-          approverRole: "billing-reviewer",
+          approvalMessage: "Review ASC 740 provision calculations, validations, and exceptions before disclosure drafting.",
+          approverRole: "tax-reviewer",
+          timeoutMinutes: 1440,
+          onReject: "abort",
+        },
+      },
+    },
+    {
+      id: "tax-disclosure-agent",
+      type: "agent",
+      position: { x: 1700, y: 260 },
+      data: {
+        label: "AuditScribe Disclosure Draft",
+        description: "Drafts ASC 740 footnote disclosure and reviewer notes",
+        config: {
+          agentId: "AuditScribe",
+          systemPrompt:
+            "Draft ASC 740 disclosure language from the approved provision package, including effective tax rate reconciliation, deferred tax table narrative, valuation allowance discussion, and reviewer notes.",
+          tools: ["draft_disclosure", "format_financial_statement_note"],
+          modelId: "gpt-5.5",
+        },
+      },
+    },
+    {
+      id: "tax-end",
+      type: "end",
+      position: { x: 1940, y: 260 },
+      data: {
+        label: "Disclosure Draft Ready",
+        description: "Approved provision package and disclosure draft are ready",
+        config: { successMessage: "ASC 740 tax provision workflow complete." },
+      },
+    },
+  ],
+  edges: [
+    { id: "taxe1", source: "tax-start", target: "tax-tb-tool" },
+    { id: "taxe2", source: "tax-tb-tool", target: "tax-fanout" },
+    { id: "taxe3", source: "tax-fanout", target: "tax-current-agent", label: "Current", data: { edgeType: "fan" } },
+    { id: "taxe4", source: "tax-fanout", target: "tax-deferred-agent", label: "Deferred", data: { edgeType: "fan" } },
+    { id: "taxe5", source: "tax-current-agent", target: "tax-fanin", data: { edgeType: "fan" } },
+    { id: "taxe6", source: "tax-deferred-agent", target: "tax-fanin", data: { edgeType: "fan" } },
+    { id: "taxe7", source: "tax-fanin", target: "tax-validate-agent" },
+    { id: "taxe8", source: "tax-validate-agent", target: "tax-approval" },
+    { id: "taxe9", source: "tax-approval", target: "tax-disclosure-agent", label: "approved" },
+    { id: "taxe10", source: "tax-disclosure-agent", target: "tax-end" },
+  ],
+  createdAt: now,
+  updatedAt: now,
+};
+
+// ─── 4. Audit Confirmations Workflow ─────────────────────────────────────────
+
+export const auditConfirmationsWorkflow: Omit<OrchestrationTemplate, "id"> = {
+  name: "Audit Confirmations Workflow",
+  description:
+    "Nebula-X audit workflow that identifies confirmation targets, dispatches requests, tracks responses, reconciles exceptions, and prepares a confirmation workpaper.",
+  category: "Audit",
+  version: "1.0.0",
+  tags: ["confirmations", "audit", "workpaper", "exceptions", "receivables", "nebula-x"],
+  visibility: "shared",
+  tenantId: TENANT,
+  usageCount: 0,
+  defaultPolicyIds: ["policy-confidential-client-data", "policy-human-gate", "policy-audit-evidence"],
+  parameters: [
+    { name: "engagementId", type: "string", required: true, description: "Audit engagement identifier" },
+    { name: "confirmationType", type: "string", required: true, description: "Bank, AR, AP, legal, debt, or other confirmation type" },
+    { name: "populationId", type: "string", required: true, description: "Population or subledger identifier" },
+    { name: "responseDeadline", type: "string", required: true, description: "Requested response deadline" },
+  ],
+  nodes: [
+    {
+      id: "conf-start",
+      type: "start",
+      position: { x: 40, y: 260 },
+      data: {
+        label: "Confirmation Request",
+        description: "Audit team initiates external confirmation workflow",
+        config: { triggerType: "http" },
+      },
+    },
+    {
+      id: "conf-identify-agent",
+      type: "agent",
+      position: { x: 260, y: 260 },
+      data: {
+        label: "LedgerSentinel Targeting",
+        description: "Identifies confirmation recipients from the audited population and risk criteria",
+        config: {
+          agentId: "LedgerSentinel",
+          systemPrompt:
+            "Identify confirmation targets from the population using materiality, risk criteria, aging, unusual activity, and audit strategy. Produce selected recipients with rationale and evidence references.",
+          tools: ["query_subledger", "apply_audit_sampling", "validate_recipient_master"],
+          modelId: "claude-sonnet-4.5",
+        },
+      },
+    },
+    {
+      id: "conf-approval",
+      type: "approval",
+      position: { x: 500, y: 260 },
+      data: {
+        label: "Recipient Approval",
+        description: "Audit manager approves confirmation recipient list before dispatch",
+        config: {
+          approvalMessage: "Review and approve external confirmation recipients before dispatch.",
+          approverRole: "audit-manager",
           timeoutMinutes: 480,
           onReject: "abort",
         },
       },
     },
     {
-      id: "cs-end",
-      type: "end",
-      position: { x: 1540, y: 240 },
-      data: {
-        label: "Claim Submitted",
-        description: "Tracking active at clearinghouse",
-        config: { successMessage: "Claim submitted to clearinghouse." },
-      },
-    },
-  ],
-  edges: [
-    { id: "cse1", source: "cs-start", target: "cs-elig-tool" },
-    { id: "cse2", source: "cs-elig-tool", target: "cs-fanout" },
-    { id: "cse3", source: "cs-fanout", target: "cs-coding-agent", label: "B1", data: { edgeType: "fan" } },
-    { id: "cse4", source: "cs-fanout", target: "cs-scrub-agent", label: "B2", data: { edgeType: "fan" } },
-    { id: "cse5", source: "cs-coding-agent", target: "cs-fanin", data: { edgeType: "fan" } },
-    { id: "cse6", source: "cs-scrub-agent", target: "cs-fanin", data: { edgeType: "fan" } },
-    { id: "cse7", source: "cs-fanin", target: "cs-condition" },
-    { id: "cse8", source: "cs-condition", target: "cs-submit-agent", label: "Submit", data: { edgeType: "true" } },
-    { id: "cse9", source: "cs-condition", target: "cs-approval", label: "Review", data: { edgeType: "false" } },
-    { id: "cse10", source: "cs-approval", target: "cs-submit-agent", label: "approved" },
-    { id: "cse11", source: "cs-submit-agent", target: "cs-end" },
-  ],
-  createdAt: now,
-  updatedAt: now,
-};
-
-// ─── 4. Payment Posting & Reconciliation ────────────────────────────────────
-
-export const paymentReconciliation: Omit<OrchestrationTemplate, "id"> = {
-  name: "Payment Posting & Reconciliation",
-  description:
-    "Batch ERA/835 processing: split by claim line, parallel payment analysis, underpayment detection, auto-post standard payments, and route exceptions to finance review.",
-  category: "RCM",
-  version: "1.0.0",
-  tags: ["payment", "posting", "ERA", "835", "reconciliation", "underpayment", "production"],
-  visibility: "shared",
-  tenantId: TENANT,
-  usageCount: 0,
-  defaultPolicyIds: ["policy-phi-safe", "policy-rate-limit"],
-  parameters: [
-    { name: "eraFileId", type: "string", required: true, description: "ERA/835 file identifier" },
-    { name: "batchId", type: "string", required: false, description: "Optional batch grouping ID" },
-  ],
-  nodes: [
-    {
-      id: "pp-start",
-      type: "start",
-      position: { x: 40, y: 260 },
-      data: { label: "ERA Batch Received", description: "835 file ingested", config: { triggerType: "event" } },
-    },
-    {
-      id: "pp-parse-tool",
+      id: "conf-dispatch-tool",
       type: "tool",
-      position: { x: 240, y: 260 },
+      position: { x: 740, y: 260 },
       data: {
-        label: "ERA Parser",
-        description: "Parses 835 EDI into structured claim-line records",
-        config: { toolId: "parse_era_835", serverId: "era-gateway" },
+        label: "Dispatch Confirmations",
+        description: "Sends approved requests through the confirmation platform",
+        config: { toolId: "dispatch_confirmations", serverId: "confirmation-platform" },
       },
     },
     {
-      id: "pp-fanout",
-      type: "fan-out",
-      position: { x: 440, y: 240 },
-      data: {
-        label: "Split by Claim",
-        description: "Process each claim line in parallel",
-        config: { branches: 10, fanOutStrategy: "parallel" },
-      },
-    },
-    {
-      id: "pp-payment-agent",
+      id: "conf-track-agent",
       type: "agent",
-      position: { x: 660, y: 140 },
+      position: { x: 980, y: 260 },
       data: {
-        label: "Payment Agent",
-        description: "Compares paid amount to expected reimbursement from fee schedule",
+        label: "AuditScribe Response Tracking",
+        description: "Tracks responses, nonresponses, bounced requests, and follow-ups",
         config: {
-          agentId: "payment-analyzer",
+          agentId: "AuditScribe",
           systemPrompt:
-            "Compare the ERA payment amount to the expected reimbursement from the fee schedule. Flag underpayments, overpayments, and denied lines. Return a structured variance report.",
-          tools: ["lookup_fee_schedule", "get_claim_expected_payment"],
-          modelId: "gpt-4o",
+            "Track confirmation status. Summarize received responses, nonresponses, follow-up needs, bounced contacts, and evidence received from the confirmation platform.",
+          tools: ["track_confirmation_responses", "send_confirmation_followup", "retrieve_response_evidence"],
+          modelId: "gpt-5.5",
         },
       },
     },
     {
-      id: "pp-variance-agent",
-      type: "agent",
-      position: { x: 660, y: 380 },
-      data: {
-        label: "Variance Analyzer",
-        description: "Identifies adjustment codes and categorizes payment discrepancies",
-        config: {
-          agentId: "variance-analyzer",
-          systemPrompt:
-            "Analyze adjustment reason codes (CAS segments) and remark codes. Categorize each variance as contractual, non-contractual, patient responsibility, or error.",
-          modelId: "gpt-4o",
-        },
-      },
-    },
-    {
-      id: "pp-fanin",
-      type: "fan-in",
-      position: { x: 880, y: 260 },
-      data: {
-        label: "Aggregate Results",
-        description: "Merge payment and variance analysis",
-        config: { joinStrategy: "all", joinTimeout: 300 },
-      },
-    },
-    {
-      id: "pp-condition",
+      id: "conf-condition",
       type: "condition",
-      position: { x: 1080, y: 260 },
+      position: { x: 1220, y: 260 },
       data: {
-        label: "Standard Payment?",
-        description: "Route based on variance threshold",
+        label: "Exceptions or Nonresponses?",
+        description: "Determines if reconciliation or alternate procedures are needed",
         config: {
-          conditionExpression: "output.variancePercent <= 2",
-          trueBranchLabel: "Auto-Post",
-          falseBranchLabel: "Finance Review",
+          conditionExpression: "output.exceptionsCount > 0 || output.nonresponseCount > 0",
+          trueBranchLabel: "Reconcile Exceptions",
+          falseBranchLabel: "Prepare Workpaper",
         },
       },
     },
     {
-      id: "pp-autopost-tool",
-      type: "tool",
-      position: { x: 1300, y: 160 },
-      data: {
-        label: "Auto-Post",
-        description: "Posts standard payments to billing system",
-        config: { toolId: "post_payment", serverId: "billing-system" },
-      },
-    },
-    {
-      id: "pp-finance-exception",
+      id: "conf-reconcile-agent",
       type: "agent",
-      position: { x: 1300, y: 380 },
+      position: { x: 1460, y: 380 },
       data: {
-        label: "Finance Exception",
-        description: "Routes underpayment or error cases to finance review queue",
+        label: "LedgerSentinel Reconciliation",
+        description: "Reconciles differences and designs alternate procedures for unresolved items",
         config: {
-          agentId: "finance-exception-router",
+          agentId: "LedgerSentinel",
           systemPrompt:
-            "Create a finance work queue item with the variance details, recommended action (appeal, adjustment, write-off), and supporting documentation.",
-          modelId: "gpt-4o",
+            "Reconcile confirmation exceptions to the client ledger and supporting documents. For nonresponses, recommend and document alternate procedures with evidence requirements.",
+          tools: ["reconcile_confirmation_exception", "retrieve_supporting_documents", "draft_alternate_procedures"],
+          modelId: "claude-sonnet-4.5",
         },
       },
     },
     {
-      id: "pp-end",
-      type: "end",
-      position: { x: 1540, y: 260 },
+      id: "conf-workpaper-agent",
+      type: "agent",
+      position: { x: 1700, y: 260 },
       data: {
-        label: "Batch Reconciled",
-        description: "All claim lines processed",
-        config: { successMessage: "ERA batch reconciliation complete." },
+        label: "AuditScribe Workpaper",
+        description: "Creates confirmation workpaper with evidence, status, exceptions, and conclusions",
+        config: {
+          agentId: "AuditScribe",
+          systemPrompt:
+            "Prepare the confirmation workpaper. Include scope, recipient selection rationale, dispatch evidence, response status, exception reconciliation, alternate procedures, and audit conclusion.",
+          tools: ["document_workpaper", "attach_confirmation_evidence", "generate_audit_conclusion"],
+          modelId: "gpt-5.5",
+        },
+      },
+    },
+    {
+      id: "conf-end",
+      type: "end",
+      position: { x: 1940, y: 260 },
+      data: {
+        label: "Workpaper Ready",
+        description: "Confirmation workpaper is ready for audit file review",
+        config: { successMessage: "Audit confirmations workpaper completed." },
       },
     },
   ],
   edges: [
-    { id: "ppe1", source: "pp-start", target: "pp-parse-tool" },
-    { id: "ppe2", source: "pp-parse-tool", target: "pp-fanout" },
-    { id: "ppe3", source: "pp-fanout", target: "pp-payment-agent", label: "B1", data: { edgeType: "fan" } },
-    { id: "ppe4", source: "pp-fanout", target: "pp-variance-agent", label: "B2", data: { edgeType: "fan" } },
-    { id: "ppe5", source: "pp-payment-agent", target: "pp-fanin", data: { edgeType: "fan" } },
-    { id: "ppe6", source: "pp-variance-agent", target: "pp-fanin", data: { edgeType: "fan" } },
-    { id: "ppe7", source: "pp-fanin", target: "pp-condition" },
-    { id: "ppe8", source: "pp-condition", target: "pp-autopost-tool", label: "Auto-Post", data: { edgeType: "true" } },
-    { id: "ppe9", source: "pp-condition", target: "pp-finance-exception", label: "Finance Review", data: { edgeType: "false" } },
-    { id: "ppe10", source: "pp-autopost-tool", target: "pp-end" },
-    { id: "ppe11", source: "pp-finance-exception", target: "pp-end" },
+    { id: "confe1", source: "conf-start", target: "conf-identify-agent" },
+    { id: "confe2", source: "conf-identify-agent", target: "conf-approval" },
+    { id: "confe3", source: "conf-approval", target: "conf-dispatch-tool", label: "approved" },
+    { id: "confe4", source: "conf-dispatch-tool", target: "conf-track-agent" },
+    { id: "confe5", source: "conf-track-agent", target: "conf-condition" },
+    { id: "confe6", source: "conf-condition", target: "conf-reconcile-agent", label: "Reconcile", data: { edgeType: "true" } },
+    { id: "confe7", source: "conf-condition", target: "conf-workpaper-agent", label: "No Exceptions", data: { edgeType: "false" } },
+    { id: "confe8", source: "conf-reconcile-agent", target: "conf-workpaper-agent" },
+    { id: "confe9", source: "conf-workpaper-agent", target: "conf-end" },
   ],
   createdAt: now,
   updatedAt: now,
 };
-
-// ─── Export all templates ───────────────────────────────────────────────────
 
 export const OPTUM_RCM_TEMPLATES = [
-  eligibilityVerification,
-  priorAuthorization,
-  claimsSubmission,
-  paymentReconciliation,
+  maDueDiligencePipeline,
+  soxControlsTesting,
+  taxProvisionAsc740Workflow,
+  auditConfirmationsWorkflow,
 ];

@@ -15,40 +15,40 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { getContainer, CONTAINERS } from "../../lib/cosmos/client.js";
 
-const UAP_ONBOARDING_SKILL_CONTENT = `---
-name: uap-onboarding
-description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the AI Marketplace from VS Code, GitHub, CLI, or the Publisher Portal."
+const NEBULA_X_ONBOARDING_SKILL_CONTENT = `---
+name: nebula-x-onboarding
+description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the Nebula-X from VS Code, GitHub, CLI, or the Publisher Portal."
 version: 1.0.0
 category: Agent Onboarding
-tags: [uap, onboarding, vscode, github, governance]
-triggers: [uap-onboarding, onboard domain agent, publish agent to marketplace, validate agent manifest]
+tags: [nebula-x, onboarding, vscode, github, governance]
+triggers: [nebula-x-onboarding, onboard domain agent, publish agent to marketplace, validate agent manifest]
 ---
 
-# UAP Onboarding
+# Nebula-X Onboarding
 
-Guides a domain engineer from local agent code to a governed AI Marketplace submission. It supports manifest authoring, VS Code submission, GitHub PR validation, evidence ingestion, deployment output activation, and troubleshooting.
+Guides a domain engineer from local agent code to a governed Nebula-X submission. It supports manifest authoring, VS Code submission, GitHub PR validation, evidence ingestion, deployment output activation, and troubleshooting.
 `;
 
-const UAP_ONBOARDING_SKILL = {
-  id: "uap-onboarding",
-  name: "uap-onboarding",
-  description: "VS Code/GHCP skill for onboarding domain agents into AI Marketplace through manifest authoring, GitHub evidence gates, eval ingestion, and activation checks.",
-  content: UAP_ONBOARDING_SKILL_CONTENT,
+const NEBULA_X_ONBOARDING_SKILL = {
+  id: "nebula-x-onboarding",
+  name: "nebula-x-onboarding",
+  description: "VS Code/GHCP skill for onboarding domain agents into Nebula-X through manifest authoring, GitHub evidence gates, eval ingestion, and activation checks.",
+  content: NEBULA_X_ONBOARDING_SKILL_CONTENT,
   version: "1.0.0",
-  tags: ["uap", "onboarding", "vscode", "github", "governance"],
+  tags: ["nebula-x", "onboarding", "vscode", "github", "governance"],
   category: "Agent Onboarding",
-  triggerPhrases: ["uap-onboarding", "onboard domain agent", "publish agent to marketplace", "validate agent manifest"],
-  sourceUrl: "https://github.com/rajesh-ms/test-onboardingagent/blob/main/.github/skills/uap-onboarding/SKILL.md",
-  author: "AI Marketplace Platform",
+  triggerPhrases: ["nebula-x-onboarding", "onboard domain agent", "publish agent to marketplace", "validate agent manifest"],
+  sourceUrl: "https://github.com/rajesh-ms/test-onboardingagent/blob/main/.github/skills/nebula-x-onboarding/SKILL.md",
+  author: "Nebula-X Platform",
   license: "Enterprise",
   tenantId: "default",
   visibility: "public",
   frontmatter: {
-    name: "uap-onboarding",
-    description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the AI Marketplace from VS Code, GitHub, CLI, or the Publisher Portal.",
+    name: "nebula-x-onboarding",
+    description: "Use when onboarding, validating, submitting, approving, deploying, or troubleshooting a domain agent for the Nebula-X from VS Code, GitHub, CLI, or the Publisher Portal.",
     version: "1.0.0",
     category: "Agent Onboarding",
-    tags: ["uap", "onboarding", "vscode", "github", "governance"],
+    tags: ["nebula-x", "onboarding", "vscode", "github", "governance"],
   },
   stars: 0,
   starCount: 0,
@@ -59,8 +59,8 @@ const UAP_ONBOARDING_SKILL = {
 
 async function ensureSkillSeeds(): Promise<void> {
   const container = await getContainer(CONTAINERS.SKILLS);
-  const { resource } = await container.item(UAP_ONBOARDING_SKILL.id, UAP_ONBOARDING_SKILL.tenantId).read();
-  if (!resource) await container.items.create(UAP_ONBOARDING_SKILL);
+  const { resource } = await container.item(NEBULA_X_ONBOARDING_SKILL.id, NEBULA_X_ONBOARDING_SKILL.tenantId).read();
+  if (!resource) await container.items.create(NEBULA_X_ONBOARDING_SKILL);
 }
 
 // ── Schemas ───────────────────────────────────────────────────────────────────

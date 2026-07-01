@@ -24,7 +24,7 @@ const ScanFindingSchema = z.object({
 const ScanSchema = z.object({
   tenantId: z.string().min(1),
   actorId: z.string().min(1).default('github-actions'),
-  phiSuspected: z.boolean().default(false),
+  engagement_confidentialSuspected: z.boolean().default(false),
   findings: z.array(ScanFindingSchema).default([]),
 });
 

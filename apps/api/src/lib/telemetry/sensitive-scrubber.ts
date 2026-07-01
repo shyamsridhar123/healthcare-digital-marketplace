@@ -1,28 +1,28 @@
 import appInsights = require('applicationinsights');
 
-type PhiType = 'ssn' | 'mrn' | 'patient_id' | 'account_id' | 'dob' | 'email' | 'phone';
+type SensitiveType = 'ssn' | 'engagement_id' | 'client_id' | 'account_id' | 'dob' | 'email' | 'phone';
 
-type PhiPattern = {
-  type: PhiType;
+type SensitivePattern = {
+  type: SensitiveType;
   pattern: RegExp;
   replacement?: string;
 };
 
-const PHI_PATTERNS: PhiPattern[] = [
+const SENSITIVE_PATTERNS: SensitivePattern[] = [
   {
     type: 'ssn',
     pattern: /\b((?:SSN|social security(?: number)?)(?:\s*[#:=]?\s*))(\d{3}-\d{2}-\d{4}|\d{9})\b/gi,
     replacement: '$1[REDACTED:ssn]',
   },
   {
-    type: 'mrn',
-    pattern: /\b((?:MRN|medical record(?: number)?)(?:\s*[:#-]?\s*))(\d{6,10})\b/gi,
-    replacement: '$1[REDACTED:mrn]',
+    type: 'engagement_id',
+    pattern: /\b((?:Engagement ID|engagement record(?: number)?)(?:\s*[:#-]?\s*))(\d{6,10})\b/gi,
+    replacement: '$1[REDACTED:engagement_id]',
   },
   {
-    type: 'patient_id',
-    pattern: /\b((?:patient identifier|patient id)\b(?:\s*[:#-]?\s*))([A-Z0-9-]{4,20})\b/gi,
-    replacement: '$1[REDACTED:patient_id]',
+    type: 'client_id',
+    pattern: /\b((?:client identifier|client id)\b(?:\s*[:#-]?\s*))([A-Z0-9-]{4,20})\b/gi,
+    replacement: '$1[REDACTED:client_id]',
   },
   {
     type: 'account_id',
@@ -38,9 +38,9 @@ const PHI_PATTERNS: PhiPattern[] = [
   { type: 'phone', pattern: /(?:\+1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)\d{3}[-.\s]?\d{4}\b/g },
 ];
 
-export type PhiFindingSummary = {
+export type SensitiveFindingSummary = {
   total: number;
-  byType: Partial<Record<PhiType, number>>;
+  byType: Partial<Record<SensitiveType, number>>;
 };
 
 export type OnboardingTelemetryEvent = {
@@ -53,25 +53,25 @@ type TelemetryClientLike = {
   trackEvent(event: { name: string; properties: Record<string, string> }): void;
 };
 
-export type PhiGoldenSetResult = {
+export type SensitiveGoldenSetResult = {
   outcome: 'passed' | 'failed';
   sampleCount: number;
   failedCount: number;
 };
 
-const PHI_GOLDEN_SAMPLES: ReadonlyArray<readonly [sample: string, rawPhi: string]> = [
+const SENSITIVE_GOLDEN_SAMPLES: ReadonlyArray<readonly [sample: string, rawSensitiveValue: string]> = [
   ['SSN 123-45-6789', '123-45-6789'],
   ['SSN: 987654321', '987654321'],
   ['social security number 111-22-3333', '111-22-3333'],
   ['social security # 444556666', '444556666'],
-  ['MRN 1234567', '1234567'],
-  ['MRN: 7654321', '7654321'],
-  ['MRN# 222333444', '222333444'],
-  ['medical record number 333444555', '333444555'],
-  ['medical record # 444555666', '444555666'],
-  ['patient id PAT-12345', 'PAT-12345'],
-  ['patient id 12345678', '12345678'],
-  ['patient identifier PX-9090', 'PX-9090'],
+  ['Engagement ID 1234567', '1234567'],
+  ['Engagement ID: 7654321', '7654321'],
+  ['Engagement ID# 222333444', '222333444'],
+  ['engagement record number 333444555', '333444555'],
+  ['engagement record # 444555666', '444555666'],
+  ['client id PAT-12345', 'PAT-12345'],
+  ['client id 12345678', '12345678'],
+  ['client identifier PX-9090', 'PX-9090'],
   ['account id ACCT-2222', 'ACCT-2222'],
   ['account number 999888777', '999888777'],
   ['DOB 05/13/1975', '05/13/1975'],
@@ -82,32 +82,32 @@ const PHI_GOLDEN_SAMPLES: ReadonlyArray<readonly [sample: string, rawPhi: string
   ['birth date 1965-12-01', '1965-12-01'],
   ['email jane.doe@example.com', 'jane.doe@example.com'],
   ['Contact JOHN.SMITH@CONTOSO.ORG', 'JOHN.SMITH@CONTOSO.ORG'],
-  ['alternate user+phi@health.example.net', 'user+phi@health.example.net'],
+  ['alternate user+engagement_confidential@advisory.example.net', 'user+engagement_confidential@advisory.example.net'],
   ['phone 212-555-0188', '212-555-0188'],
   ['phone (212) 555-0188', '(212) 555-0188'],
   ['phone +1 212 555 0188', '+1 212 555 0188'],
   ['mobile 415.555.1212', '415.555.1212'],
   ['cell 6175550101', '6175550101'],
-  ['claimant SSN 222-33-4444 in prompt', '222-33-4444'],
-  ['claimant SSN 222334444 in prompt', '222334444'],
-  ['member MRN 10101010 denied', '10101010'],
-  ['member medical record number 20202020 denied', '20202020'],
-  ['member patient id MEMBER-123 denied', 'MEMBER-123'],
-  ['member account number ACCOUNT-321 denied', 'ACCOUNT-321'],
-  ['member DOB 09/09/1999 denied', '09/09/1999'],
-  ['member date of birth 1999-09-09 denied', '1999-09-09'],
-  ['member birthdate 08/08/1988 denied', '08/08/1988'],
-  ['member email phi.case@example.org denied', 'phi.case@example.org'],
-  ['member phone 303-555-0100 denied', '303-555-0100'],
+  ['requestor SSN 222-33-4444 in prompt', '222-33-4444'],
+  ['requestor SSN 222334444 in prompt', '222334444'],
+  ['member Engagement ID 10101010 flagged', '10101010'],
+  ['member engagement record number 20202020 flagged', '20202020'],
+  ['member client id MEMBER-123 flagged', 'MEMBER-123'],
+  ['member account number ACCOUNT-321 flagged', 'ACCOUNT-321'],
+  ['member DOB 09/09/1999 flagged', '09/09/1999'],
+  ['member date of birth 1999-09-09 flagged', '1999-09-09'],
+  ['member birthdate 08/08/1988 flagged', '08/08/1988'],
+  ['member email engagement_confidential.case@example.org flagged', 'engagement_confidential.case@example.org'],
+  ['member phone 303-555-0100 flagged', '303-555-0100'],
   ['SSN=555-66-7777', '555-66-7777'],
   ['SSN 555667777', '555667777'],
-  ['MRN-888999000', '888999000'],
+  ['Engagement ID-888999000', '888999000'],
   ['DOB-02/03/1970', '02/03/1970'],
   ['date of birth-1970-02-03', '1970-02-03'],
   ['birth date: 03/04/1971', '03/04/1971'],
-  ['patient identifier 444555666', '444555666'],
+  ['client identifier 444555666', '444555666'],
   ['account id 777666555', '777666555'],
-  ['send to care.manager@example.com', 'care.manager@example.com'],
+  ['send to engagement.manager@example.com', 'engagement.manager@example.com'],
   ['callback +1-800-555-0199', '+1-800-555-0199'],
   ['call 800 555 0199 now', '800 555 0199'],
 ];
@@ -115,9 +115,9 @@ const PHI_GOLDEN_SAMPLES: ReadonlyArray<readonly [sample: string, rawPhi: string
 let onboardingTelemetryClient: TelemetryClientLike | undefined;
 let telemetryProcessorRegistered = false;
 
-export function redactPhi(value: string): string {
-  return PHI_PATTERNS.reduce(
-    (currentValue, phiPattern) => currentValue.replace(phiPattern.pattern, phiPattern.replacement ?? `[REDACTED:${phiPattern.type}]`),
+export function redactSensitiveData(value: string): string {
+  return SENSITIVE_PATTERNS.reduce(
+    (currentValue, engagement_confidentialPattern) => currentValue.replace(engagement_confidentialPattern.pattern, engagement_confidentialPattern.replacement ?? `[REDACTED:${engagement_confidentialPattern.type}]`),
     value,
   );
 }
@@ -128,7 +128,7 @@ export function scrubTelemetryAttributes<T>(value: T): T {
 
 function scrubTelemetryAttributesInner<T>(value: T, seen: WeakSet<object>): T {
   if (typeof value === 'string') {
-    return redactPhi(value) as T;
+    return redactSensitiveData(value) as T;
   }
 
   if (Array.isArray(value)) {
@@ -158,13 +158,13 @@ function scrubTelemetryAttributesInner<T>(value: T, seen: WeakSet<object>): T {
   return value;
 }
 
-export function summarizePhiFindings(value: string): PhiFindingSummary {
-  const byType: Partial<Record<PhiType, number>> = {};
+export function summarizeSensitiveFindings(value: string): SensitiveFindingSummary {
+  const byType: Partial<Record<SensitiveType, number>> = {};
 
-  for (const phiPattern of PHI_PATTERNS) {
-    const matches = value.match(phiPattern.pattern) ?? [];
+  for (const engagement_confidentialPattern of SENSITIVE_PATTERNS) {
+    const matches = value.match(engagement_confidentialPattern.pattern) ?? [];
     if (matches.length > 0) {
-      byType[phiPattern.type] = matches.length;
+      byType[engagement_confidentialPattern.type] = matches.length;
     }
   }
 
@@ -174,12 +174,12 @@ export function summarizePhiFindings(value: string): PhiFindingSummary {
   };
 }
 
-export function runPhiScrubberGoldenSetCheck(): PhiGoldenSetResult {
-  const failedCount = PHI_GOLDEN_SAMPLES.filter(([sample, rawPhi]) => redactPhi(sample).includes(rawPhi)).length;
+export function runSensitiveScrubberGoldenSetCheck(): SensitiveGoldenSetResult {
+  const failedCount = SENSITIVE_GOLDEN_SAMPLES.filter(([sample, rawSensitiveValue]) => redactSensitiveData(sample).includes(rawSensitiveValue)).length;
 
   return {
     outcome: failedCount === 0 ? 'passed' : 'failed',
-    sampleCount: PHI_GOLDEN_SAMPLES.length,
+    sampleCount: SENSITIVE_GOLDEN_SAMPLES.length,
     failedCount,
   };
 }
@@ -244,10 +244,10 @@ function ensureApplicationInsightsStarted(): void {
       .start();
   }
 
-  registerPhiScrubberTelemetryProcessor();
+  registerSensitiveScrubberTelemetryProcessor();
 }
 
-function registerPhiScrubberTelemetryProcessor(): void {
+function registerSensitiveScrubberTelemetryProcessor(): void {
   if (telemetryProcessorRegistered || !appInsights.defaultClient) {
     return;
   }
@@ -260,7 +260,7 @@ function registerPhiScrubberTelemetryProcessor(): void {
 }
 
 function normalizeTelemetryKey(key: string): string {
-  return redactPhi(key)
+  return redactSensitiveData(key)
     .replace(/\[REDACTED:([^\]]+)\]/g, 'redacted_$1')
     .replace(/[^A-Za-z0-9_.-]/g, '_');
 }

@@ -11,7 +11,7 @@ import type { PolicyContext } from "../../policy/engine.js";
 
 export interface HandlerResult {
   /** Terminal status for this node */
-  status: "completed" | "failed" | "skipped" | "paused" | "policy-denied";
+  status: "completed" | "failed" | "skipped" | "paused" | "policy-flagged";
   /** Primary output value — written to context at `${nodeId}.output` */
   output?: unknown;
   /** Additional context key-value pairs to set */

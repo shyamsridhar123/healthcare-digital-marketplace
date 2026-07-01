@@ -24,7 +24,7 @@ export type ScanFindingsInput = {
   tenantId: string;
   submissionId: string;
   actorId: string;
-  phiSuspected: boolean;
+  engagement_confidentialSuspected: boolean;
   findings: ScanFinding[];
 };
 
@@ -98,7 +98,7 @@ export async function ingestOnboardingScanFindings(input: ScanFindingsInput): Pr
     terminal_status: terminalStatus ?? submission.terminal_status,
     scan_evidence: {
       status,
-      phi_suspected: input.phiSuspected,
+      engagement_confidential_suspected: input.engagement_confidentialSuspected,
       findings: input.findings,
       failures,
       ingested_at: now,
@@ -111,7 +111,7 @@ export async function ingestOnboardingScanFindings(input: ScanFindingsInput): Pr
 
   await submissions.items.upsert(updated);
   await writeEvidenceAudit(input.tenantId, input.submissionId, 'onboarding.scan_findings_ingested', input.actorId, status, {
-    phiSuspected: input.phiSuspected,
+    engagement_confidentialSuspected: input.engagement_confidentialSuspected,
     findingCount: input.findings.length,
     criticalCount: input.findings.filter((finding) => finding.severity === 'critical').length,
     failures,
@@ -136,7 +136,7 @@ function collectScanFailures(submission: any, input: ScanFindingsInput): string[
   const dataCategories = Array.isArray(submission.manifest?.rai?.data_categories)
     ? submission.manifest.rai.data_categories.map((category: unknown) => String(category).toLowerCase())
     : [];
-  if (input.phiSuspected && !dataCategories.includes('phi')) failures.push('phi_unattested');
+  if (input.engagement_confidentialSuspected && !dataCategories.includes('engagement_confidential')) failures.push('engagement_confidential_unattested');
   return failures;
 }
 

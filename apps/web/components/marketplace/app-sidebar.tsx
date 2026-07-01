@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { NebulaLogo } from "@/components/ui/nebula-logo"
 import {
   LayoutGrid,
   Brain,
@@ -58,11 +59,11 @@ interface NavItem {
   external?: boolean
 }
 
-const SIDEBAR_STORAGE_KEY = "ai-marketplace.sidebar-collapsed"
+const SIDEBAR_STORAGE_KEY = "nebula-x.sidebar-collapsed"
 const SIDEBAR_EXPANDED_WIDTH = "16rem"
 const SIDEBAR_COLLAPSED_WIDTH = "5rem"
 
-// UAP Marketplaces
+// Marketplaces
 const marketplaceItems: NavItem[] = [
   {
     label: "Agent Marketplace",
@@ -160,7 +161,7 @@ export const dataSubItems: NavItem[] = [
     icon: Sparkles,
     badge: "Hub",
     badgeColor: "bg-sky-500/20 text-sky-400",
-    description: "Curated healthcare datasets",
+    description: "Curated professional-services datasets",
   },
 ]
 
@@ -180,7 +181,7 @@ export const sandboxSubItems: NavItem[] = [
   },
 ]
 
-// UAP Development & Deployment
+// Development & Deployment
 const developmentItems: NavItem[] = [
   {
     label: "Agent Builder",
@@ -212,7 +213,7 @@ const developmentItems: NavItem[] = [
   },
 ]
 
-// UAP Governance & Operations
+// Governance & Operations
 const governanceItems: NavItem[] = [
   {
     label: "Governance",
@@ -239,9 +240,9 @@ const governanceItems: NavItem[] = [
 const bottomNavItems: NavItem[] = [
   {
     label: "Help & Docs",
-    href: "https://www.optum.com/en/",
+    href: "https://www.deloitte.com/",
     icon: HelpCircle,
-    description: "Optum website",
+    description: "Deloitte website",
     external: true,
   },
 ]
@@ -839,12 +840,13 @@ export function AppSidebar() {
     <>
       <div className={cn("flex h-16 items-center border-b border-border", collapsed ? "justify-center px-2" : "justify-between px-4")}>
         <div className={cn("flex items-center", collapsed ? "justify-center" : "gap-3")}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)]">
-            <Building2 className="h-5 w-5 text-white" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary)] to-[var(--accent-light)]">
+            <NebulaLogo className="h-5 w-5 text-[#0C0C0C]" />
           </div>
           {!collapsed && (
-            <div>
-              <span className="text-sm font-bold tracking-tight text-foreground">HealthCare RCM</span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-bold tracking-tight text-foreground">Nebula-X</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--primary)]">by Deloitte</span>
             </div>
           )}
         </div>

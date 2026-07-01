@@ -9,10 +9,10 @@ import {
 } from "@/lib/azure-ml-client"
 import { demoPublishedModelExperience, models as staticModels } from "@/lib/models-data"
 
-const IMDE_DEMO_SCENARIO_ID = "imde-rcm-denial-demo"
+const IMDE_DEMO_SCENARIO_ID = "imde-engagement-exception-demo"
 
 function isAllowedDemoTenant(tenantId: string) {
-  return (process.env.UAP_IMDE_DEMO_TENANTS ?? "default")
+  return (process.env.NEBULA_X_IMDE_DEMO_TENANTS ?? "default")
     .split(",")
     .map((tenant) => tenant.trim())
     .filter(Boolean)
@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
  * POST /api/models
  *
  * Registers a custom model in the Azure ML workspace.
- * Also adds it to the AI Asset Marketplace catalog as a "byom" (bring-your-own-model) entry.
+ * Also adds it to the Nebula-X catalog as a "byom" (bring-your-own-model) entry.
  *
  * Body: RegisterModelInput JSON
  */

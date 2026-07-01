@@ -25,7 +25,7 @@ app.http('onboardingDeploymentOutputs', {
       }
 
       const rawBody = Buffer.from(await req.arrayBuffer());
-      const signature = req.headers.get('x-uap-signature-256') ?? undefined;
+      const signature = req.headers.get('x-nebula-x-signature-256') ?? undefined;
       if (!verifyGitHubWebhookSignature(secret, rawBody, signature)) {
         return { status: 401, jsonBody: { error: 'Invalid deployment outputs signature' } };
       }

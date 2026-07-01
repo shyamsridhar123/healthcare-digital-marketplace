@@ -115,8 +115,8 @@ export const PERSONA_TIERS: PersonaTier[] = [
       },
       {
         id: "clinical-expert",
-        label: "Clinical Expert",
-        desc: "Reviews model outputs for clinical relevance and safety.",
+        label: "Engagement Quality Reviewer",
+        desc: "Reviews model outputs for professional-standards relevance and independence.",
         icon: "Stethoscope",
         tier: 2,
       },
@@ -161,7 +161,7 @@ export const PERSONA_TIERS: PersonaTier[] = [
         id: "review-board",
         label: "Review Board / Ethics",
         shortLabel: "Ethics Board",
-        desc: "Approves model usage, ensures clinical and ethical compliance.",
+        desc: "Approves model usage, ensures professional-standards and ethical compliance.",
         icon: "Gavel",
         tier: 2,
       },
@@ -259,11 +259,11 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     description: "Configure storage backends, feature stores, and pipeline execution environments.",
     fields: [
       { key: "feature_store_backend", label: "Feature Store Backend", description: "Primary backend for feature storage", type: "select", defaultValue: "Azure Redis Cache", options: ["Azure Redis Cache", "Azure SQL", "Cosmos DB", "Azure Table Storage"], group: "Feature Store" },
-      { key: "pipeline_storage_account", label: "Pipeline Storage Account", description: "Azure Storage account for pipeline artifacts", type: "text", defaultValue: "aimarket-pipeline-eastus", group: "Storage" },
+      { key: "pipeline_storage_account", label: "Pipeline Storage Account", description: "Azure Storage account for pipeline artifacts", type: "text", defaultValue: "nebulax-pipeline-eastus", group: "Storage" },
       { key: "transformation_compute", label: "Transformation Compute", description: "Spark or Databricks cluster for large-scale transforms", type: "select", defaultValue: "Azure Databricks (Standard_DS3_v2)", options: ["Azure Databricks (Standard_DS3_v2)", "Azure Synapse Spark", "Azure HDInsight", "Local"], group: "Compute" },
       { key: "delta_lake_enabled", label: "Delta Lake Format", description: "Use Delta Lake format for ACID transactions on data lakes", type: "toggle", defaultValue: true, group: "Storage" },
       { key: "ingestion_parallelism", label: "Max Ingestion Workers", description: "Maximum parallel workers for data ingestion jobs", type: "number", defaultValue: 16, unit: "workers", group: "Compute" },
-      { key: "data_catalog", label: "Data Catalog Endpoint", description: "Azure Purview or Unity Catalog API endpoint", type: "text", defaultValue: "https://aimarket-purview.purview.azure.com", group: "Catalog" },
+      { key: "data_catalog", label: "Data Catalog Endpoint", description: "Azure Purview or Unity Catalog API endpoint", type: "text", defaultValue: "https://nebulax-purview.purview.azure.com", group: "Catalog" },
     ],
   },
   {
@@ -273,9 +273,9 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     description: "Manage CI/CD pipelines, container environments, and deployment targets.",
     fields: [
       { key: "acr_endpoint", label: "Container Registry", description: "Azure Container Registry login server", type: "text", defaultValue: "aimktacrp7a65r22.azurecr.io", group: "Containers" },
-      { key: "k8s_cluster", label: "AKS Cluster", description: "Primary Kubernetes cluster for workload deployments", type: "text", defaultValue: "aimarket-aks-dev", group: "Kubernetes" },
+      { key: "k8s_cluster", label: "AKS Cluster", description: "Primary Kubernetes cluster for workload deployments", type: "text", defaultValue: "nebulax-aks-dev", group: "Kubernetes" },
       { key: "cicd_platform", label: "CI/CD Platform", description: "Pipeline orchestration system in use", type: "select", defaultValue: "Azure DevOps", options: ["Azure DevOps", "GitHub Actions", "Jenkins", "CircleCI"], group: "CI/CD" },
-      { key: "artifact_feed", label: "Artifact Feed URL", description: "Azure Artifacts or npm/PyPI feed for packages", type: "text", defaultValue: "https://pkgs.dev.azure.com/Enterprise/aimarket/_packaging/ai-assets/npm/registry/", group: "CI/CD" },
+      { key: "artifact_feed", label: "Artifact Feed URL", description: "Azure Artifacts or npm/PyPI feed for packages", type: "text", defaultValue: "https://pkgs.dev.azure.com/Enterprise/nebulax/_packaging/ai-assets/npm/registry/", group: "CI/CD" },
       { key: "infra_as_code", label: "IaC Framework", description: "Infrastructure provisioning toolchain", type: "select", defaultValue: "Bicep", options: ["Bicep", "Terraform", "ARM Templates", "Pulumi"], group: "IaC" },
       { key: "gitops_enabled", label: "GitOps Mode", description: "Enable GitOps-driven reconciliation via Flux or ArgoCD", type: "toggle", defaultValue: true, group: "Kubernetes" },
     ],
@@ -288,7 +288,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     fields: [
       { key: "keyvault_name", label: "Key Vault", description: "Primary Key Vault for secrets and certs", type: "text", defaultValue: "aimkt-kv-p7a65r22", group: "Secrets" },
       { key: "private_endpoint_enabled", label: "Private Endpoints", description: "Force all service traffic through private endpoints", type: "toggle", defaultValue: true, group: "Network" },
-      { key: "vnet_name", label: "VNet Name", description: "Virtual Network for service isolation", type: "text", defaultValue: "aimarket-vnet-dev", group: "Network" },
+      { key: "vnet_name", label: "VNet Name", description: "Virtual Network for service isolation", type: "text", defaultValue: "nebulax-vnet-dev", group: "Network" },
       { key: "identity_provider", label: "Identity Provider", description: "Primary IdP for platform authentication", type: "select", defaultValue: "Microsoft Entra ID", options: ["Microsoft Entra ID", "Okta", "Ping Identity"], group: "Identity" },
       { key: "managed_identity_principal", label: "Managed Identity Principal", description: "System-assigned managed identity client ID", type: "readonly", defaultValue: "62a4c81d-…-8f21", group: "Identity" },
       { key: "defender_enabled", label: "Microsoft Defender for Cloud", description: "Enable continuous threat protection on all resources", type: "toggle", defaultValue: true, group: "Threat Protection" },
@@ -316,7 +316,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
       { key: "audit_log_storage", label: "Audit Log Storage", description: "Azure Storage account for immutable audit logs", type: "text", defaultValue: "aimktauditlogs001", group: "Audit" },
       { key: "audit_retention_days", label: "Audit Retention", description: "Number of days to retain audit events", type: "number", defaultValue: 365, unit: "days", group: "Audit" },
       { key: "data_residency_region", label: "Data Residency Region", description: "Enforce all PII data to stay within this region", type: "select", defaultValue: "United States", options: ["United States", "European Union", "United Kingdom", "Australia"], group: "Compliance" },
-      { key: "purview_workspace", label: "Microsoft Purview Workspace", description: "Data governance and lineage tracking workspace", type: "text", defaultValue: "aimarket-purview", group: "Catalog" },
+      { key: "purview_workspace", label: "Microsoft Purview Workspace", description: "Data governance and lineage tracking workspace", type: "text", defaultValue: "nebulax-purview", group: "Catalog" },
       { key: "approval_workflow_engine", label: "Approval Workflow Engine", description: "Engine used for multi-stage approval flows", type: "select", defaultValue: "Azure Logic Apps", options: ["Azure Logic Apps", "Power Automate", "ServiceNow", "Jira Service Management"], group: "Workflow" },
     ],
   },
@@ -326,11 +326,11 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Platform Overview",
     description: "Read-only view of the service topology and environment configuration.",
     fields: [
-      { key: "environment_name", label: "Environment", description: "Active deployment environment", type: "readonly", defaultValue: "ai-marketplace-dev", group: "Environment" },
+      { key: "environment_name", label: "Environment", description: "Active deployment environment", type: "readonly", defaultValue: "nebula-x-dev", group: "Environment" },
       { key: "azure_region", label: "Azure Region", description: "Primary deployment region", type: "readonly", defaultValue: "East US", group: "Environment" },
       { key: "subscription_id", label: "Subscription", description: "Azure subscription in use", type: "readonly", defaultValue: "a7fecb91-4553-…", group: "Environment" },
       { key: "active_services", label: "Active Services", description: "Number of platform services currently running", type: "readonly", defaultValue: "12 of 14", group: "Services" },
-      { key: "roadmap_link", label: "Roadmap Board", description: "Link to the product roadmap (Azure DevOps Board)", type: "text", defaultValue: "https://dev.azure.com/Enterprise/aimarket/_boards/board", group: "Planning" },
+      { key: "roadmap_link", label: "Roadmap Board", description: "Link to the product roadmap (Azure DevOps Board)", type: "text", defaultValue: "https://dev.azure.com/Enterprise/nebulax/_boards/board", group: "Planning" },
     ],
   },
   // Remaining personas — infrastructure
@@ -354,7 +354,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     fields: [
       { key: "ad_tenant_id", label: "Entra ID Tenant", description: "Microsoft Entra ID tenant for user federation", type: "text", defaultValue: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", group: "Identity" },
       { key: "sso_protocol", label: "SSO Protocol", description: "Federated authentication protocol", type: "select", defaultValue: "OIDC", options: ["OIDC", "SAML 2.0", "WS-Federation"], group: "Identity" },
-      { key: "network_peering", label: "On-Prem VPN / Peering", description: "VPN Gateway or ExpressRoute circuit name", type: "text", defaultValue: "aimarket-vpngw-dev", group: "Network" },
+      { key: "network_peering", label: "On-Prem VPN / Peering", description: "VPN Gateway or ExpressRoute circuit name", type: "text", defaultValue: "nebulax-vpngw-dev", group: "Network" },
       { key: "hsm_enabled", label: "Hardware Security Module", description: "Route key operations through Azure Dedicated HSM", type: "toggle", defaultValue: false, group: "Cryptography" },
     ],
   },
@@ -364,9 +364,9 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "API & SDK Infrastructure",
     description: "Configure API gateway endpoints, SDK package feeds, and webhook destinations.",
     fields: [
-      { key: "api_gateway_url", label: "API Gateway URL", description: "Base URL for all platform REST APIs", type: "text", defaultValue: "https://ai-marketplace-api-dev.azurewebsites.net", group: "API" },
+      { key: "api_gateway_url", label: "API Gateway URL", description: "Base URL for all platform REST APIs", type: "text", defaultValue: "https://nebula-x-api-dev.azurewebsites.net", group: "API" },
       { key: "apim_subscription_key", label: "APIM Subscription Key Header", description: "Custom header for APIM subscription key", type: "text", defaultValue: "Ocp-Apim-Subscription-Key", group: "API" },
-      { key: "sdk_feed", label: "SDK Package Feed", description: "npm/PyPI feed URL for @Enterprise/ai-marketplace SDK", type: "text", defaultValue: "https://pkgs.dev.azure.com/Enterprise/aimarket/_packaging/ai-assets/npm/registry/", group: "SDK" },
+      { key: "sdk_feed", label: "SDK Package Feed", description: "npm/PyPI feed URL for @Enterprise/nebula-x SDK", type: "text", defaultValue: "https://pkgs.dev.azure.com/Enterprise/nebulax/_packaging/ai-assets/npm/registry/", group: "SDK" },
       { key: "webhook_endpoint", label: "Webhook Destination", description: "Your endpoint to receive platform event webhooks", type: "text", defaultValue: "", group: "Events" },
     ],
   },
@@ -376,8 +376,8 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Plugin & Connector Infrastructure",
     description: "Configure plugin repository, connector storage, and extension SDK endpoints.",
     fields: [
-      { key: "plugin_registry_url", label: "Plugin Registry", description: "URL of the platform plugin registry", type: "text", defaultValue: "https://plugins.ai-marketplace.Enterprise.com", group: "Plugins" },
-      { key: "connector_storage", label: "Connector Storage Account", description: "Storage account for connector bundles", type: "text", defaultValue: "aimarket-connectors-dev", group: "Storage" },
+      { key: "plugin_registry_url", label: "Plugin Registry", description: "URL of the platform plugin registry", type: "text", defaultValue: "https://plugins.nebula-x.Enterprise.com", group: "Plugins" },
+      { key: "connector_storage", label: "Connector Storage Account", description: "Storage account for connector bundles", type: "text", defaultValue: "nebulax-connectors-dev", group: "Storage" },
       { key: "extension_sdk_version", label: "Extension SDK Version", description: "Minimum supported extension SDK version", type: "select", defaultValue: "v2.3.0", options: ["v2.3.0", "v2.2.1", "v2.1.0"], group: "SDK" },
     ],
   },
@@ -388,7 +388,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     description: "Configure sandbox compute, experiment isolation, and BYOM storage.",
     fields: [
       { key: "sandbox_compute", label: "Sandbox Compute Tier", description: "Compute tier allocated to your team sandbox", type: "select", defaultValue: "Standard_DS3_v2 (4 vCPU, 14 GB)", options: ["Standard_DS3_v2 (4 vCPU, 14 GB)", "Standard_DS4_v2 (8 vCPU, 28 GB)", "Standard_NC6s_v3 (6 vCPU, 1× V100)"], group: "Compute" },
-      { key: "byom_storage", label: "BYOM Storage Account", description: "Dedicated storage for brought-your-own-model artifacts", type: "text", defaultValue: "aimarket-byom-dev", group: "BYOM" },
+      { key: "byom_storage", label: "BYOM Storage Account", description: "Dedicated storage for brought-your-own-model artifacts", type: "text", defaultValue: "nebulax-byom-dev", group: "BYOM" },
       { key: "isolation_mode", label: "Sandbox Isolation", description: "Network and data isolation level for experiments", type: "select", defaultValue: "Full VNet Isolation", options: ["Full VNet Isolation", "Shared Network (Restricted ACLs)", "Public (No Isolation)"], group: "Security" },
     ],
   },
@@ -408,10 +408,10 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     personaId: "clinical-expert",
     category: "infrastructure",
     title: "Model Serving Endpoints",
-    description: "Read-only view of model serving infrastructure relevant to clinical review.",
+    description: "Read-only view of model serving infrastructure relevant to quality review.",
     fields: [
-      { key: "inference_endpoint", label: "Primary Inference Endpoint", description: "REST endpoint for model scoring", type: "readonly", defaultValue: "https://aimarket-inference.azurecontainerapps.io", group: "Endpoints" },
-      { key: "model_version", label: "Active Clinical Model Version", description: "Version of the model currently under clinical review", type: "readonly", defaultValue: "v2.1.4-rc", group: "Models" },
+      { key: "inference_endpoint", label: "Primary Inference Endpoint", description: "REST endpoint for model scoring", type: "readonly", defaultValue: "https://nebulax-inference.azurecontainerapps.io", group: "Endpoints" },
+      { key: "model_version", label: "Active Engagement Model Version", description: "Version of the model currently under quality review", type: "readonly", defaultValue: "v2.1.4-rc", group: "Models" },
     ],
   },
   {
@@ -420,7 +420,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Domain Data Sources",
     description: "Configure domain-specific reference data sources used in model validation.",
     fields: [
-      { key: "reference_data_path", label: "Reference Data Path", description: "Blob storage path containing ground-truth reference data", type: "text", defaultValue: "https://aimarket-data.blob.core.windows.net/domain-ref/", group: "Data" },
+      { key: "reference_data_path", label: "Reference Data Path", description: "Blob storage path containing ground-truth reference data", type: "text", defaultValue: "https://nebulax-data.blob.core.windows.net/domain-ref/", group: "Data" },
       { key: "validation_framework", label: "Validation Framework", description: "Framework used for domain model validation", type: "select", defaultValue: "Great Expectations", options: ["Great Expectations", "Deequ", "Custom", "None"], group: "Validation" },
     ],
   },
@@ -430,9 +430,9 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "BI & Analytics Infrastructure",
     description: "Configure BI connectors, data warehouse endpoints, and dashboard source connections.",
     fields: [
-      { key: "synapse_workspace", label: "Synapse Workspace", description: "Azure Synapse workspace for SQL and Spark analytics", type: "text", defaultValue: "aimarket-synapse-dev", group: "Warehouse" },
+      { key: "synapse_workspace", label: "Synapse Workspace", description: "Azure Synapse workspace for SQL and Spark analytics", type: "text", defaultValue: "nebulax-synapse-dev", group: "Warehouse" },
       { key: "powerbi_workspace", label: "Power BI Workspace ID", description: "ID of the Power BI workspace for published dashboards", type: "text", defaultValue: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", group: "Dashboards" },
-      { key: "refresh_storage", label: "Dashboard Cache Storage", description: "Storage container for pre-aggregated dashboard caches", type: "text", defaultValue: "aimarket-bicache-dev", group: "Dashboards" },
+      { key: "refresh_storage", label: "Dashboard Cache Storage", description: "Storage container for pre-aggregated dashboard caches", type: "text", defaultValue: "nebulax-bicache-dev", group: "Dashboards" },
     ],
   },
   {
@@ -441,7 +441,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Operational Tool Endpoints",
     description: "Configure workflow tool integration endpoints for daily operations.",
     fields: [
-      { key: "workflow_api_url", label: "Workflow API URL", description: "API endpoint used by operational tools", type: "text", defaultValue: "https://ai-marketplace-api-dev.azurewebsites.net/api/workflows", group: "Tools" },
+      { key: "workflow_api_url", label: "Workflow API URL", description: "API endpoint used by operational tools", type: "text", defaultValue: "https://nebula-x-api-dev.azurewebsites.net/api/workflows", group: "Tools" },
       { key: "notification_channel", label: "Notification Channel", description: "Teams or Slack webhook for workflow notifications", type: "text", defaultValue: "https://outlook.office.com/webhook/…", group: "Notifications" },
     ],
   },
@@ -451,8 +451,8 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Review & Audit Access",
     description: "Configure audit trail access and review storage for ethics board workflows.",
     fields: [
-      { key: "review_storage", label: "Review Artifacts Storage", description: "Storage account for model review packages", type: "text", defaultValue: "aimarket-reviews-dev", group: "Storage" },
-      { key: "approval_system", label: "Approval System URL", description: "ServiceNow or Jira endpoint for approval tickets", type: "text", defaultValue: "https://Enterprise.service-now.com/ai-review", group: "Workflow" },
+      { key: "review_storage", label: "Review Artifacts Storage", description: "Storage account for model review packages", type: "text", defaultValue: "nebulax-reviews-dev", group: "Storage" },
+      { key: "approval_system", label: "Approval System URL", description: "ServiceNow or Jira endpoint for approval tickets", type: "text", defaultValue: "https://Enterprise.service-now.com/nebula-x-review", group: "Workflow" },
     ],
   },
   {
@@ -461,7 +461,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     title: "Marketplace Integration",
     description: "Configure marketplace listing endpoints, billing integration, and SDK settings.",
     fields: [
-      { key: "listing_api_url", label: "Listing API URL", description: "API endpoint for submitting marketplace listings", type: "text", defaultValue: "https://ai-marketplace-api-dev.azurewebsites.net/api/catalog", group: "API" },
+      { key: "listing_api_url", label: "Listing API URL", description: "API endpoint for submitting marketplace listings", type: "text", defaultValue: "https://nebula-x-api-dev.azurewebsites.net/api/catalog", group: "API" },
       { key: "billing_webhook", label: "Billing Webhook URL", description: "Your endpoint to receive usage billing events", type: "text", defaultValue: "", group: "Billing" },
       { key: "sdk_language", label: "Primary SDK Language", description: "Programming language for SDK integration", type: "select", defaultValue: "TypeScript", options: ["TypeScript", "Python", "C#", "Java", "Go"], group: "SDK" },
     ],
@@ -626,10 +626,10 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
   {
     personaId: "clinical-expert",
     category: "performance",
-    title: "Clinical Review Performance",
-    description: "Configure clinical review queue size and scoring latency thresholds.",
+    title: "Quality Review Performance",
+    description: "Configure quality review queue size and scoring latency thresholds.",
     fields: [
-      { key: "max_daily_reviews", label: "Max Daily Reviews", description: "Maximum model outputs queued for clinical review per day", type: "number", defaultValue: 100, unit: "records", group: "Queue" },
+      { key: "max_daily_reviews", label: "Max Daily Reviews", description: "Maximum model outputs queued for quality review per day", type: "number", defaultValue: 100, unit: "records", group: "Queue" },
       { key: "score_latency_alert_ms", label: "Scoring Latency Alert", description: "Alert if scoring response exceeds this threshold", type: "number", defaultValue: 500, unit: "ms", group: "Latency" },
     ],
   },
@@ -686,7 +686,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
       { key: "latency_slo_ms", label: "Latency SLO (P99)", description: "P99 latency target in milliseconds", type: "number", defaultValue: 500, unit: "ms", group: "SLOs" },
       { key: "error_budget_policy", label: "Error Budget Policy", description: "Action to take when the error budget falls below 10%", type: "select", defaultValue: "Freeze releases", options: ["Freeze releases", "Alert only", "Alert + reduce change rate"], group: "Error Budgets" },
       { key: "alert_channel", label: "Alert Notification Channel", description: "PagerDuty, OpsGenie, or Teams webhook for incidents", type: "text", defaultValue: "https://events.pagerduty.com/integration/…", group: "Alerting" },
-      { key: "runbook_url", label: "Runbook URL", description: "Primary operations runbook for incident response", type: "text", defaultValue: "https://confluence.Enterprise.com/ai-marketplace/runbooks", group: "Incidents" },
+      { key: "runbook_url", label: "Runbook URL", description: "Primary operations runbook for incident response", type: "text", defaultValue: "https://confluence.Enterprise.com/nebula-x/runbooks", group: "Incidents" },
       { key: "backup_frequency", label: "Backup Frequency", description: "How often configuration state is backed up", type: "select", defaultValue: "Daily", options: ["Hourly", "Daily", "Weekly"], group: "Backups" },
     ],
   },
@@ -733,7 +733,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
     description: "Configure retry policies, dead-letter queues, and SLA breach alerting for pipelines.",
     fields: [
       { key: "pipeline_retry_count", label: "Pipeline Retry Count", description: "Number of automatic retries on job failure", type: "number", defaultValue: 3, unit: "retries", group: "Retries" },
-      { key: "dead_letter_queue", label: "Dead-Letter Queue", description: "Azure Service Bus queue for failed pipeline events", type: "text", defaultValue: "aimarket-pipeline-dlq", group: "Error Handling" },
+      { key: "dead_letter_queue", label: "Dead-Letter Queue", description: "Azure Service Bus queue for failed pipeline events", type: "text", defaultValue: "nebulax-pipeline-dlq", group: "Error Handling" },
       { key: "pipeline_sla_alert_min", label: "Pipeline SLA Alert", description: "Alert if a pipeline run exceeds this duration", type: "number", defaultValue: 30, unit: "minutes", group: "SLA" },
       { key: "idempotency_enabled", label: "Idempotent Writes", description: "Enable idempotency keys to prevent duplicate data", type: "toggle", defaultValue: true, group: "Correctness" },
     ],
@@ -747,7 +747,7 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
       { key: "mttr_hours", label: "MTTR (last 90 days)", description: "Mean Time To Recovery for recent incidents", type: "readonly", defaultValue: "0.8 hours", group: "Metrics" },
       { key: "incidents_90d", label: "Incidents (last 90 days)", description: "Total P1/P2 incidents in the past quarter", type: "readonly", defaultValue: "2", group: "Metrics" },
       { key: "availability_30d", label: "Availability (last 30 days)", description: "Measured platform availability percentage", type: "readonly", defaultValue: "99.97%", group: "Metrics" },
-      { key: "status_page_url", label: "Status Page", description: "Public platform status page URL", type: "text", defaultValue: "https://status.ai-marketplace.Enterprise.com", group: "Communication" },
+      { key: "status_page_url", label: "Status Page", description: "Public platform status page URL", type: "text", defaultValue: "https://status.nebula-x.Enterprise.com", group: "Communication" },
     ],
   },
   {
@@ -799,11 +799,11 @@ export const SETTINGS_CATALOG: PersonaSettings[] = [
   {
     personaId: "clinical-expert",
     category: "reliability",
-    title: "Clinical Safety Reliability",
-    description: "Configure safety thresholds and auto-suspension rules for clinical model outputs.",
+    title: "Quality Reliability",
+    description: "Configure safety thresholds and auto-suspension rules for engagement model outputs.",
     fields: [
       { key: "auto_suspend_threshold", label: "Auto-Suspend Threshold", description: "Suspend model scoring if error rate exceeds this", type: "number", defaultValue: 5, unit: "% error rate", group: "Safety" },
-      { key: "safety_alert_email", label: "Safety Alert Email", description: "Clinical safety team email for auto-suspend notifications", type: "text", defaultValue: "clinical-safety@yourorg.com", group: "Alerting" },
+      { key: "safety_alert_email", label: "Safety Alert Email", description: "Quality team email for auto-suspend notifications", type: "text", defaultValue: "quality-review@yourorg.com", group: "Alerting" },
     ],
   },
   {

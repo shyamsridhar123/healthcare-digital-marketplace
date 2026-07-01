@@ -1,7 +1,7 @@
 /**
- * Optum RCM MVP — Cosmos DB Template Seeder
+ * Nebula-X by Deloitte — Cosmos DB Template Seeder
  *
- * Loads the 4 production workflow templates into the `templates` container.
+ * Loads the 4 production workflow templates into the API's orchestration templates container.
  * Run once after initial deployment:
  *
  *   npx tsx infra/optum-rcm/seed/cosmos-seed.ts
@@ -9,6 +9,7 @@
  * Requires:
  *   COSMOS_ENDPOINT and COSMOS_KEY environment variables
  *   (or use the local emulator defaults).
+ *   COSMOS_DATABASE is optional and defaults to the API default (`ai-marketplace`).
  */
 
 import { CosmosClient } from "@azure/cosmos";
@@ -20,8 +21,8 @@ const key =
   process.env.COSMOS_KEY ??
   "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
 
-const DATABASE = "optum-rcm";
-const CONTAINER = "templates";
+const DATABASE = process.env.COSMOS_DATABASE ?? "ai-marketplace";
+const CONTAINER = "orchestration-templates";
 
 async function seed() {
   const client = new CosmosClient({ endpoint, key });

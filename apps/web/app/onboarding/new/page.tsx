@@ -19,15 +19,15 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:7071/a
 
 export default function OnboardingPage() {
   const [tenantId, setTenantId] = useState("contoso")
-  const [name, setName] = useState("Claims Copilot")
+  const [name, setName] = useState("AuditScribe")
   const [version, setVersion] = useState("1.0.0")
-  const [description, setDescription] = useState("Assists claims analysts with document summarization and routing.")
-  const [team, setTeam] = useState("claims-platform")
-  const [email, setEmail] = useState("claims-platform@example.com")
-  const [image, setImage] = useState("contoso.azurecr.io/claims-copilot:1.0.0")
-  const [capabilities, setCapabilities] = useState("claims-summary, payer-rules")
+  const [description, setDescription] = useState("Assists engagement teams with workpaper summarization and routing.")
+  const [team, setTeam] = useState("engagement-platform")
+  const [email, setEmail] = useState("engagement-platform@example.com")
+  const [image, setImage] = useState("deloitte.azurecr.io/auditscribe:1.0.0")
+  const [capabilities, setCapabilities] = useState("workpaper-summary, regulator-rules")
   const [dataCategories, setDataCategories] = useState("pii")
-  const [repoUrl, setRepoUrl] = useState("https://github.com/contoso/claims-copilot")
+  const [repoUrl, setRepoUrl] = useState("https://github.com/deloitte/auditscribe")
   const [branch, setBranch] = useState("main")
   const [commitSha, setCommitSha] = useState("local-ui-submit")
   const [submitting, setSubmitting] = useState(false)
@@ -84,10 +84,10 @@ export default function OnboardingPage() {
             </div>
             <h1 className="text-2xl font-semibold text-foreground">Onboard a Domain Agent</h1>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-              Submit an ACA-backed agent manifest through the same governed pipeline used by GitHub and the VS Code UAP onboarding skill.
+              Submit an ACA-backed agent manifest through the same governed pipeline used by GitHub and the VS Code Nebula-X onboarding skill.
             </p>
           </div>
-          <Link href="/asset/uap-onboarding-agent">
+          <Link href="/asset/nebula-x-onboarding-agent">
             <Button variant="outline" className="gap-2">
               Marketplace asset <ExternalLink className="h-4 w-4" />
             </Button>
@@ -96,8 +96,8 @@ export default function OnboardingPage() {
 
         <div className="mb-6 grid gap-4 lg:grid-cols-3">
           {[
-            { icon: Bot, title: "VS Code", text: "Invoke /uap-onboarding after installing the workspace skill." },
-            { icon: Terminal, title: "CLI", text: "Use uap validate, uap submit, and uap status when the CLI package is installed." },
+            { icon: Bot, title: "VS Code", text: "Invoke /nebula-x-onboarding after installing the workspace skill." },
+            { icon: Terminal, title: "CLI", text: "Use nebula-x validate, nebula-x submit, and nebula-x status when the CLI package is installed." },
             { icon: GitBranch, title: "GitHub", text: "Push code and post CI evidence into the same onboarding API." },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className="rounded-lg border border-border bg-card p-4">
@@ -157,9 +157,9 @@ export default function OnboardingPage() {
             <div className="rounded-lg border border-border bg-card p-5">
               <h2 className="text-sm font-medium text-foreground">Install VS Code Skill</h2>
               <code className="mt-3 block rounded-md bg-background p-3 text-xs text-muted-foreground">
-                Copy-Item -Recurse .github/skills/uap-onboarding $env:USERPROFILE\.copilot\skills\uap-onboarding -Force
+                Copy-Item -Recurse .github/skills/nebula-x-onboarding $env:USERPROFILE\.copilot\skills\nebula-x-onboarding -Force
               </code>
-              <p className="mt-3 text-xs text-muted-foreground">Then open Copilot Chat and invoke /uap-onboarding.</p>
+              <p className="mt-3 text-xs text-muted-foreground">Then open Copilot Chat and invoke /nebula-x-onboarding.</p>
             </div>
           </aside>
         </div>

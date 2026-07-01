@@ -35,12 +35,12 @@ interface ChatMessage {
 function spaceReply(prompt: string) {
   const normalized = prompt.toLowerCase()
   if (normalized.includes("carc") || normalized.includes("197")) {
-    return "CARC 197 usually points to missing or invalid authorization. For this de-identified scenario, the Space estimates high denial risk and recommends checking prior-auth evidence, payer-specific medical-necessity policy, and submission timing before appeal."
+    return "Control exception EX-197 usually points to missing or invalid approval evidence. For this engagement-confidential scenario, the Space estimates high exception risk and recommends checking approval workflow evidence, regulator-specific policy, and submission timing before remediation."
   }
   if (normalized.includes("appeal") || normalized.includes("evidence")) {
-    return "Recommended appeal package: authorization confirmation, clinical necessity summary, original claim timeline, payer policy excerpt, and denial-code mapping. This response is generated from the published snapshot only; no source data or credentials are copied to the visitor."
+    return "Recommended remediation package: approval confirmation, regulatory rationale summary, original transaction timeline, regulator policy excerpt, and exception-code mapping. This response is generated from the published snapshot only; no source data or credentials are copied to the visitor."
   }
-  return "Estimated denial risk: 72% high. Top drivers are prior-authorization mismatch, payer-policy variance, and historical denial pattern for the procedure group. Try seeding a sandbox to inspect the immutable agent definition and adapt it for your team."
+  return "Estimated exception risk: 72% high. Top drivers are approval-workflow mismatch, regulator-policy variance, and historical finding patterns for the transaction group. Try seeding a sandbox to inspect the immutable agent definition and adapt it for your team."
 }
 
 export default function SpaceDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -51,7 +51,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
     {
       role: "space",
       content:
-        "Hi, I am the Denial Risk Copilot Space. Enter a de-identified claim scenario and I will explain denial risk drivers from the published snapshot.",
+        "Hi, I am the Audit Exception Copilot Space. Enter an engagement-confidential transaction scenario and I will explain exception risk drivers from the published snapshot.",
     },
   ])
   const [seeded, setSeeded] = useState(false)
@@ -151,12 +151,12 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                   Try the Space
                 </CardTitle>
                 <CardDescription>
-                  Chat-only v1: no visitor file uploads. Use de-identified scenarios only.
+                  Chat-only v1: no visitor file uploads. Use engagement-confidential scenarios only.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-200">
-                  PHI warning: do not paste patient names, MRNs, claim IDs, or source documents. This demo stores no raw visitor transcript.
+                  Engagement-confidential warning: do not paste client names, engagement IDs, source documents, or credentials. This demo stores no raw visitor transcript.
                 </div>
 
                 <div className="max-h-[360px] space-y-3 overflow-y-auto rounded-lg border border-border bg-background/60 p-4">
@@ -182,7 +182,7 @@ export default function SpaceDetailPage({ params }: { params: Promise<{ id: stri
                   <Textarea
                     value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
-                    placeholder="Enter a de-identified claim scenario..."
+                    placeholder="Enter an engagement-confidential transaction scenario..."
                     className="min-h-24"
                   />
                   <div className="flex flex-wrap items-center justify-between gap-2">

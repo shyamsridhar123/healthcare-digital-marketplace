@@ -74,7 +74,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
 
       async function loadPublishedDemoModel() {
         try {
-          const response = await fetch("/api/models?demoScenarioId=imde-rcm-denial-demo&tenantId=default", { cache: "no-store" })
+          const response = await fetch("/api/models?demoScenarioId=imde-engagement-exception-demo&tenantId=default", { cache: "no-store" })
           if (!response.ok) return
           const payload = await response.json() as { models?: Array<typeof demoPublishedModelExperience> }
           const found = (payload.models ?? []).find((item) => item.id === demoPublishedModelExperience.id) ?? null
@@ -256,7 +256,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="space-y-4">
                     <div>
                       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Pick a synthetic claim
+                        Pick a synthetic engagement scenario
                       </p>
                       <div className="grid gap-2">
                         {previewScenarios.map((s) => {
@@ -305,7 +305,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs text-muted-foreground">
-                        Outputs are pre-canned for this demo; no real claims are ever scored.
+                        Outputs are pre-canned for this demo; no real engagement records are ever scored.
                       </p>
                       <Button
                         type="button"
@@ -339,7 +339,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       {result ? (
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                            <span className="text-sm text-muted-foreground">Denial risk:</span>
+                            <span className="text-sm text-muted-foreground">Exception risk:</span>
                             <span
                               className={cn(
                                 "text-base font-semibold",
@@ -367,8 +367,8 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       ) : (
                         <p className="text-sm text-muted-foreground">
                           {running
-                            ? "Scoring synthetic claim..."
-                            : "Pick a synthetic claim above and click Run preview."}
+                            ? "Scoring synthetic engagement scenario..."
+                            : "Pick a synthetic engagement scenario above and click Run preview."}
                         </p>
                       )}
                     </div>
@@ -470,7 +470,7 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       <p className="text-xs text-muted-foreground">
                         {model.experienceType === "published-model-experience"
                           ? "Demo governance evidence from a synthetic-data IMDE sandbox run."
-                          : "Governance-approved documentation for production use. HIPAA & SOC2 reviewed."}
+                          : "Governance-approved documentation for production use. SOC2 & ISO27001 reviewed."}
                       </p>
                     </div>
 
@@ -523,9 +523,9 @@ export default function ModelDetailPage({ params }: { params: Promise<{ id: stri
                       <h3 className="mb-3 text-base font-medium text-foreground">Intended Use</h3>
                       <div className="rounded-lg border border-border bg-secondary/30 p-4 text-sm text-muted-foreground">
                         <p>
-                          This model is designed for use within Healthcare RCM healthcare workflows. It is NOT intended
-                          for use in direct clinical decision-making, emergency care, or as a standalone diagnostic tool.
-                          All outputs should be reviewed by qualified healthcare professionals.
+                          This model is designed for use within professional-services engagement delivery workflows. It is NOT intended
+                          for use as a standalone audit opinion, tax filing decision, or legal conclusion.
+                          All outputs should be reviewed by qualified Deloitte professionals.
                         </p>
                       </div>
                     </div>
@@ -573,7 +573,7 @@ client = FoundryClient(
 
 response = client.models.invoke(
     model_id="${model.id}",
-    input={"text": "Patient presented with..."},
+    input={"text": "Engagement workpaper excerpt..."},
 )
 print(response.result)`}</pre>
                       </div>
@@ -590,7 +590,7 @@ const client = new FoundryClient({
 
 const response = await client.models.invoke({
   modelId: "${model.id}",
-  input: { text: "Patient presented with..." },
+  input: { text: "Engagement workpaper excerpt..." },
 });
 console.log(response.result);`}</pre>
                       </div>
@@ -603,7 +603,7 @@ console.log(response.result);`}</pre>
   "${model.endpoint ?? "https://aimarket-hub.azure.com"}/invoke" \\
   -H "Authorization: Bearer $AZURE_TOKEN" \\
   -H "Content-Type: application/json" \\
-  -d '{"input": {"text": "Patient presented with..."}}'`}</pre>
+  -d '{"input": {"text": "Engagement workpaper excerpt..."}}'`}</pre>
                       </div>
                     </div>
                   </div>

@@ -55,8 +55,8 @@ const containers: CosmosContainer[] = [
     throughput: "Serverless",
     itemCount: 48,
     items: [
-      { id: "asset-001", tenantId: "demo-tenant", name: "Claims Denial Agent v2", type: "agent", status: "published", publisherId: "hc-rcm", createdAt: "2026-02-15T10:00:00Z" },
-      { id: "asset-002", tenantId: "demo-tenant", name: "Eligibility Verifier", type: "agent", status: "published", publisherId: "hc-rcm", createdAt: "2026-01-20T09:30:00Z" },
+      { id: "asset-001", tenantId: "demo-tenant", name: "LedgerSentinel Agent v2", type: "agent", status: "published", publisherId: "ps-engagement-delivery", createdAt: "2026-02-15T10:00:00Z" },
+      { id: "asset-002", tenantId: "demo-tenant", name: "Compliance Verifier", type: "agent", status: "published", publisherId: "ps-engagement-delivery", createdAt: "2026-01-20T09:30:00Z" },
       { id: "asset-003", tenantId: "demo-tenant", name: "GPT-4o (Azure AI Foundry)", type: "model", status: "active", endpoint: "https://...", createdAt: "2026-01-10T08:00:00Z" },
     ],
   },
@@ -66,7 +66,7 @@ const containers: CosmosContainer[] = [
     throughput: "Serverless",
     itemCount: 6,
     items: [
-      { id: "hc-rcm", publisherId: "hc-rcm", name: "Healthcare RCM Team", verified: true, assetCount: 12, createdAt: "2025-12-01T00:00:00Z" },
+      { id: "ps-engagement-delivery", publisherId: "ps-engagement-delivery", name: "Deloitte Audit", verified: true, assetCount: 12, createdAt: "2025-12-01T00:00:00Z" },
       { id: "openai-azure", publisherId: "openai-azure", name: "Azure OpenAI Service", verified: true, assetCount: 8, createdAt: "2025-12-01T00:00:00Z" },
     ],
   },
@@ -107,7 +107,7 @@ const containers: CosmosContainer[] = [
     throughput: "Serverless",
     itemCount: 18,
     items: [
-      { id: "wf-001", tenantId: "demo-tenant", name: "Claims Processing Pipeline", steps: 4, status: "active", lastRun: "2026-03-02T13:00:00Z" },
+      { id: "wf-001", tenantId: "demo-tenant", name: "Transactions Processing Pipeline", steps: 4, status: "active", lastRun: "2026-03-02T13:00:00Z" },
     ],
   },
   {
@@ -125,7 +125,7 @@ const containers: CosmosContainer[] = [
     throughput: "Serverless",
     itemCount: 9,
     items: [
-      { id: "proj-001", tenantId: "demo-tenant", name: "Q1 Denial Reduction", status: "active", assetIds: ["asset-001", "asset-002"], createdAt: "2026-01-05T00:00:00Z" },
+      { id: "proj-001", tenantId: "demo-tenant", name: "Q1 Finding Reduction", status: "active", assetIds: ["asset-001", "asset-002"], createdAt: "2026-01-05T00:00:00Z" },
     ],
   },
   {

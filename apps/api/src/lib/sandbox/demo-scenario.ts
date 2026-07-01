@@ -1,4 +1,4 @@
-export const IMDE_DEMO_SCENARIO_ID = "imde-rcm-denial-demo";
+export const IMDE_DEMO_SCENARIO_ID = "imde-advisory-exception-demo";
 
 export type DemoDataClassification = "synthetic" | "de-identified" | "approved-demo";
 
@@ -6,7 +6,7 @@ export interface ImdeDemoDataPackage {
   id: string;
   displayName: string;
   version: string;
-  classification: "internal" | "restricted" | "phi";
+  classification: "internal" | "restricted" | "engagement_confidential";
   demoDataClassifications: DemoDataClassification[];
   demoDataStatement: string;
 }
@@ -81,125 +81,125 @@ export interface ImdeDemoScenario {
   };
 }
 
-const PRIMARY_PACKAGE_IDS = ["claims_training", "denials_gold"];
+const PRIMARY_PACKAGE_IDS = ["transaction_testing_training", "control_exceptions_gold"];
 
 const scenario: ImdeDemoScenario = {
   demoScenarioId: IMDE_DEMO_SCENARIO_ID,
-  title: "RCM Denial Prediction Sandbox",
-  baseModelId: "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+  title: "Nebula-X Audit Exception Sandbox",
+  baseModelId: "Deloitte Audit LM",
   requestDefaults: {
-    name: "RCM denial prediction fine-tuning",
-    description: "Governed team sandbox for denial prediction model tuning with approved demo claims data.",
+    name: "Audit exception prediction fine-tuning",
+    description: "Governed team sandbox for audit exception prediction model tuning with approved professional-services demo data.",
     workspaceTemplateId: "aml-team-standard-v1",
     sandboxType: "team",
     dataPackages: PRIMARY_PACKAGE_IDS,
     computeProfile: "gpu-small",
     durationDays: 30,
-    costCenter: "RCM-AI-2026",
-    businessJustification: "Tune and evaluate a denial prediction model using synthetic, de-identified claims demo data before marketplace publication.",
+    costCenter: "NEBULA-X-AUDIT-2026",
+    businessJustification: "Tune and evaluate an audit exception prediction model using synthetic ERP transactions before Nebula-X publication.",
   },
   actors: {
     ownerId: "ds-priya-shah",
     ownerName: "Priya Shah",
     approverId: "platform-admin-morgan-lee",
     approverName: "Morgan Lee",
-    teamName: "Revenue Cycle AI Lab",
+    teamName: "Deloitte Audit Innovation",
   },
   dataPackages: [
     {
-      id: "claims_training",
-      displayName: "Claims Training Dataset",
+      id: "transaction_testing_training",
+      displayName: "Transaction Testing Dataset",
       version: "12",
       classification: "internal",
       demoDataClassifications: ["synthetic", "de-identified", "approved-demo"],
-      demoDataStatement: "synthetic, de-identified approved demo claims data for RCM model training.",
+      demoDataStatement: "synthetic, de-identified approved demo transactions data for audit analytics model training.",
     },
     {
-      id: "denials_gold",
-      displayName: "Denials Gold Dataset",
+      id: "control_exceptions_gold",
+      displayName: "Control Exceptions Gold Dataset",
       version: "4",
       classification: "internal",
       demoDataClassifications: ["synthetic", "de-identified", "approved-demo"],
-      demoDataStatement: "synthetic, de-identified approved demo denial outcomes for evaluation.",
+      demoDataStatement: "synthetic, de-identified approved demo control exception outcomes for evaluation.",
     },
   ],
-  selectedRunId: "run-denial-pubmedbert-v3",
+  selectedRunId: "run-exception-auditlm-v3",
   evaluationRuns: [
     {
-      id: "run-denial-pubmedbert-v3",
-      name: "PubMedBERT denial classifier v3",
+      id: "run-exception-auditlm-v3",
+      name: "Deloitte Audit LM exception classifier v3",
       status: "completed",
       selectedWinner: true,
       governanceStatus: "ready-for-publish",
-      baseModelId: "hf-microsoft-biomednlp-pubmedbert-base-uncased-abstract",
+      baseModelId: "Deloitte Audit LM",
       dataPackages: PRIMARY_PACKAGE_IDS,
       metrics: { f1: 0.87, accuracy: 0.91, latencyMs: 142 },
       lineage: {
-        notebookPath: "notebooks/denials_prediction_finetune.ipynb",
-        templateId: "denials-prediction-finetune-v1",
-        trainingDataVersion: "claims_training:12",
-        evaluationDataVersion: "denials_gold:4",
+        notebookPath: "notebooks/control_exceptions_finetune.ipynb",
+        templateId: "control-exceptions-finetune-v1",
+        trainingDataVersion: "transaction_testing_training:12",
+        evaluationDataVersion: "control_exceptions_gold:4",
       },
     },
     {
-      id: "run-denial-baseline-v1",
-      name: "Baseline gradient boosted claims classifier",
+      id: "run-exception-baseline-v1",
+      name: "Baseline control testing classifier",
       status: "completed",
       selectedWinner: false,
       governanceStatus: "in-review",
-      baseModelId: "baseline-claims-gbdt",
+      baseModelId: "baseline-control-testing-gbdt",
       dataPackages: PRIMARY_PACKAGE_IDS,
       metrics: { f1: 0.74, accuracy: 0.82, latencyMs: 96 },
       lineage: {
-        notebookPath: "notebooks/claims_baseline_train.ipynb",
-        templateId: "claims-baseline-v1",
-        trainingDataVersion: "claims_training:12",
-        evaluationDataVersion: "denials_gold:4",
+        notebookPath: "notebooks/transaction_testing_baseline.ipynb",
+        templateId: "transaction-testing-baseline-v1",
+        trainingDataVersion: "transaction_testing_training:12",
+        evaluationDataVersion: "control_exceptions_gold:4",
       },
     },
   ],
   publishedExperience: {
-    modelRouteId: "rcm-denial-prediction-space",
-    displayName: "RCM Denial Prediction Space",
-    task: "Healthcare revenue cycle denial prediction",
+    modelRouteId: "nebula-x-audit-exception-space",
+    displayName: "Nebula-X Audit Exception Space",
+    task: "Professional services audit exception prediction",
     trustStatus: "governance-passed",
     experienceStatus: "published",
     playgroundScenarios: [
       {
-        id: "outpatient-mri-no-auth",
-        label: "Outpatient MRI, missing prior auth",
+        id: "deal-advisory-revenue-cutoff",
+        label: "Deal advisory revenue cutoff",
         inputText:
-          "Synthetic claim: outpatient MRI of lumbar spine for chronic low back pain, payer A commercial plan, no prior authorization on file, billed CPT 72148.",
+          "Synthetic transaction set: acquisition target revenue entries booked in the final three days of the period, SAP source system, manual approval workflow, and counterparty concentration above threshold.",
         output: {
           prediction: "High",
           rationale:
-            "Synthetic example: payer A consistently denies advanced imaging without a prior auth record; documentation gap drives high denial risk.",
-          reasonCode: "CO-197",
+            "Synthetic example: late-period manual entries and concentrated counterparties require expanded transaction testing before M&A due diligence sign-off.",
+          reasonCode: "DA-REV-CUTOFF",
           confidence: 0.92,
         },
       },
       {
-        id: "ed-visit-coding-mismatch",
-        label: "ED visit, coding mismatch",
+        id: "sox-control-evidence-gap",
+        label: "SOX control evidence gap",
         inputText:
-          "Synthetic claim: emergency department level 4 visit (CPT 99284) with primary diagnosis of unspecified chest pain (R07.9), no supporting cardiac workup documented.",
+          "Synthetic control test: user access review control has incomplete reviewer evidence, Oracle ERP export, and missing remediation owner for two sampled exceptions.",
         output: {
           prediction: "Medium",
           rationale:
-            "Synthetic example: E/M level appears unsupported by documented workup; payer may downcode or request records.",
-          reasonCode: "CO-50",
+            "Synthetic example: evidence completeness is partial and requires manager review, but compensating monitoring controls reduce the exception severity.",
+          reasonCode: "SOX-EVIDENCE",
           confidence: 0.68,
         },
       },
       {
-        id: "inpatient-stay-complete-docs",
-        label: "Inpatient stay, complete documentation",
+        id: "tax-provision-complete-support",
+        label: "Tax provision complete support",
         inputText:
-          "Synthetic claim: 3-day inpatient admission for community-acquired pneumonia, attending notes and discharge summary on file, DRG 193, in-network facility.",
+          "Synthetic tax provision workpaper: jurisdictional adjustments tie to the trial balance, GloBE entity classifications are reviewed, and partner approval is documented.",
         output: {
           prediction: "Low",
           rationale:
-            "Synthetic example: medical necessity well documented and DRG aligns with diagnosis; low likelihood of denial.",
+            "Synthetic example: tax classification support, reviewer sign-off, and ERP reconciliation are complete, so exception likelihood is low.",
           confidence: 0.12,
         },
       },
@@ -221,8 +221,8 @@ export function validateImdeDemoScenario(candidate: ImdeDemoScenario): void {
 
   for (const packageId of selectedPackages) {
     const dataPackage = packageById.get(packageId);
-    if (!dataPackage || dataPackage.classification === "phi" || dataPackage.classification === "restricted") {
-      throw new Error("Primary IMDE demo scenario must not include restricted or PHI packages");
+    if (!dataPackage || dataPackage.classification === "engagement_confidential" || dataPackage.classification === "restricted") {
+      throw new Error("Primary IMDE demo scenario must not include restricted or engagement-confidential data packages");
     }
     if (!dataPackage.demoDataStatement.toLowerCase().includes("synthetic")) {
       throw new Error(`Demo data package ${packageId} must include a synthetic data statement`);
@@ -250,11 +250,11 @@ interface DemoSandboxRequest {
 }
 
 export function isImdeDemoModeEnabled(): boolean {
-  return process.env.UAP_ENABLE_IMDE_DEMO === "true";
+  return process.env.NEBULA_X_ENABLE_IMDE_DEMO === "true";
 }
 
 export function getAllowedImdeDemoTenants(): string[] {
-  return (process.env.UAP_IMDE_DEMO_TENANTS ?? "default")
+  return (process.env.NEBULA_X_IMDE_DEMO_TENANTS ?? "default")
     .split(",")
     .map((tenant) => tenant.trim())
     .filter(Boolean);
@@ -275,41 +275,41 @@ export interface ImdeDemoAmlWorkspaceConfig {
 /**
  * Resolve the AML workspace metadata the IMDE demo "ready" projection should expose.
  *
- * When UAP_IMDE_DEMO_AML_WORKSPACE_NAME is set (plus the matching subscription/RG/
+ * When NEBULA_X_IMDE_DEMO_AML_WORKSPACE_NAME is set (plus the matching subscription/RG/
  * tenant/region env vars), the projection presents a real Azure ML Studio workspace
  * the executive audience can click through to. Otherwise it falls back to the original
  * synthetic placeholder so unit tests and offline demos keep working unchanged.
  */
 export function resolveImdeDemoAmlWorkspace(): ImdeDemoAmlWorkspaceConfig {
-  const workspaceName = process.env.UAP_IMDE_DEMO_AML_WORKSPACE_NAME?.trim();
+  const workspaceName = process.env.NEBULA_X_IMDE_DEMO_AML_WORKSPACE_NAME?.trim();
 
   if (!workspaceName) {
     return {
-      workspaceName: "demo-imde-rcm-denial-workspace",
+      workspaceName: "demo-imde-advisory-exception-workspace",
       workspaceId: `/demo/workspaces/${scenario.demoScenarioId}`,
-      mlflowTrackingUri: `https://demo.ai-marketplace.local/${scenario.demoScenarioId}/mlflow`,
-      studioUrl: `https://demo.ai-marketplace.local/demo/${scenario.demoScenarioId}/studio`,
-      notebookUrl: `https://demo.ai-marketplace.local/demo/${scenario.demoScenarioId}/notebook`,
+      mlflowTrackingUri: `https://demo.nebula-x.local/${scenario.demoScenarioId}/mlflow`,
+      studioUrl: `https://demo.nebula-x.local/demo/${scenario.demoScenarioId}/studio`,
+      notebookUrl: `https://demo.nebula-x.local/demo/${scenario.demoScenarioId}/notebook`,
     };
   }
 
   const subscriptionId = (
-    process.env.UAP_IMDE_DEMO_AML_SUBSCRIPTION_ID
+    process.env.NEBULA_X_IMDE_DEMO_AML_SUBSCRIPTION_ID
     ?? process.env.AZURE_SUBSCRIPTION_ID
     ?? ""
   ).trim();
   const resourceGroup = (
-    process.env.UAP_IMDE_DEMO_AML_RESOURCE_GROUP
+    process.env.NEBULA_X_IMDE_DEMO_AML_RESOURCE_GROUP
     ?? process.env.AZURE_RESOURCE_GROUP
     ?? ""
   ).trim();
   const tenantId = (
-    process.env.UAP_IMDE_DEMO_AML_TENANT_ID
+    process.env.NEBULA_X_IMDE_DEMO_AML_TENANT_ID
     ?? process.env.AZURE_TENANT_ID
     ?? ""
   ).trim();
   const region = (
-    process.env.UAP_IMDE_DEMO_AML_REGION
+    process.env.NEBULA_X_IMDE_DEMO_AML_REGION
     ?? process.env.AZURE_LOCATION
     ?? "eastus"
   ).trim();
@@ -318,7 +318,7 @@ export function resolveImdeDemoAmlWorkspace(): ImdeDemoAmlWorkspaceConfig {
   const encodedArmId = encodeURIComponent(workspaceArmId);
 
   const mlflowTrackingUri = (
-    process.env.UAP_IMDE_DEMO_AML_MLFLOW_URI
+    process.env.NEBULA_X_IMDE_DEMO_AML_MLFLOW_URI
     ?? `azureml://${region}.api.azureml.ms/mlflow/v1.0${workspaceArmId}`
   ).trim();
 
@@ -373,7 +373,7 @@ export function buildImdeDemoReadySandbox<T extends Record<string, any>>(
     status: "ready",
     approvedBy: scenario.actors.approverId,
     approvedAt: now,
-    approvalReason: "Approved for executive demo GPU sandbox with synthetic, de-identified RCM data.",
+    approvalReason: "Approved for executive demo GPU sandbox with synthetic, de-identified professional-services data.",
     demoScenarioId: scenario.demoScenarioId,
     baseModelId: scenario.baseModelId,
     amlWorkspaceName: aml.workspaceName,

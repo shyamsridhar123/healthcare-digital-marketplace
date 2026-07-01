@@ -61,7 +61,8 @@ var acrName = 'aimktacr${shortSuffix}'
 var containerAppEnvName = '${appName}-env-${environment}'
 var containerAppName = '${appName}-web-${environment}'
 var shouldDeployApi = deployFunctions && (deployCosmos || !empty(existingCosmosAccountName))
-var apiContainerImage = '${acr.outputs.loginServer}/api:${imageTag}'
+// Placeholder public image for initial provision; azd overrides it with the built ACR image on deploy.
+var apiContainerImage = 'mcr.microsoft.com/azure-functions/node:4-node20'
 
 // Application Insights
 module appInsights 'modules/appinsights.bicep' = {

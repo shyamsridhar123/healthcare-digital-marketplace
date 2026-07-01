@@ -10,7 +10,7 @@ import {
  * GET /api/models/sync
  *
  * Pulls the full model catalog from the Azure ML workspace and returns it
- * as a list of AI Asset Marketplace ModelData objects.
+ * as a list of Nebula-X ModelData objects.
  *
  * Returns 503 when AML is not configured (env vars absent).
  */

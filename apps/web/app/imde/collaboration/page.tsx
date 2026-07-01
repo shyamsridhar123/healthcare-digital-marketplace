@@ -68,59 +68,59 @@ interface AuditEntry {
 }
 
 const commits: CommitEntry[] = [
-  { hash: "a3f8c2d", message: "feat: add payer-specific feature for BCBS group", author: "Sarah Chen", authorInitials: "SC", timestamp: "2h ago", branch: "feature/payer-feats", additions: 124, deletions: 18, verified: true },
-  { hash: "b7e91fa", message: "fix: handle null denial reason codes from ERA 835", author: "Mike Johnson", authorInitials: "MJ", timestamp: "4h ago", branch: "feature/payer-feats", additions: 12, deletions: 8, verified: true },
+  { hash: "a3f8c2d", message: "feat: add counterparty-specific feature for GlobalBank cohort", author: "Sarah Chen", authorInitials: "SC", timestamp: "2h ago", branch: "feature/counterparty-feats", additions: 124, deletions: 18, verified: true },
+  { hash: "b7e91fa", message: "fix: handle null finding reason codes from GL extract", author: "Mike Johnson", authorInitials: "MJ", timestamp: "4h ago", branch: "feature/counterparty-feats", additions: 12, deletions: 8, verified: true },
   { hash: "c12d405", message: "refactor: vectorize preprocessing for 3× speedup", author: "Priya Patel", authorInitials: "PP", timestamp: "1d ago", branch: "main", additions: 89, deletions: 203, verified: true },
-  { hash: "d5b3e91", message: "docs: add domain expert feedback from Dr. Gupta session", author: "Amy Kowalski", authorInitials: "AK", timestamp: "1d ago", branch: "main", additions: 44, deletions: 2, verified: false },
-  { hash: "e8f21bc", message: "experiment: try focal loss for class imbalance (denials vs. paid)", author: "James Rivera", authorInitials: "JR", timestamp: "2d ago", branch: "exp/focal-loss", additions: 67, deletions: 31, verified: true },
+  { hash: "d5b3e91", message: "docs: add domain expert feedback from Gupta session", author: "Amy Kowalski", authorInitials: "AK", timestamp: "1d ago", branch: "main", additions: 44, deletions: 2, verified: false },
+  { hash: "e8f21bc", message: "experiment: try focal loss for class imbalance (findings vs. cleared)", author: "James Rivera", authorInitials: "JR", timestamp: "2d ago", branch: "exp/focal-loss", additions: 67, deletions: 31, verified: true },
   { hash: "f03a8d6", message: "chore: update MLflow tracking URI to new workspace", author: "Kevin Wu", authorInitials: "KW", timestamp: "3d ago", branch: "main", additions: 5, deletions: 5, verified: true },
 ]
 
 const reviewRequests: ReviewRequest[] = [
   {
     id: "pr-001",
-    title: "Add payer-specific features for BCBS denial prediction",
-    description: "Adds 8 new features derived from BCBS-specific EOB codes. Improves F1 by +1.4% on held-out BCBS test set.",
+    title: "Add counterparty-specific features for GlobalBank going concern risk",
+    description: "Adds 8 new features derived from GlobalBank-specific engagement artifact codes. Improves F1 by +1.4% on held-out GlobalBank test set.",
     author: "Sarah Chen",
     status: "open",
-    reviewers: ["Mike Johnson", "Dr. Raj Gupta"],
+    reviewers: ["Mike Johnson", "Raj Gupta"],
     comments: 7,
     createdAt: "2h ago",
-    artifact: "RCM-Denial-Prediction-v3",
+    artifact: "Going-Concern-Risk-Model-v3",
   },
   {
     id: "pr-002",
     title: "LoRA rank experiment — r=32 vs r=16 comparison",
-    description: "Testing higher LoRA rank for ICD-10 task. +0.7% accuracy, but 2× inference time. Domain expert review needed.",
+    description: "Testing higher LoRA rank for IFRS/GAAP task. +0.7% accuracy, but 2× inference time. Domain expert review needed.",
     author: "James Rivera",
     status: "changes-requested",
-    reviewers: ["Priya Patel", "Dr. Sarah Chen"],
+    reviewers: ["Priya Patel", "Sarah Chen"],
     comments: 12,
     createdAt: "1d ago",
-    artifact: "ICD10-AutoCode-LLM",
+    artifact: "FinancialDisclosure-AutoCode-LLM",
   },
   {
     id: "pr-003",
-    title: "Update denial taxonomy to 2026 payer rule set",
-    description: "Incorporates 14 new denial codes effective Jan 2026. Required for compliance.",
+    title: "Update finding taxonomy to 2026 counterparty rule set",
+    description: "Incorporates 14 new finding codes effective Jan 2026. Required for compliance.",
     author: "Amy Kowalski",
     status: "approved",
     reviewers: ["Kevin Wu", "Linda Park"],
     comments: 4,
     createdAt: "3d ago",
-    artifact: "RCM-Denial-Prediction-v3",
+    artifact: "Going-Concern-Risk-Model-v3",
   },
 ]
 
 const auditLog: AuditEntry[] = [
-  { id: "a-001", action: "Read claim dataset (18mo slice)", actor: "Sarah Chen", target: "Claims DB (prod-mirror)", timestamp: "Mar 2, 2026 09:14", category: "data-access", severity: "info" },
-  { id: "a-002", action: "Model weights exported to artifact store", actor: "Sarah Chen", target: "denial-bert-lr1e4-bs32", timestamp: "Mar 2, 2026 11:22", category: "model-change", severity: "info" },
-  { id: "a-003", action: "Published model to marketplace", actor: "Sarah Chen", target: "Denial Predictor v2.1", timestamp: "Feb 25, 2026 14:05", category: "publish", severity: "info" },
-  { id: "a-004", action: "Added domain expert (Dr. Gupta) to sandbox", actor: "Amy Kowalski", target: "RCM-Denial-Prediction-v3", timestamp: "Feb 24, 2026 10:30", category: "permission", severity: "info" },
-  { id: "a-005", action: "PHI scan flagged 3 records in test set — removed", actor: "Linda Park (DPO)", target: "clinical-notes-sample.csv", timestamp: "Feb 22, 2026 08:15", category: "data-access", severity: "warning" },
-  { id: "a-006", action: "Model config changed: max_tokens 512→1024", actor: "James Rivera", target: "ICD10-AutoCode-LLM", timestamp: "Feb 20, 2026 15:44", category: "config", severity: "info" },
-  { id: "a-007", action: "Attempted read of prod-live DB (blocked)", actor: "Kevin Wu", target: "Claims DB (production)", timestamp: "Feb 18, 2026 09:01", category: "data-access", severity: "critical" },
-  { id: "a-008", action: "Governance sign-off recorded", actor: "Dr. Raj Gupta", target: "Denial Predictor v2.1", timestamp: "Feb 17, 2026 11:30", category: "publish", severity: "info" },
+  { id: "a-001", action: "Read transaction dataset (18mo slice)", actor: "Sarah Chen", target: "GL Entries DB (prod-mirror)", timestamp: "Mar 2, 2026 09:14", category: "data-access", severity: "info" },
+  { id: "a-002", action: "Model weights exported to artifact store", actor: "Sarah Chen", target: "audit-lm-lr1e4-bs32", timestamp: "Mar 2, 2026 11:22", category: "model-change", severity: "info" },
+  { id: "a-003", action: "Published model to marketplace", actor: "Sarah Chen", target: "LedgerSentinel v2.1", timestamp: "Feb 25, 2026 14:05", category: "publish", severity: "info" },
+  { id: "a-004", action: "Added domain expert (Gupta) to sandbox", actor: "Amy Kowalski", target: "Going-Concern-Risk-Model-v3", timestamp: "Feb 24, 2026 10:30", category: "permission", severity: "info" },
+  { id: "a-005", action: "engagement-confidential data scan flagged 3 records in test set — removed", actor: "Linda Park (DPO)", target: "financial-memos-sample.csv", timestamp: "Feb 22, 2026 08:15", category: "data-access", severity: "warning" },
+  { id: "a-006", action: "Model config changed: max_tokens 512→1024", actor: "James Rivera", target: "FinancialDisclosure-AutoCode-LLM", timestamp: "Feb 20, 2026 15:44", category: "config", severity: "info" },
+  { id: "a-007", action: "Attempted read of prod-live DB (blocked)", actor: "Kevin Wu", target: "GL Entries DB (production)", timestamp: "Feb 18, 2026 09:01", category: "data-access", severity: "critical" },
+  { id: "a-008", action: "Governance sign-off recorded", actor: "Raj Gupta", target: "LedgerSentinel v2.1", timestamp: "Feb 17, 2026 11:30", category: "publish", severity: "info" },
 ]
 
 const categoryColors: Record<AuditEntry["category"], string> = {
@@ -215,7 +215,7 @@ export default function IMDECollaborationPage() {
                   <CardContent className="space-y-2">
                     {[
                       { name: "main", commits: 134, protected: true, lastActivity: "1d ago" },
-                      { name: "feature/payer-feats", commits: 8, protected: false, lastActivity: "2h ago" },
+                      { name: "feature/counterparty-feats", commits: 8, protected: false, lastActivity: "2h ago" },
                       { name: "exp/focal-loss", commits: 4, protected: false, lastActivity: "2d ago" },
                       { name: "exp/lora-r32", commits: 6, protected: false, lastActivity: "1d ago" },
                     ].map((b) => (
@@ -326,17 +326,17 @@ export default function IMDECollaborationPage() {
                     <MessageSquare className="h-4 w-4 text-violet-400" />
                     Domain Expert Feedback
                   </CardTitle>
-                  <CardDescription className="text-xs">Billing and coding experts can leave feedback directly on models and experiments</CardDescription>
+                  <CardDescription className="text-xs">Engagement billing and tax classification experts can leave feedback directly on models and experiments</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Textarea
                     rows={3}
-                    placeholder="Share domain expertise, flag clinical concerns, or suggest training data improvements..."
+                    placeholder="Share domain expertise, flag financial concerns, or suggest training data improvements..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                   />
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Commenting on: <strong>RCM-Denial-Prediction-v3</strong></span>
+                    <span className="text-xs text-muted-foreground">Commenting on: <strong>Going-Concern-Risk-Model-v3</strong></span>
                     <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700 text-white" disabled={!comment.trim()}>
                       <MessageSquare className="h-4 w-4" /> Post Feedback
                     </Button>
@@ -401,20 +401,20 @@ export default function IMDECollaborationPage() {
             </div>
             <p className="mt-3 text-xs text-muted-foreground flex items-center gap-1.5">
               <Shield className="h-3.5 w-3.5 text-emerald-400" />
-              Audit logs are immutable, tamper-evident, and retained for 7 years per HIPAA requirements.
+              Audit logs are immutable, tamper-evident, and retained for 7 years per independence requirements.
             </p>
           </TabsContent>
 
           <TabsContent value="team" className="mt-0">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { name: "Dr. Sarah Chen", role: "Lead Data Scientist", team: "RCM AI Core", expertise: ["Transformer models", "Denial prediction", "EDA"], status: "online", contributions: 134 },
-                { name: "James Rivera", role: "ML Engineer", team: "RCM AI Core", expertise: ["LLM fine-tuning", "LoRA/PEFT", "ICD-10 coding"], status: "online", contributions: 89 },
-                { name: "Mike Johnson", role: "Data Scientist", team: "RCM AI Core", expertise: ["XGBoost", "Benchmarking", "Feature engineering"], status: "away", contributions: 67 },
-                { name: "Priya Patel", role: "MLOps Engineer", team: "RCM AI Core", expertise: ["Pipeline optimization", "SHAP", "Deployment"], status: "online", contributions: 61 },
-                { name: "Amy Kowalski", role: "Data Scientist", team: "Billing Analytics", expertise: ["Prior auth", "Payer rules", "XGBoost"], status: "offline", contributions: 48 },
-                { name: "Dr. Raj Gupta", role: "Domain Expert — RCM", team: "Revenue Cycle", expertise: ["RCM workflows", "Denial appeal", "Coding accuracy"], status: "online", contributions: 22 },
-                { name: "Linda Park", role: "Data Privacy Officer", team: "Compliance", expertise: ["HIPAA", "PHI review", "Data governance"], status: "away", contributions: 9 },
+                { name: "Sarah Chen", role: "Lead Data Scientist", team: "Deloitte Audit AI Studio", expertise: ["Transformer models", "Finding prediction", "EDA"], status: "online", contributions: 134 },
+                { name: "James Rivera", role: "ML Engineer", team: "Deloitte Audit AI Studio", expertise: ["LLM fine-tuning", "LoRA/PEFT", "IFRS/GAAP classification"], status: "online", contributions: 89 },
+                { name: "Mike Johnson", role: "Data Scientist", team: "Deloitte Audit AI Studio", expertise: ["XGBoost", "Benchmarking", "Feature engineering"], status: "away", contributions: 67 },
+                { name: "Priya Patel", role: "MLOps Engineer", team: "Deloitte Audit AI Studio", expertise: ["Pipeline optimization", "SHAP", "Deployment"], status: "online", contributions: 61 },
+                { name: "Amy Kowalski", role: "Data Scientist", team: "Engagement Billing Analytics", expertise: ["Approval workflow", "Counterparty rules", "XGBoost"], status: "offline", contributions: 48 },
+                { name: "Raj Gupta", role: "Domain Expert — Engagement Delivery", team: "Engagement Delivery", expertise: ["Engagement Delivery workflows", "Finding remediation", "Classification accuracy"], status: "online", contributions: 22 },
+                { name: "Linda Park", role: "Data Privacy Officer", team: "Compliance", expertise: ["independence", "engagement-confidential data review", "Data governance"], status: "away", contributions: 9 },
                 { name: "Kevin Wu", role: "MLOps Engineer", team: "Platform", expertise: ["Infrastructure", "CI/CD", "Container ops"], status: "online", contributions: 31 },
               ].map((m) => (
                 <Card key={m.name} className="border-border">

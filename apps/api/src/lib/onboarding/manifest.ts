@@ -75,7 +75,7 @@ export function compareSemver(candidate: string, current: string): -1 | 0 | 1 {
 
 export function classifyRiskTier(input: { dataCategories: string[]; networkEgress: boolean }): RiskTier {
   const categories = input.dataCategories.map((category) => category.toLowerCase());
-  if (categories.some((category) => ['phi', 'hipaa'].includes(category))) {
+  if (categories.some((category) => ['engagement_confidential', 'hipaa'].includes(category))) {
     return 'high';
   }
 
